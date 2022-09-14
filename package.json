@@ -1,0 +1,127 @@
+{
+  "name": "patikunye",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Veteriner klinikleri için mikroçip ve hayvan takip uygulaması",
+  "main": "./out/main/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "start": "electron-vite preview",
+    "dev:server": "tsx watch src/server-dev.ts",
+    "dev:web": "vite --config vite.web.config.ts",
+    "db:generate": "drizzle-kit generate",
+    "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
+    "test": "vitest run",
+    "dist": "electron-vite build && electron-builder --win",
+    "dist:dir": "electron-vite build && electron-builder --win --dir",
+    "dist:mac": "electron-vite build && electron-builder --mac"
+  },
+  "dependencies": {
+    "@node-rs/argon2": "^2.0.2",
+    "bonjour-service": "^1.4.4",
+    "drizzle-orm": "^0.45.4",
+    "electron-updater": "^6.8.11",
+    "embedded-postgres": "18.4.0-beta.17",
+    "fastify": "^5.6.1",
+    "nodemailer": "^10.2.1",
+    "pg": "^8.16.3",
+    "selfsigned": "^5.5.0",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/ibm-plex-sans": "^5.3.0",
+    "@tanstack/react-query": "^5.90.5",
+    "@types/node": "^22.18.0",
+    "@types/nodemailer": "^8.0.2",
+    "@types/pg": "^8.15.5",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@vitejs/plugin-react": "^6.0.0",
+    "drizzle-kit": "^0.31.5",
+    "electron": "^45.0.0",
+    "electron-builder": "^26.18.0",
+    "electron-vite": "^6.0.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.9.4",
+    "tsx": "^4.20.6",
+    "typescript": "~5.9.3",
+    "vite": "^8.0.0",
+    "vitest": "^5.0.5"
+  },
+  "productName": "PatiKünye",
+  "author": "Kadir",
+  "build": {
+    "appId": "com.patikunye.app",
+    "productName": "PatiKünye",
+    "executableName": "PatiKunye",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "out/**",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "drizzle",
+        "to": "drizzle"
+      },
+      {
+        "from": "migrations",
+        "to": "migrations"
+      }
+    ],
+    "asar": true,
+    "asarUnpack": [
+      "node_modules/@embedded-postgres/**",
+      "node_modules/@node-rs/**"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "PatiKunye-Kurulum-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "PatiKünye",
+      "language": "1055",
+      "installerLanguages": [
+        "tr_TR"
+      ],
+      "deleteAppDataOnUninstall": false
+    },
+    "publish": null,
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
+      ],
+      "category": "public.app-category.medical"
+    }
+  },
+  "optionalDependencies": {
+    "@embedded-postgres/windows-x64": "18.4.0-beta.17",
+    "@embedded-postgres/darwin-arm64": "18.4.0-beta.17",
+    "@embedded-postgres/darwin-x64": "18.4.0-beta.17",
+    "@embedded-postgres/linux-x64": "18.4.0-beta.17"
+  }
+}
