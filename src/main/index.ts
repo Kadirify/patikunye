@@ -136,6 +136,8 @@ async function ensureBackend(): Promise<BackendStatus> {
       setupUpdater()
       status.apiBase = backend.apiBase
       status.state = 'ready'
+      // Veritabanı artık var: sonradan açılan pencereler (yazdırma) kurulumu yeniden göstermesin
+      status.firstRun = false
     } catch (e) {
       log(`[fatal] ${e instanceof Error ? (e.stack ?? e.message) : String(e)}`)
       status.state = 'error'

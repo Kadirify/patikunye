@@ -19,6 +19,7 @@ export function BootGate({ children }: { children: ReactNode }) {
   const [st, setSt] = useState<BackendStatus | null>(null)
   const [needsSetup, setNeedsSetup] = useState<boolean | null>(null)
   const [wizardDone, setWizardDone] = useState(false)
+  const [wizardShown, setWizardShown] = useState(false)
 
   useEffect(() => {
     if (!bridge) {
@@ -40,7 +41,11 @@ export function BootGate({ children }: { children: ReactNode }) {
 
   if (!st) return <div className="app"><TitleBar /></div>
   // İlk açılış ya da kurulum yapılmamış veritabanı → sihirbaz (veritabanı adımını kendisi yürütür)
-  if (!wizardDone && (st.firstRun || needsSetup)) return <SetupWizard status={st} onDone={() => setWizardDone(true)} />
+  // Veritabanı hazır ve kurulum tamamsa "ilk açılış" bayrağına bakılmaz (yazdırma gibi ek pencereler)
+  const wizardNeeded = needsSetup === true || (st.firstRun && st.state !== 'ready')
+  // Sihirbaz bir kez açıldıysa tamamlanana kadar açık kalır (adım bilgisi kaybolmasın)
+  if (wizardNeeded && !wizardShown) setWizardShown(true)
+  if (!wizardDone && (wizardNeeded || wizardShown)) return <SetupWizard status={st} onDone={() => setWizardDone(true)} />
   if (st.state === 'error') return <SystemError status={st} />
   if (st.state !== 'ready' || needsSetup === null) return <Starting status={st} />
   return <>{children}</>
