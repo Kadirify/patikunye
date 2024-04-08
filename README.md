@@ -1,17 +1,139 @@
-# PatiKünye
+<p align="center">
+  <img src="build/icon.png" width="72" alt="PatiKünye">
+</p>
 
-Veteriner klinikleri için mikroçip, hayvan ve PETVET takip uygulaması. Windows masaüstü (Electron); veriler klinik bilgisayarında, uygulamayla gelen yerel PostgreSQL 18'de durur. Birden çok bilgisayar yerel ağdan ana bilgisayara bağlanabilir.
+<h1 align="center">PatiKünye</h1>
 
-Plan ve ekran tanımları: `docs/plan/PLAN.md`, `docs/plan/SAYFALAR.md`, onaylı tasarımlar `docs/plan/tasarim/`. Modül geliştirme kuralları: `docs/MODUL-REHBERI.md`.
+<p align="center">
+  Veteriner klinikleri için mikroçip, hayvan kaydı ve PETVET takibi.<br>
+  Windows'ta çalışır, veriler klinikteki bilgisayarda durur.
+</p>
 
-## Çalıştırma
+<p align="center">
+  <a href="https://github.com/Kadirify/patikunye/releases/latest"><b>Son sürümü indir (Windows, .exe)</b></a>
+</p>
+
+---
+
+![Bugün ekranı](docs/tanitim/img/02-bugun.png)
+
+Kedi ve köpeklere mikroçip zorunlu hale gelince kliniklerde aynı bilgi iki kere girilmeye başlandı: bir kere klinik programına, bir kere PETVET'e. PatiKünye bu iki işi tek ekranda toplamak için yazıldı. Çip okutulur, hayvan ve sahibi bulunur ya da birkaç alanla kaydedilir; PETVET'e girilmesi gereken her şey 15 günlük süresiyle birlikte iş listesine düşer.
+
+Program internet gerektirmez. Veritabanı (PostgreSQL 18) programla birlikte gelir, ayrıca bir şey kurmanız gerekmez.
+
+## İçindekiler
+
+- [Kurulum](#kurulum)
+- [İlk açılış](#ilk-açılış)
+- [Ekranlar](#ekranlar)
+- [Özellikler](#özellikler)
+- [Veriler nerede durur?](#veriler-nerede-durur)
+- [Geliştirme](#geliştirme)
+- [Bilinen eksikler](#bilinen-eksikler)
+
+## Kurulum
+
+**Gereken:** Windows 10 veya 11 (64 bit), yaklaşık 500 MB boş alan. USB barkod/çip okuyucu varsa takılı olsun, yoksa çip numarası elle de yazılabilir.
+
+1. [Releases](https://github.com/Kadirify/patikunye/releases/latest) sayfasından `PatiKunye-Kurulum-0.1.0.exe` dosyasını indirin.
+2. Dosyayı çalıştırın. Kurulum dosyası henüz imzalı olmadığı için Windows **"Windows bilgisayarınızı korudu"** uyarısı verebilir. **Ek bilgi → Yine de çalıştır** ile devam edin.
+3. Programın kimler için kurulacağını seçin. Tek bilgisayarlı klinikte **Sadece benim için** yeterli; aynı bilgisayarı farklı Windows kullanıcıları kullanıyorsa diğerini seçin.
+
+   <img src="docs/ekran/kurulum/01-kimin-icin.png" width="503" alt="Kurulum: kimler için">
+
+4. Kurulum klasörünü onaylayın (değiştirmeniz gerekmez) ve **Kur**'a basın. Kurulum bitince masaüstüne PatiKünye kısayolu gelir.
+
+   <img src="docs/ekran/kurulum/02-klasor.png" width="503" alt="Kurulum: hedef klasör">
+
+Kaldırmak için: **Ayarlar → Uygulamalar → PatiKünye → Kaldır**. Kaldırma klinik verilerini silmez; veri klasörü yerinde kalır.
+
+## İlk açılış
+
+Program ilk açıldığında kurulum sihirbazı çıkar. 10 adım var, çoğu birkaç saniye sürer.
+
+| | |
+|---|---|
+| <img src="docs/ekran/kurulum/sihirbaz-01-hos-geldiniz.png" alt="Hoş geldiniz"> | **1. Hoş geldiniz.** Verilerin buluta gönderilmediği, bu bilgisayarda tutulduğu ve KVKK açısından veri sorumlusunun klinik olduğu anlatılır. Kutuyu işaretleyip devam edin. |
+| <img src="docs/ekran/kurulum/sihirbaz-02-kurulum-turu.png" alt="Kurulum türü"> | **2. Kurulum türü.** İlk bilgisayarda **Bu bilgisayar ana bilgisayar olsun** seçilir; veritabanı bu bilgisayarda kurulur. Klinikte ikinci bir bilgisayar varsa onda **Bu bilgisayarı mevcut kliniğe bağla** seçilir; ana bilgisayardaki eşleştirme koduyla bağlanır, veritabanı kurulmaz. |
+| <img src="docs/ekran/kurulum/sihirbaz-03-veritabani.png" alt="Veritabanı"> | **3. Veritabanı.** PostgreSQL kendi kendine kurulur ve başlatılır. Her adımın ne kadar sürdüğü görünür; bir şey ters giderse **Tanı bilgisini kaydet** ile bir dosya alıp bana gönderebilirsiniz. |
+| <img src="docs/ekran/kurulum/sihirbaz-04-klinik.png" alt="Klinik bilgileri"> | **4. Klinik bilgileri.** Klinik adı, il, ilçe, telefon ve adres. Bunlar aşı karnesi, çip kartı ve reçete çıktılarının başlığında kullanılır. |
+| <img src="docs/ekran/kurulum/sihirbaz-05-yonetici.png" alt="Yönetici hekim"> | **5. Yönetici hekim.** Klinik yöneticisi olacak hekimin adı, oda sicil numarası, kullanıcı adı ve parolası (en az 10 karakter). Diğer hekim ve personel daha sonra Ayarlar'dan eklenir. |
+| <img src="docs/ekran/kurulum/sihirbaz-06-kurtarma-kodu.png" alt="Kurtarma kodu"> | **Kurtarma kodu.** 12 kelimelik kod bir kez gösterilir. Kâğıda yazın ya da yazdırın, bilgisayardan ayrı bir yerde saklayın. Yedekleri başka bilgisayarda açmak ve yönetici parolası unutulduğunda girmek için bu kod gerekir. |
+| <img src="docs/ekran/kurulum/sihirbaz-07-yedekleme.png" alt="Yedekleme"> | **6. Yedekleme.** Günlük yedeğin gideceği klasör ve saat. Harici disk ya da ağ klasörü seçmenizi öneririm; boş bırakılırsa yedek aynı diske alınır, disk bozulursa yedek de gider. |
+| <img src="docs/ekran/kurulum/sihirbaz-08-disk-sifreleme.png" alt="Disk şifreleme"> | **7. Disk şifreleme.** BitLocker açık mı diye bakılır. Kapalıysa nereden açılacağı yazılır. Zorunlu değil, ama bilgisayar çalınırsa verilerin okunamaması için özellikle dizüstünde açmanızı öneririm. |
+| <img src="docs/ekran/kurulum/sihirbaz-09-cip-okuyucu.png" alt="Çip okuyucu"> | **8. Çip okuyucu testi.** USB okuyucuyla bir çip okutun; program okuyucunun hızını ölçer ve klavyeden yazılanla okuyucudan geleni ayırt etmeyi öğrenir. Okuyucu yoksa atlanabilir. |
+| <img src="docs/ekran/kurulum/sihirbaz-10-mesajlasma.png" alt="Mesajlaşma"> | **9. Mesajlaşma.** Aşı ve randevu hatırlatmalarının SMS ya da e-postayla gideceği anlatılır. Sağlayıcı (Netgsm, İletimerkezi) ve e-posta ayarları sonradan Ayarlar → Mesajlaşma'dan yapılır. |
+| <img src="docs/ekran/kurulum/sihirbaz-11-hazir.png" alt="Hazır"> | **10. Hazır.** Özet gösterilir. **Başla** ile program açılır ve ilk yedek hemen alınır. |
+
+## Ekranlar
+
+Her ekranın ne işe yaradığı ve neler yapılabildiği [tanıtım sayfasında](docs/tanitim/index.html) tek tek anlatılıyor (36 ekran). Birkaçı:
+
+**Hızlı kayıt.** Çip okutulunca açılır. Çip numarası doğrulanır, sahip aranır ya da yeni sahip girilir, hayvan birkaç alanla kaydedilir ve PETVET görevi kendiliğinden açılır.
+
+![Hızlı kayıt](docs/tanitim/img/03-hizli-kayit.png)
+
+**Hayvan kartı.** Kimlik, çip geçmişi, aşılar, muayeneler, randevular ve sahip geçmişi sekmeler halinde aynı yerde.
+
+![Hayvan kartı](docs/tanitim/img/05-hayvan-detay.png)
+
+**PETVET işleri.** PETVET'e girilmesi gereken her olay (çip uygulama, kuduz aşısı, ölüm, sahip değişikliği) süresiyle birlikte listelenir. Görev açılınca TARBİL'e yazılacak alanlar kopyalanmaya hazır gelir.
+
+![PETVET işleri](docs/tanitim/img/08-petvet.png)
+
+**Muayene.** SOAP düzeninde muayene, yaşam bulguları, tanı, tedavi satırları. Kaydedilen muayene imzalanır; imzadan sonra değişiklik ancak ek sürümle yapılır.
+
+![Muayene](docs/tanitim/img/11-muayene.png)
+
+**Randevular.** Hekim sütunlu gün görünümü, sürükle-bırak ile taşıma, gelen hastalar için bekleme salonu.
+
+![Randevular](docs/tanitim/img/14-randevular.png)
+
+**Yedekleme.** Şifreli günlük yedek, yedeğin açılıp açılmadığının denetlenmesi, başka bilgisayara geri yükleme.
+
+![Yedekleme](docs/tanitim/img/18-yedekleme.png)
+
+**Çıktılar.** Aşı karnesi, barkodlu kayıt/çip kartı, muayene özeti ve tedavi talimatı yazdırılır.
+
+<img src="docs/tanitim/img/34-yazdir-cip-karti.png" width="49%" alt="Çip kartı"> <img src="docs/tanitim/img/33-yazdir-asi-karnesi.png" width="49%" alt="Aşı karnesi">
+
+## Özellikler
+
+| Bölüm | Neler var |
+|---|---|
+| Çip ve kayıt | USB okuyucuyla her ekrandan çip yakalama, çip doğrulama, hızlı kayıt, kampanya günleri için seri kayıt |
+| Sahipler ve hayvanlar | Sahip/hayvan kartları, mükerrer sahip birleştirme, ölüm, kayıp, bulundu ve sahip değişikliği işlemleri |
+| Muayene | SOAP, otomatik taslak, imza ve ek sürümler, tedavi satırları, alerji uyarısı, kilo takibi |
+| Aşılar | Aşı uygulama, protokoller, aşı takvimi, kuduz aşısında PETVET görevi |
+| PETVET | 15 gün kuralına göre iş listesi, TARBİL'e kopyalanacak alanlar, eksik TCKN takibi |
+| Randevu | Hekim sütunlu takvim, sürükle-bırak, bekleme salonu, randevu türleri ve tatil günleri |
+| Mesajlar | Aşı ve randevu hatırlatmaları (SMS: Netgsm, İletimerkezi; e-posta), şablonlar, sessiz saatler |
+| Yönetim | Kullanıcılar ve roller, PIN ile hızlı giriş, kilit ekranı, KVKK talepleri ve anonimleştirme, değiştirilemez denetim kaydı |
+| Yedekleme | Kurtarma koduyla şifreli günlük yedek, doğrulama, başka bilgisayara geri yükleme |
+| Raporlar | 9 rapor ve CSV dışa aktarma, aşı karnesi, çip kartı, muayene özeti, onam formu |
+| Yerel ağ | Klinikteki diğer bilgisayarlar ana bilgisayara eşleştirme koduyla bağlanır |
+
+## Veriler nerede durur?
+
+| | Klasör |
+|---|---|
+| Veritabanı ve ayarlar | `%APPDATA%\PatiKünye\data` |
+| Yedekler | Kurulumda seçilen klasör (varsayılan: veri klasörünün altı) |
+
+- Veritabanı yalnızca bu bilgisayardan erişilebilir (`127.0.0.1`). Ağdaki diğer bilgisayarlar veritabanına değil, programın kendi sunucusuna HTTPS ile bağlanır.
+- TCKN gibi hassas alanlar veritabanında şifreli tutulur. Şifreleme anahtarları Windows'un kullanıcıya özel korumasıyla saklanır.
+- Yedekler kurtarma koduyla şifrelenir; kod olmadan açılamaz.
+
+## Geliştirme
+
+Node.js 22 gerekir.
 
 ```bash
 npm install
-npm run dev          # Electron uygulaması (ilk açılışta kurulum sihirbazı)
+npm run dev          # Electron, ilk açılışta kurulum sihirbazı
 ```
 
-Arayüzü tarayıcıda geliştirmek için iki terminal:
+Arayüz üzerinde tarayıcıdan çalışmak için iki terminal:
 
 ```bash
 npm run dev:server   # veritabanı (.dev-data) + API, port 47800
@@ -19,47 +141,26 @@ npm run dev:web      # arayüz, http://localhost:5173
 ```
 
 ```bash
-npm test             # 196 test (her test dosyası kendi geçici PostgreSQL kümesini kurar)
+npm test             # 196 test, her dosya kendi geçici PostgreSQL'ini kurar
 npm run typecheck
-npm run dist         # Windows kurulum dosyası → dist/PatiKunye-Kurulum-<sürüm>.exe
-npm run dist:dir     # kurulum dosyası olmadan paket → dist/win-unpacked
+npm run dist         # kurulum dosyası: dist/PatiKunye-Kurulum-<sürüm>.exe
 ```
 
-## Modüller
+Örnek veri basmak için (geliştirme veritabanına):
 
-| Modül | Ekranlar | Test |
-|---|---|---|
-| Kurulum ve sistem | 11 adımlı kurulum sihirbazı (adım adım veritabanı kurulumu), başlatma/hata ekranı, kilit ekranı, komut paleti (Ctrl+K), bildirim merkezi, klavye kısayolları | – |
-| Çip ve hızlı kayıt | Global çip yakalama (USB okuyucu), çip paneli, hızlı kayıt, kampanya modu | api, shared, chipCapture |
-| Sahipler ve hayvanlar | Sahip liste/form/detay/birleştirme, hayvan liste/form/detay (10 sekme), ölüm/kayıp/bulundu/devir, çip uygula/düzelt | owners |
-| Muayene | SOAP editörü, otomatik taslak, imza + ek/düzeltme sürümleri, tedavi satırları, alerji uyarısı, kilo | visits |
-| Aşılar | Aşı uygula, protokoller, aşı takvimi, Bugün paneli, kuduz → PETVET görevi | vaccines |
-| PETVET | İş listesi, görev detayı (TARBİL'e kopyalanacak alanlar), eksik TCKN akışı | api |
-| Randevu | Hekim sütunlu takvim, sürükle-bırak, bekleme salonu (kanban), randevu türleri ve tatiller | appointments |
-| Mesajlar | Hatırlatma kuyruğu, SMS (Netgsm, İletimerkezi) / e-posta, şablonlar, sessiz saatler, tekrar deneme | messaging |
-| Ayarlar, KVKK, denetim | Klinik, kullanıcılar, PIN girişi, sözlükler, okuyucu testi, PETVET ayarları, KVKK talepleri ve anonimleştirme, denetim kaydı ve zincir doğrulama | admin |
-| Yedekleme | Şifreli günlük yedek (.pkb), doğrulama, başka bilgisayara geri yükleme, veritabanı durumu | backup |
-| Raporlar ve yazdırma | 9 rapor + CSV, aşı karnesi, çip kartı (Code128), muayene özeti, onam formu, denetim paketi | reports |
-| Yerel ağ | Ana bilgisayar HTTPS dinleyicisi, eşleştirme kodu, sertifika sabitleme, cihaz yönetimi | network |
-| Güncelleme | Güncelleme sunucusu tanımlıysa otomatik indirme, kurulumdan önce zorunlu yedek | – |
+```bash
+npx tsx scripts/seed-demo.ts --dev
+npx tsx scripts/seed-history.ts --dev
+```
 
-## Veriler nerede?
+Kullanılanlar: Electron, React, Fastify, Drizzle ORM, PostgreSQL 18 (embedded-postgres), electron-builder.
 
-| Ortam | Veri klasörü | Anahtarlar |
-|---|---|---|
-| Kurulu uygulama | `%APPDATA%\PatiKünye\data` | `secrets.bin` (Windows DPAPI ile şifreli) |
-| `npm run dev` | `%APPDATA%\PatiKunye-dev\data` | `secrets.bin` |
-| `npm run dev:server` | `./.dev-data` | `secrets.json` (düz metin, yalnızca geliştirme) |
+## Bilinen eksikler
 
-- PostgreSQL yalnızca `127.0.0.1`'i dinler; ağdaki bilgisayarlar yalnızca uygulama sunucusuna (HTTPS, cihaz anahtarı) bağlanır.
-- TCKN ve diğer hassas alanlar AES-256-GCM ile şifreli; ek dosyalar şifreli dosya olarak saklanır.
-- Yedekler kurtarma koduyla şifrelenir ve farklı bilgisayara geri yüklenebilir (anahtarlar yeniden şifrelenir).
+- Kurulum dosyası imzasız, Windows ilk çalıştırmada uyarı veriyor.
+- PostgreSQL Windows servisi olarak değil, programın alt süreci olarak çalışıyor; program sistem tepsisinde açık kaldığı sürece veritabanı da açık.
+- Güncelleme sunucusu henüz yok.
+- SMS sağlayıcıları gerçek hesapla denenmedi.
+- Aşı protokolleri, tanı listesi ve KVKK metinleri örnek olarak konuldu; kullanmadan önce kendi kliniğinize göre düzenleyin.
 
-## Bilinen sınırlamalar / yapılacaklar
-
-- **Kod imzalama sertifikası yok:** kurulum dosyası imzasız; Windows SmartScreen "bilinmeyen yayıncı" uyarısı verir.
-- **PostgreSQL Windows servisi değil:** uygulamanın alt süreci olarak çalışır; uygulama tepside açık kaldığı sürece çalışır.
-- **Güncelleme sunucusu yok:** güncelleme için `PATIKUNYE_UPDATE_URL` ya da kurulum klasörüne `update-url.txt`.
-- **SMS sağlayıcı API'leri gerçek hesapla denenmedi** (kodda ⚠️ işaretli).
-- **Mevzuat ve tohum veriler (aşı protokolleri, tanılar, KVKK metinleri) örnektir;** hekim ve hukukçu onayı gerekir.
-- Ayrıntılar: her modülün kod yorumlarında "⚠️ doğrulanacak" notları.
+Hata bulursanız ya da öneriniz varsa Issues'a yazabilirsiniz.

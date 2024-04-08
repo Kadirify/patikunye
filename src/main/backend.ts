@@ -92,6 +92,9 @@ async function finishStart(
     deps,
     supervisor,
     network,
+    sessions,
+    /** İç istek (örnek veri yükleyici vb.): HTTP'ye çıkmadan API'yi çağırır */
+    inject: app.inject.bind(app),
     async stop() {
       stopJobs()
       await network.stop()

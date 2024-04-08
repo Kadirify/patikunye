@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PatiKünye — Ekranlar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ebe8e2; --panel: #fff; --side: #f6f4f0; --line: #d6d1c7; --line2: #e6e2da;
+    --ink: #1d1b18; --mut: #6b665d; --acc: #1f4e9c; --brand: #a3651a; --grn: #2f6f3a;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 16px; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 'IBM Plex Sans', 'Segoe UI', sans-serif; }
+  a { color: var(--acc); }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
+  header { background: var(--side); border-bottom: 1px solid var(--line); }
+  header .wrap { padding-top: 28px; padding-bottom: 24px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 22px; }
+  .mark { width: 26px; height: 30px; background: var(--brand); border-radius: 3px; position: relative; }
+  .mark::before, .mark::after { content: ''; position: absolute; left: 7px; right: 7px; height: 2px; background: #f6efe4; }
+  .mark::before { top: 14px; } .mark::after { top: 19px; right: 10px; }
+  header p { margin: 10px 0 0; max-width: 760px; color: var(--mut); }
+  .facts { display: flex; flex-wrap: wrap; gap: 0; margin-top: 18px; border: 1px solid var(--line); background: var(--panel); border-radius: 3px; width: fit-content; max-width: 100%; }
+  .facts div { padding: 8px 16px; border-right: 1px solid var(--line2); font-size: 13px; color: var(--mut); }
+  .facts div:last-child { border-right: 0; }
+  .facts b { display: block; color: var(--ink); font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 15px; }
+  nav.toc { margin: 24px 0 8px; display: grid; grid-template-columns: repeat(auto-fill, minmax(205px, 1fr)); gap: 12px; }
+  nav.toc section { background: var(--panel); border: 1px solid var(--line); border-radius: 3px; padding: 10px 14px; }
+  nav.toc h3 { margin: 0 0 6px; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--mut); font-weight: 600; }
+  nav.toc a { display: block; text-decoration: none; padding: 2px 0; font-size: 14px; }
+  nav.toc a:hover { text-decoration: underline; }
+  h2.group { margin: 40px 0 0; padding-bottom: 6px; border-bottom: 2px solid var(--ink); font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
+  article { background: var(--panel); border: 1px solid var(--line); border-radius: 3px; margin-top: 16px; display: grid; grid-template-columns: 330px 1fr; }
+  article .txt { padding: 18px 20px; border-right: 1px solid var(--line2); }
+  article h3 { margin: 0; font-size: 18px; font-weight: 600; }
+  article .where { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--mut); margin-top: 2px; }
+  article .why { margin: 10px 0 8px; }
+  article ul { margin: 0; padding-left: 18px; }
+  article li { margin: 3px 0; font-size: 14px; }
+  article li::marker { color: var(--brand); }
+  article .who { margin-top: 12px; padding-top: 8px; border-top: 1px solid var(--line2); font-size: 13px; color: var(--mut); }
+  article .shot { padding: 12px; background: #f1eee8; display: flex; align-items: flex-start; }
+  article .shot a { display: block; width: 100%; }
+  article img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 3px; background: #fff; }
+  kbd { font-family: 'IBM Plex Mono', monospace; font-size: 12px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 3px; padding: 0 4px; background: var(--side); }
+  footer { margin: 48px 0 32px; color: var(--mut); font-size: 13px; }
+  @media (max-width: 900px) {
+    article { grid-template-columns: 1fr; }
+    article .txt { border-right: 0; border-bottom: 1px solid var(--line2); }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand"><span class="mark"></span>PatiKünye</div>
+    <p>Veteriner klinikleri için mikroçip, hasta ve PETVET takip programı. Windows masaüstünde çalışır, verileri kliniğin kendi bilgisayarındaki veritabanında tutar. İnternet olmadan da çalışır; muayene odası ve resepsiyon bilgisayarları yerel ağdan aynı veriye bağlanır.</p>
+    <div class="facts">
+      <div><b>15 gün</b>yeni çipte PETVET süresi, sayaçla izlenir</div>
+      <div><b>4 rol</b>yönetici, hekim, teknisyen, sekreter</div>
+      <div><b>AES-256</b>şifreli günlük yedek</div>
+      <div><b>Ctrl+K</b>her yerden arama</div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="toc" aria-label="İçindekiler">
+    <section><h3>Günlük iş</h3>
+      <a href="#giris">Giriş</a><a href="#bugun">Bugün</a><a href="#hizli-kayit">Hızlı kayıt</a><a href="#randevular">Randevular</a><a href="#bekleme">Bekleme salonu</a>
+    </section>
+    <section><h3>Kayıtlar</h3>
+      <a href="#hayvanlar">Hayvanlar</a><a href="#hayvan-detay">Hayvan kartı</a><a href="#sahipler">Sahipler</a><a href="#sahip-detay">Sahip kartı</a>
+    </section>
+    <section><h3>Klinik işleri</h3>
+      <a href="#muayeneler">Muayeneler</a><a href="#muayene">Muayene ekranı</a><a href="#asi-takvimi">Aşı takvimi</a><a href="#asi-uygula">Aşı uygula</a><a href="#petvet">PETVET işleri</a><a href="#petvet-gorev">PETVET görevi</a><a href="#mesajlar">Mesajlar</a><a href="#raporlar">Raporlar</a>
+    </section>
+    <section><h3>Yönetim</h3>
+      <a href="#yedekleme">Yedekleme</a><a href="#kullanicilar">Kullanıcılar</a><a href="#roller">Roller ve izinler</a><a href="#kvkk">KVKK</a><a href="#denetim">Denetim kaydı</a><a href="#ayarlar">Diğer ayarlar</a>
+    </section>
+    <section><h3>Çıktılar</h3>
+      <a href="#asi-karnesi">Aşı karnesi</a><a href="#cip-karti">Çip kartı</a><a href="#muayene-ozeti">Muayene özeti</a><a href="#recete">Tedavi talimatı</a>
+    </section>
+  </nav>
+
+  <h2 class="group">Günlük iş</h2>
+
+  <article id="giris">
+    <div class="txt">
+      <h3>Giriş</h3>
+      <div class="where">Program açılınca</div>
+      <p class="why">Klinikteki herkes kendi hesabıyla girer; her işlem yapan kişinin adıyla kaydedilir.</p>
+      <ul>
+        <li>Kullanıcılar kart olarak listelenir, son giren üstte</li>
+        <li>Hekimler kendi bilgisayarlarında PIN ile hızlı giriş yapabilir</li>
+        <li>5 hatalı denemede hesap 5 dakika kilitlenir</li>
+        <li>"Parolamı unuttum": yönetici diğer kullanıcıların parolasını sıfırlar; yönetici kendisi unuttuysa kurulumda verilen kurtarma kodunu kullanır</li>
+        <li>Belli bir süre işlem yapılmazsa ekran kilitlenir, kişisel veriler gizlenir</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/01-giris.png"><img src="img/01-giris.png" alt="Giriş ekranı" loading="lazy"></a></div>
+  </article>
+
+  <article id="bugun">
+    <div class="txt">
+      <h3>Bugün</h3>
+      <div class="where">Sol menü → Bugün</div>
+      <p class="why">Klinik açılınca ilk bakılan ekran: "Bugün ne yapmam lazım?"</p>
+      <ul>
+        <li>Günün randevuları ve kimin ne kadar süredir beklediği</li>
+        <li>Süresi dolmuş PETVET kayıtları için kırmızı uyarı</li>
+        <li>Bekleyen PETVET işleri, kalan gün sayısıyla</li>
+        <li>Vadesi geçen aşılar ve aranacak sahiplerin telefonları (tek tıkla kopyalanır)</li>
+        <li>Son kayıtlar ve bu ayın özeti</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/02-bugun.png"><img src="img/02-bugun.png" alt="Bugün ekranı" loading="lazy"></a></div>
+  </article>
+
+  <article id="hizli-kayit">
+    <div class="txt">
+      <h3>Hızlı kayıt</h3>
+      <div class="where">Üst çubuk → Yeni kayıt <kbd>Ctrl+N</kbd> ya da çip okutunca</div>
+      <p class="why">Çip uygulamasını tek ekranda bitirir: çip, sahip, hayvan ve uygulama bilgisi.</p>
+      <ul>
+        <li>Çip okuyucuyu çipe tutmak yeterli; numara kendiliğinden gelir</li>
+        <li>Çip numarası ISO 11784 kuralına göre denetlenir (792 Türkiye, 9xx üretici, 999 test çipi)</li>
+        <li>Sahip ad, telefon ya da TCKN ile aranır; yoksa aynı ekrandan eklenir</li>
+        <li>"Uygulamadan sonra tekrar okutuldu" onayı istenir</li>
+        <li>Kaydedince 15 günlük PETVET görevi kendiliğinden açılır</li>
+        <li>Kampanya modu: toplu çip günlerinde form her kayıttan sonra temizlenir</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/03-hizli-kayit.png"><img src="img/03-hizli-kayit.png" alt="Hızlı kayıt" loading="lazy"></a></div>
+  </article>
+
+  <article id="randevular">
+    <div class="txt">
+      <h3>Randevular</h3>
+      <div class="where">Sol menü → Randevular</div>
+      <p class="why">Hekim bazında günlük ve haftalık takvim.</p>
+      <ul>
+        <li>Her hekim ayrı sütunda; öğle arası ve tatiller kapalı görünür</li>
+        <li>Randevu türüne göre renk ve süre (muayene, aşı, çip, operasyon, bakım)</li>
+        <li>Gün, hafta ve liste görünümü</li>
+        <li>Çakışan randevular uyarılır</li>
+        <li>Randevudan bir gün önce sahibe hatırlatma mesajı planlanır</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/14-randevular.png"><img src="img/14-randevular.png" alt="Randevu takvimi" loading="lazy"></a></div>
+  </article>
+
+  <article id="bekleme">
+    <div class="txt">
+      <h3>Bekleme salonu</h3>
+      <div class="where">Sol menü → Bekleme salonu</div>
+      <p class="why">Günün akışı: hasta geldi mi, kim muayenede, kim ne kadar bekledi.</p>
+      <ul>
+        <li>Sütunlar: Bekleniyor → Geldi → Muayenede → Tamamlandı / Gelmedi</li>
+        <li>Kartı sürükleyerek durum değiştirilir</li>
+        <li>Bekleme süresi dakika olarak sayılır</li>
+        <li>Alerji ve "ısırır / ürkek" gibi uyarılar kartta görünür</li>
+        <li>Randevusuz gelen hasta tek tıkla eklenir</li>
+        <li>Tüm bilgisayarlarda anında güncellenir</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/15-bekleme.png"><img src="img/15-bekleme.png" alt="Bekleme salonu" loading="lazy"></a></div>
+  </article>
+
+  <h2 class="group">Kayıtlar</h2>
+
+  <article id="hayvanlar">
+    <div class="txt">
+      <h3>Hayvanlar</h3>
+      <div class="where">Sol menü → Hayvanlar</div>
+      <p class="why">Klinikteki tüm hastaların listesi.</p>
+      <ul>
+        <li>Ad, sahip, telefon, çip ya da pasaport numarasıyla arama</li>
+        <li>Tür, durum (aktif, kayıp, vefat, devredildi) ve çipli/çipsiz süzgeci</li>
+        <li>"6 aydan büyük ve çipsiz" süzgeci: çip uygulanması gerekenler</li>
+        <li>Alerji ve davranış uyarıları ismin yanında</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/04-hayvanlar.png"><img src="img/04-hayvanlar.png" alt="Hayvan listesi" loading="lazy"></a></div>
+  </article>
+
+  <article id="hayvan-detay">
+    <div class="txt">
+      <h3>Hayvan kartı</h3>
+      <div class="where">Hayvanlar → bir hayvan</div>
+      <p class="why">Bir hastanın bütün geçmişi tek sayfada.</p>
+      <ul>
+        <li>Çip, pasaport ve sahip bilgisi üstte</li>
+        <li>Sekmeler: muayeneler, aşılar, çip ve kimlik, tedaviler, kilo, belgeler, PETVET, sahiplik, geçmiş</li>
+        <li>Kilo grafiği</li>
+        <li>Yeni muayene, aşı, randevu ve yazdırma düğmeleri</li>
+        <li>İşlemler: kayıp, bulundu, sahip devri, vefat, çip düzeltme</li>
+        <li>Kim oluşturdu, kim değiştirdi her zaman görünür</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/05-hayvan-detay.png"><img src="img/05-hayvan-detay.png" alt="Hayvan kartı" loading="lazy"></a></div>
+  </article>
+
+  <article id="sahipler">
+    <div class="txt">
+      <h3>Sahipler</h3>
+      <div class="where">Sol menü → Sahipler</div>
+      <p class="why">Hayvan sahiplerinin listesi ve iletişim bilgileri.</p>
+      <ul>
+        <li>Ad, telefon ya da TCKN ile arama (Türkçe karakter yazmadan da bulur)</li>
+        <li>TCKN şifreli saklanır; listede yalnızca son haneler görünür</li>
+        <li>Aynı kişinin çift kaydı uyarılır, yönetici birleştirebilir</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/06-sahipler.png"><img src="img/06-sahipler.png" alt="Sahip listesi" loading="lazy"></a></div>
+  </article>
+
+  <article id="sahip-detay">
+    <div class="txt">
+      <h3>Sahip kartı</h3>
+      <div class="where">Sahipler → bir sahip</div>
+      <p class="why">Sahibin hayvanları, randevuları, mesajları ve KVKK izinleri.</p>
+      <ul>
+        <li>Aydınlatma, hatırlatma ve ticari ileti izinleri bir bakışta</li>
+        <li>TCKN'nin tamamı "Göster" ile açılır; her görüntüleme kayda geçer</li>
+        <li>Sekmeler: hayvanlar, randevular, mesajlar, belgeler, izinler, geçmiş</li>
+        <li>Buradan yeni hayvan, randevu ve mesaj</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/07-sahip-detay.png"><img src="img/07-sahip-detay.png" alt="Sahip kartı" loading="lazy"></a></div>
+  </article>
+
+  <h2 class="group">Klinik işleri</h2>
+
+  <article id="muayeneler">
+    <div class="txt">
+      <h3>Muayeneler</h3>
+      <div class="where">Sol menü → Muayeneler</div>
+      <p class="why">Yapılan muayenelerin listesi.</p>
+      <ul>
+        <li>Tarih aralığı, hekim, tür, tanı ve hasta adına göre süzme</li>
+        <li>İmzalı / taslak durumu; 24 saati geçen taslaklar kırmızı</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/10-muayeneler.png"><img src="img/10-muayeneler.png" alt="Muayene listesi" loading="lazy"></a></div>
+  </article>
+
+  <article id="muayene">
+    <div class="txt">
+      <h3>Muayene ekranı</h3>
+      <div class="where">Hayvan kartı → Yeni muayene <kbd>Ctrl+M</kbd></div>
+      <p class="why">Muayene notu SOAP düzeninde: şikayet, bulgular, değerlendirme, plan.</p>
+      <ul>
+        <li>Ateş, nabız, solunum, kilo ve vücut kondisyonu alanları</li>
+        <li>Sistem sistem normal / anormal işaretleme</li>
+        <li>Tanı listesi, ilaç ve tedavi satırları (klinikte uygulandı / evde kullanılacak)</li>
+        <li>Solda önceki muayeneler ve süren tedaviler</li>
+        <li>İmzalanan muayene değiştirilemez; yalnızca ek / düzeltme eklenir</li>
+        <li>Dosya ve görüntü eki</li>
+      </ul>
+      <div class="who">Yazma: hekim ve teknisyen. İmza: yalnızca hekim.</div>
+    </div>
+    <div class="shot"><a href="img/11-muayene.png"><img src="img/11-muayene.png" alt="Muayene ekranı" loading="lazy"></a></div>
+  </article>
+
+  <article id="asi-takvimi">
+    <div class="txt">
+      <h3>Aşı takvimi</h3>
+      <div class="where">Sol menü → Aşı takvimi</div>
+      <p class="why">Vadesi gelen ve geçen aşılar; kimi aramak gerektiği.</p>
+      <ul>
+        <li>Bu hafta, bu ay, 0–30 gün gecikmiş ve 30 günden fazla gecikmiş sayıları</li>
+        <li>Telefonlar maskeli; kopyala düğmesiyle alınır</li>
+        <li>Hatırlatma gönderildi mi, randevusu var mı</li>
+        <li>Satırdan doğrudan "Uygula"</li>
+        <li>Liste ve ay görünümü</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/12-asi-takvimi.png"><img src="img/12-asi-takvimi.png" alt="Aşı takvimi" loading="lazy"></a></div>
+  </article>
+
+  <article id="asi-uygula">
+    <div class="txt">
+      <h3>Aşı uygula</h3>
+      <div class="where">Hayvan kartı → Aşı uygula</div>
+      <p class="why">Uygulanan aşının kaydı ve bir sonraki dozun planı.</p>
+      <ul>
+        <li>Aşı türü, ürün, üretici, lot / seri numarası ve son kullanma tarihi</li>
+        <li>Kuduz aşısında lot ve son kullanma tarihi zorunlu</li>
+        <li>Sonraki doz tarihi protokole göre kendiliğinden hesaplanır</li>
+        <li>"Pasaporta işlendi" işareti</li>
+        <li>Kuduz aşısı PETVET görevi açar</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/13-asi-uygula.png"><img src="img/13-asi-uygula.png" alt="Aşı uygula" loading="lazy"></a></div>
+  </article>
+
+  <article id="petvet">
+    <div class="txt">
+      <h3>PETVET işleri</h3>
+      <div class="where">Sol menü → PETVET işleri</div>
+      <p class="why">Bakanlık sistemine (hbs.tarbil.gov.tr) girilmesi gereken her şeyin listesi ve süre takibi.</p>
+      <ul>
+        <li>Yeni çip, aşı, sahip devri, kayıp, bulundu ve ölüm bildirimleri</li>
+        <li>Son tarih ve kalan gün; gecikenler kırmızı</li>
+        <li>Eksik bilgi (ör. TCKN yok) ayrıca işaretlenir</li>
+        <li>Sol menüde geciken / açık sayısı hep görünür</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/08-petvet.png"><img src="img/08-petvet.png" alt="PETVET iş listesi" loading="lazy"></a></div>
+  </article>
+
+  <article id="petvet-gorev">
+    <div class="txt">
+      <h3>PETVET görevi</h3>
+      <div class="where">PETVET işleri → bir görev</div>
+      <p class="why">PETVET'e girerken gereken bütün bilgiler kopyalanmaya hazır.</p>
+      <ul>
+        <li>Her alanın yanında kopyala düğmesi</li>
+        <li>Değerler PETVET'in beklediği biçimde (büyük harf, telefonda baştaki 0 yok)</li>
+        <li>"Tümünü kopyala" ve PETVET sayfasını açma düğmesi</li>
+        <li>Girildikten sonra referans numarasıyla "girildi" işaretlenir</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/09-petvet-gorev.png"><img src="img/09-petvet-gorev.png" alt="PETVET görevi" loading="lazy"></a></div>
+  </article>
+
+  <article id="mesajlar">
+    <div class="txt">
+      <h3>Mesajlar</h3>
+      <div class="where">Sol menü → Mesajlar</div>
+      <p class="why">Aşı ve randevu hatırlatmalarının sırası ve gönderim geçmişi.</p>
+      <ul>
+        <li>Planlanan, bugün gidecek, gönderilen ve başarısız mesajlar</li>
+        <li>SMS sağlayıcısı ve bakiye bilgisi</li>
+        <li>Sessiz saatlerde gönderim yapılmaz</li>
+        <li>İzni olmayan sahibe mesaj gitmez</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/16-mesajlar.png"><img src="img/16-mesajlar.png" alt="Mesajlar" loading="lazy"></a></div>
+  </article>
+
+  <article id="raporlar">
+    <div class="txt">
+      <h3>Raporlar</h3>
+      <div class="where">Sol menü → Raporlar</div>
+      <p class="why">Dönem ve hekim bazında sayılar.</p>
+      <ul>
+        <li>Kimliklendirme (uygulanan çipler), PETVET uyumu, çipsiz hayvanlar</li>
+        <li>Aşı raporu ve aşı uyum oranı</li>
+        <li>Muayene istatistiği, hasta tabanı, mesaj ve randevu raporları</li>
+        <li>PETVET denetim paketi ve yazdırılabilir iş listeleri</li>
+        <li>Her rapor yazdırılır ya da CSV olarak alınır</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/17-raporlar.png"><img src="img/17-raporlar.png" alt="Raporlar" loading="lazy"></a></div>
+  </article>
+
+  <h2 class="group">Yönetim</h2>
+
+  <article id="yedekleme">
+    <div class="txt">
+      <h3>Yedekleme</h3>
+      <div class="where">Ayarlar → Yedekleme</div>
+      <p class="why">Verinin kaybolmaması için her gün kendiliğinden yedek.</p>
+      <ul>
+        <li>Birden çok hedef: harici disk, USB, ağ klasörü</li>
+        <li>Günlük yedek saati; bilgisayar kapalıysa ilk açılışta alınır</li>
+        <li>Saklama: son 14 gün ve 12 ay</li>
+        <li>Yedekler AES-256 ile şifreli; şifre olmadan açılmaz</li>
+        <li>"Doğrula": yedek geçici olarak açılıp tablo sayıları kontrol edilir</li>
+        <li>Güncellemeden önce otomatik yedek</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/18-yedekleme.png"><img src="img/18-yedekleme.png" alt="Yedekleme" loading="lazy"></a></div>
+  </article>
+
+  <article id="kullanicilar">
+    <div class="txt">
+      <h3>Kullanıcılar</h3>
+      <div class="where">Ayarlar → Kullanıcılar</div>
+      <p class="why">Klinik çalışanlarının hesapları.</p>
+      <ul>
+        <li>Hekim için oda sicil numarası zorunlu (çıktılarda yazar)</li>
+        <li>Parola sıfırlama: geçici parola, ilk girişte değiştirme zorunlu</li>
+        <li>Hesap silinmez, devre dışı bırakılır (geçmiş kayıtlar korunur)</li>
+        <li>Açık oturumları kapatma</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/20-ayar-kullanicilar.png"><img src="img/20-ayar-kullanicilar.png" alt="Kullanıcılar" loading="lazy"></a></div>
+  </article>
+
+  <article id="roller">
+    <div class="txt">
+      <h3>Roller ve izinler</h3>
+      <div class="where">Ayarlar → Roller ve izinler</div>
+      <p class="why">Kim neyi görebilir, neyi yapabilir.</p>
+      <ul>
+        <li>Hazır roller: Klinik Yöneticisi, Hekim, Teknisyen, Sekreter</li>
+        <li>Örnek: sekreter muayene içeriğini göremez, teknisyen tam TCKN göremez</li>
+        <li>Ölüm kaydı, çip uygulama ve muayene imzası yalnızca hekimde</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/21-ayar-roller.png"><img src="img/21-ayar-roller.png" alt="Roller ve izinler" loading="lazy"></a></div>
+  </article>
+
+  <article id="kvkk">
+    <div class="txt">
+      <h3>KVKK</h3>
+      <div class="where">Ayarlar → KVKK</div>
+      <p class="why">Kişisel veri talepleri (KVKK m.11) ve aydınlatma metinleri.</p>
+      <ul>
+        <li>Bilgi alma, veri kopyası, düzeltme, silme ve itiraz talepleri</li>
+        <li>30 günlük yasal yanıt süresi sayılır</li>
+        <li>Yanıt yazısı şablondan hazırlanır</li>
+        <li>Metinler sürümlü; eski onaylar eski sürüme bağlı kalır</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/29-kvkk.png"><img src="img/29-kvkk.png" alt="KVKK talepleri" loading="lazy"></a></div>
+  </article>
+
+  <article id="denetim">
+    <div class="txt">
+      <h3>Denetim kaydı</h3>
+      <div class="where">Ayarlar → Denetim kaydı</div>
+      <p class="why">Programda kim, ne zaman, neyi değiştirdi.</p>
+      <ul>
+        <li>Her ekleme, değişiklik ve hassas görüntüleme (ör. TCKN) kaydedilir</li>
+        <li>Kayıtlar değiştirilemez; her satır bir öncekinin özetini taşır</li>
+        <li>"Zinciri doğrula": araya kayıt eklenip silinmediği kontrol edilir</li>
+        <li>Kullanıcı, tarih, işlem ve kayıt türüne göre süzme</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/30-denetim.png"><img src="img/30-denetim.png" alt="Denetim kaydı" loading="lazy"></a></div>
+  </article>
+
+  <article id="ayarlar">
+    <div class="txt">
+      <h3>Diğer ayarlar</h3>
+      <div class="where">Ayarlar</div>
+      <ul>
+        <li><b>Klinik:</b> ad, adres, çalışma saatleri, çıktı anteti</li>
+        <li><b>Aşılar ve ürünler:</b> aşı ürünleri ve tür bazında aşı protokolleri</li>
+        <li><b>Sözlükler:</b> ırklar, renkler, tanılar, hazır cümleler</li>
+        <li><b>Randevu türleri ve tatiller</b></li>
+        <li><b>Mesajlaşma ve şablonlar:</b> SMS / e-posta ayarı, mesaj metinleri ve karakter sayacı</li>
+        <li><b>Çip okuyucu:</b> klavye ya da seri port modu, canlı test alanı</li>
+        <li><b>PETVET:</b> görev süreleri, hangi aşıların görev açacağı</li>
+        <li><b>Ağ ve cihazlar:</b> diğer bilgisayarları eşleştirme kodu ile bağlama</li>
+        <li><b>Veritabanı:</b> durum, tablo boyutları, bakım</li>
+        <li><b>Güncellemeler ve profilim</b></li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/26-ayar-asilar.png"><img src="img/26-ayar-asilar.png" alt="Aşılar ve ürünler ayarı" loading="lazy"></a></div>
+  </article>
+
+  <article>
+    <div class="txt">
+      <h3>Çip okuyucu</h3>
+      <div class="where">Ayarlar → Çip okuyucu</div>
+      <p class="why">Okuyucu cihazın programa tanıtılması.</p>
+      <ul>
+        <li>USB okuyucular klavye gibi çalışır; program hızlı gelen rakamları çip okuması olarak yakalar</li>
+        <li>Hangi ekranda olursanız olun çip okutunca hayvan paneli açılır</li>
+        <li>Canlı test alanında okunan değer ve denetim sonucu görülür</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/23-ayar-okuyucu.png"><img src="img/23-ayar-okuyucu.png" alt="Çip okuyucu ayarı" loading="lazy"></a></div>
+  </article>
+
+  <article>
+    <div class="txt">
+      <h3>PETVET ayarları</h3>
+      <div class="where">Ayarlar → PETVET</div>
+      <ul>
+        <li>Her bildirim türü için gün sayısı (yeni çip 15 gün)</li>
+        <li>Hangi aşıların görev açacağı</li>
+        <li>Kaç gün kala uyarılacağı</li>
+        <li>"Girildi" işaretlerken belge zorunluluğu</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/24-ayar-petvet.png"><img src="img/24-ayar-petvet.png" alt="PETVET ayarları" loading="lazy"></a></div>
+  </article>
+
+  <article>
+    <div class="txt">
+      <h3>Veritabanı</h3>
+      <div class="where">Ayarlar → Veritabanı</div>
+      <ul>
+        <li>Veritabanı programla birlikte kurulur, ayrıca bir şey kurmak gerekmez</li>
+        <li>Yalnızca bu bilgisayardan erişilir; dışarıya açılmaz</li>
+        <li>Tablo boyutları, son bakım, tek tıkla bakım</li>
+        <li>Sorun anında destek için tanı paketi</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/31-ayar-veritabani.png"><img src="img/31-ayar-veritabani.png" alt="Veritabanı ayarı" loading="lazy"></a></div>
+  </article>
+
+  <h2 class="group">Çıktılar</h2>
+
+  <article id="asi-karnesi">
+    <div class="txt">
+      <h3>Aşı karnesi</h3>
+      <div class="where">Hayvan kartı → Yazdır</div>
+      <ul>
+        <li>Hayvan, sahip ve çip bilgisi</li>
+        <li>Uygulanan bütün aşılar: tarih, ürün, lot, doz, hekim, imza/kaşe alanı</li>
+        <li>A4 ya da A5</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/33-yazdir-asi-karnesi.png"><img src="img/33-yazdir-asi-karnesi.png" alt="Aşı karnesi" loading="lazy"></a></div>
+  </article>
+
+  <article id="cip-karti">
+    <div class="txt">
+      <h3>Kayıt / çip kartı</h3>
+      <div class="where">Hayvan kartı → Yazdır</div>
+      <ul>
+        <li>Kartvizit boyunda, çip numarası büyük ve barkodlu</li>
+        <li>Arkada "Beni bulursanız" metni ve klinik iletişimi</li>
+        <li>Sahip adı ve telefonu yalnızca sahip isterse basılır</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/34-yazdir-cip-karti.png"><img src="img/34-yazdir-cip-karti.png" alt="Çip kartı" loading="lazy"></a></div>
+  </article>
+
+  <article id="muayene-ozeti">
+    <div class="txt">
+      <h3>Muayene özeti</h3>
+      <div class="where">Muayene ekranı → Yazdır</div>
+      <ul>
+        <li>Şikayet, bulgular, tanı ve tedaviler</li>
+        <li>Sahibe verilecek sürümde iç notlar yer almaz</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/35-yazdir-muayene.png"><img src="img/35-yazdir-muayene.png" alt="Muayene özeti" loading="lazy"></a></div>
+  </article>
+
+  <article id="recete">
+    <div class="txt">
+      <h3>Tedavi talimatı</h3>
+      <div class="where">Muayene ekranı → Yazdır</div>
+      <ul>
+        <li>Evde kullanılacak ilaçlar: doz, yol, sıklık, süre</li>
+        <li>Klinikte uygulananlar bilgi için ayrı tabloda</li>
+        <li>"Resmî e-reçete değildir" uyarısı açıkça yazar</li>
+        <li>Hekimin adı ve oda sicil numarası</li>
+      </ul>
+    </div>
+    <div class="shot"><a href="img/36-yazdir-recete.png"><img src="img/36-yazdir-recete.png" alt="Tedavi talimatı" loading="lazy"></a></div>
+  </article>
+
+  <footer>Ekranlardaki kişi, hayvan, telefon ve çip numaraları örnek veridir. Sürüm 0.1.0 · Ekim 2026</footer>
+</main>
+</body>
+</html>

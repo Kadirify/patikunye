@@ -7,3 +7,5 @@ dist/
 .DS_Store
 *.tsbuildinfo
 dist-yeni/
+
+admin-gecici-parola.txt
