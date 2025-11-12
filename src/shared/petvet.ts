@@ -6,20 +6,13 @@ export type PetvetTaskKind = (typeof PETVET_TASK_KINDS)[number]
 export const PETVET_STATUSES = ['pending', 'missing_info', 'done', 'cancelled'] as const
 export type PetvetStatus = (typeof PETVET_STATUSES)[number]
 
-export const PETVET_STATUS_LABEL: Record<PetvetStatus, string> = {
-  pending: 'Bekliyor',
-  missing_info: 'Eksik bilgi',
-  done: 'Tamamlandı',
-  cancelled: 'İptal edildi',
-}
-
 export const PETVET_KIND_LABEL: Record<PetvetTaskKind, string> = {
   CHIP_NEW: 'Yeni çip',
   VACCINE: 'Aşı',
   TRANSFER: 'Sahip devri',
   DEATH: 'Ölüm bildirimi',
   LOST: 'Kayıp bildirimi',
-  FOUND: 'Bulundu bildirimi',
+  FOUND: 'Bulundu',
   UPDATE: 'Bilgi düzeltme',
 }
 
@@ -33,11 +26,7 @@ export const PETVET_KIND_DESCRIPTION: Record<PetvetTaskKind, string> = {
   UPDATE: 'Hayvan veya sahip bilgisi düzeltmesi TARBİL'e iletilir.',
 }
 
-/**
- * Varsayılan süreler (gün).
- * CHIP_NEW/VACCINE/TRANSFER/UPDATE = 15 gün (10.03.2026 tarihli Bakanlık genelgesi, PETVET kılavuzu md. 4).
- * DEATH = 30 gün, LOST/FOUND = 7 gün (doğrulanacak).
- */
+/** Varsayılan süreler (gün). Süreler mevzuat değiştiğinde güncellenecek. */
 export const DEFAULT_PETVET_DAYS: Record<PetvetTaskKind, number> = {
   CHIP_NEW: 15,
   VACCINE: 15,
