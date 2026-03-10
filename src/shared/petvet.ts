@@ -26,7 +26,11 @@ export const PETVET_KIND_DESCRIPTION: Record<PetvetTaskKind, string> = {
   UPDATE: 'Hayvan veya sahip bilgisi düzeltmesi TARBİL'e iletilir.',
 }
 
-/** Varsayılan süreler (gün). Süreler mevzuat değiştiğinde güncellenecek. */
+/**
+ * Varsayılan süreler (gün).
+ * CHIP_NEW/VACCINE/TRANSFER/UPDATE = 15 gün (10.03.2026 tarihli Bakanlık genelgesi, PETVET kılavuzu md. 4).
+ * DEATH = 30 gün, LOST/FOUND = 7 gün (doğrulanacak).
+ */
 export const DEFAULT_PETVET_DAYS: Record<PetvetTaskKind, number> = {
   CHIP_NEW: 15,
   VACCINE: 15,
