@@ -6,6 +6,13 @@ export type PetvetTaskKind = (typeof PETVET_TASK_KINDS)[number]
 export const PETVET_STATUSES = ['pending', 'missing_info', 'done', 'cancelled'] as const
 export type PetvetStatus = (typeof PETVET_STATUSES)[number]
 
+export const PETVET_STATUS_LABEL: Record<PetvetStatus, string> = {
+  pending: 'Bekliyor',
+  missing_info: 'Eksik bilgi',
+  done: 'Tamamlandı',
+  cancelled: 'İptal edildi',
+}
+
 export const PETVET_KIND_LABEL: Record<PetvetTaskKind, string> = {
   CHIP_NEW: 'Yeni çip',
   VACCINE: 'Aşı',
