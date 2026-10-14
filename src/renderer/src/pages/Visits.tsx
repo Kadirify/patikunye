@@ -1,4 +1,4 @@
-// Muayene modülü (C): S-40 muayene ekranı, S-41 muayene listesi, S-42 tedavi satırları,
+// Muayene modülü: muayene ekranı, muayene listesi, tedavi satırları
 // hayvan detayındaki "Muayeneler" ve "Tedaviler" sekmeleri.
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent as RKeyboardEvent } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
@@ -45,11 +45,11 @@ import {
 /* ───────────── Yardımcılar ───────────── */
 
 const TZ = 'Europe/Istanbul'
-/** ISO → datetime-local değeri (İstanbul saati) */
+/** ISO -> datetime-local değeri (İstanbul saati) */
 function toLocalInput(iso: string) {
   return new Date(iso).toLocaleString('sv-SE', { timeZone: TZ }).slice(0, 16).replace(' ', 'T')
 }
-/** datetime-local → ISO (Türkiye UTC+3, yaz saati yok) */
+/** datetime-local -> ISO (Türkiye UTC+3, yaz saati yok) */
 function fromLocalInput(v: string) {
   const d = new Date(`${v}:00+03:00`)
   return Number.isNaN(d.getTime()) ? null : d.toISOString()
@@ -64,7 +64,7 @@ function fmtTime(iso: string) {
   return new Date(iso).toLocaleTimeString('tr-TR', { timeZone: TZ, hour: '2-digit', minute: '2-digit' })
 }
 const todayIso = () => new Date().toLocaleDateString('en-CA', { timeZone: TZ })
-/** "38,9" → 38.9 ; boş → null ; geçersiz → NaN */
+/** "38,9" -> 38.9 ; boş -> null ; geçersiz -> NaN */
 function parseNum(s: string): number | null {
   const t = s.trim().replace(',', '.')
   if (!t) return null
@@ -73,7 +73,7 @@ function parseNum(s: string): number | null {
 }
 const fmtNum = (n: number | null | undefined) => (n == null ? '' : String(n).replace('.', ','))
 const shortName = (n: string | null) => {
-  if (!n) return '—'
+  if (!n) return '-'
   const p = n.replace(/^Dr\.?\s*/i, '').split(/\s+/)
   return p.length > 1 ? `${p[0]} ${p[p.length - 1][0]}.` : p[0]
 }
@@ -92,7 +92,7 @@ function useVets() {
   })
 }
 
-/* ───────────── S-41 Muayene listesi ───────────── */
+/* ───────────── Muayene listesi ───────────── */
 
 const STATUS_FILTERS: { key: VisitStatusFilter; label: string }[] = [
   { key: 'all', label: 'Tümü' },
@@ -195,10 +195,10 @@ export function VisitsPage() {
                 <tr key={r.id} className={`click${r.stale ? ' hot' : ''}`} onDoubleClick={() => nav(`/muayene/${r.id}`)} onClick={() => nav(`/muayene/${r.id}`)}>
                   <td className="mono">{fmtDateTime(r.visitAt)}</td>
                   <td><strong>{r.animalName}</strong> <span className="mut">{speciesLabel(r.species)}</span></td>
-                  <td>{r.ownerName ?? <span className="mut">—</span>}</td>
+                  <td>{r.ownerName ?? <span className="mut">-</span>}</td>
                   <td>{r.vetName ?? <span className="mut">seçilmedi</span>}</td>
                   <td>{VISIT_TYPE_LABEL[r.type]}</td>
-                  {content && <td style={{ maxWidth: 320, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.diagnosisSummary ?? <span className="mut">—</span>}</td>}
+                  {content && <td style={{ maxWidth: 320, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.diagnosisSummary ?? <span className="mut">-</span>}</td>}
                   <td><StatusMark s={r.displayStatus} stale={r.stale} />{r.version > 1 && <span className="mut mono"> v{r.version}</span>}</td>
                 </tr>
               ))}
@@ -209,7 +209,7 @@ export function VisitsPage() {
         </div>
         {total > 50 && (
           <div className="tfoot" style={{ display: 'flex', gap: 8, alignItems: 'center', padding: '8px 12px' }}>
-            <span className="mut">{page * 50 + 1}–{Math.min(total, (page + 1) * 50)} / {total}</span>
+            <span className="mut">{page * 50 + 1}-{Math.min(total, (page + 1) * 50)} / {total}</span>
             <button className="btn sm" disabled={page === 0} onClick={() => set('sayfa', String(page - 1))}>Önceki</button>
             <button className="btn sm" disabled={(page + 1) * 50 >= total} onClick={() => set('sayfa', String(page + 1))}>Sonraki</button>
           </div>
@@ -219,7 +219,7 @@ export function VisitsPage() {
   )
 }
 
-/* ───────────── S-40 Muayene ekranı ───────────── */
+/* ───────────── Muayene ekranı ───────────── */
 
 export function VisitEditorPage() {
   const { id } = useParams()
@@ -228,7 +228,7 @@ export function VisitEditorPage() {
   return <VisitLoader key={id} id={id} />
 }
 
-/** /muayene/yeni?animal=ID[&appointment=ID] → taslak oluşturup editöre geçer */
+/** /muayene/yeni?animal=ID[&appointment=ID] -> taslak oluşturup editöre geçer */
 function NewVisit() {
   const [params] = useSearchParams()
   const nav = useNavigate()
@@ -248,14 +248,14 @@ function NewVisit() {
   if (!can('visits.write')) return <div className="alert">Muayene açma yetkiniz yok.</div>
   if (!animalId) return <div className="alert amb">Muayene için önce bir hayvan seçin (hayvan kartından "Yeni muayene").</div>
   if (err) return <div className="alert">{err}</div>
-  return <div className="mut">Muayene açılıyor…</div>
+  return <div className="mut">Muayene açılıyor...</div>
 }
 
 function VisitLoader({ id }: { id: string }) {
   const q = useQuery({ queryKey: ['visit', id], queryFn: () => api.get<VisitDetail>(`/api/visits/${id}`), refetchOnWindowFocus: false })
   const can = useCan()
   if (q.isError) return <div className="alert">{(q.error as Error).message}</div>
-  if (!q.data) return <div className="mut">Yükleniyor…</div>
+  if (!q.data) return <div className="mut">Yükleniyor...</div>
   const v = q.data
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', gap: 12 }}>
@@ -276,7 +276,7 @@ function AnimalSide({ animalId, excludeVisitId }: { animalId: string; excludeVis
   const ctx = useAnimalContext(animalId, excludeVisitId)
   const [open, setOpen] = useState(true)
   const c = ctx.data
-  if (!c) return <aside style={{ flex: '1 1 260px', maxWidth: 300 }} className="mut">{ctx.isError ? (ctx.error as Error).message : 'Yükleniyor…'}</aside>
+  if (!c) return <aside style={{ flex: '1 1 260px', maxWidth: 300 }} className="mut">{ctx.isError ? (ctx.error as Error).message : 'Yükleniyor...'}</aside>
   const a = c.animal
   return (
     <aside style={{ flex: '1 1 260px', maxWidth: 300, display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -287,22 +287,22 @@ function AnimalSide({ animalId, excludeVisitId }: { animalId: string; excludeVis
             <button type="button" className="btn sm" aria-expanded={open} aria-label={open ? 'Hayvan kartını daralt' : 'Hayvan kartını genişlet'} onClick={() => setOpen(!open)} style={{ height: 22, padding: '0 6px' }}>{open ? '−' : '+'}</button>
           </div>
           <span className="mut" style={{ fontSize: 12 }}>
-            {[speciesLabel(a.species), a.breed, SEX_LABEL[a.sex] + (a.neutered ? ' (kısır)' : ''), age(a.birthDate)].filter(Boolean).join(' · ')}
-            {c.lastWeight ? ` · son ${fmtNum(c.lastWeight.kg)} kg` : ''}
+            {[speciesLabel(a.species), a.breed, SEX_LABEL[a.sex] + (a.neutered ? ' (kısır)' : ''), age(a.birthDate)].filter(Boolean).join(' - ')}
+            {c.lastWeight ? ` - son ${fmtNum(c.lastWeight.kg)} kg` : ''}
           </span>
           {open && (
             <>
               <span style={{ fontSize: 12 }}><ChipNo value={a.chipNo} /></span>
               {(a.behavior || a.allergies.length > 0) && (
                 <span style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginTop: 2 }}>
-                  {a.behavior && <span className="tag s-red">{a.behavior === 'bites' ? 'Isırır — ağızlık' : a.behavior === 'aggressive' ? 'Agresif' : 'Ürkek'}</span>}
+                  {a.behavior && <span className="tag s-red">{a.behavior === 'bites' ? 'Isırır - ağızlık' : a.behavior === 'aggressive' ? 'Agresif' : 'Ürkek'}</span>}
                   {a.allergies.map((x) => <span key={x} className="tag s-red">{x} alerjisi</span>)}
                 </span>
               )}
               {c.owner && (
                 <span style={{ fontSize: 12, marginTop: 4 }}>
                   Sahip: <Link to={`/sahipler/${c.owner.id}`}>{c.owner.fullName}</Link>
-                  {c.owner.phone && <> · <span className="mono">{c.owner.phone.replace(/^\+90(\d{3})(\d{3})(\d{2})(\d{2})$/, '0$1 $2 $3 $4')}</span></>}
+                  {c.owner.phone && <> - <span className="mono">{c.owner.phone.replace(/^\+90(\d{3})(\d{3})(\d{2})(\d{2})$/, '0$1 $2 $3 $4')}</span></>}
                 </span>
               )}
             </>
@@ -317,8 +317,8 @@ function AnimalSide({ animalId, excludeVisitId }: { animalId: string; excludeVis
               {c.recentVisits.length === 0 && <span className="mut">Kayıt yok</span>}
               {c.recentVisits.map((v) => (
                 <div key={v.id}>
-                  <Link to={`/muayene/${v.id}`} className="mono">{fmtShortDate(v.visitAt)}</Link> · {shortName(v.vetName)}
-                  {v.status === 'draft' && <span className="s-amb"> · taslak</span>}
+                  <Link to={`/muayene/${v.id}`} className="mono">{fmtShortDate(v.visitAt)}</Link> - {shortName(v.vetName)}
+                  {v.status === 'draft' && <span className="s-amb"> - taslak</span>}
                   <br />
                   {v.summary || <span className="mut">{VISIT_TYPE_LABEL[v.type]}</span>}
                 </div>
@@ -331,7 +331,7 @@ function AnimalSide({ animalId, excludeVisitId }: { animalId: string; excludeVis
               {c.activeTreatments.length === 0 && <span className="mut">Yok</span>}
               {c.activeTreatments.map((t) => (
                 <div key={t.id}>
-                  <strong>{t.drug}</strong> {[t.dose != null ? `${fmtNum(t.dose)} ${t.doseUnit ?? ''}` : '', t.frequency].filter(Boolean).join(' · ')}
+                  <strong>{t.drug}</strong> {[t.dose != null ? `${fmtNum(t.dose)} ${t.doseUnit ?? ''}` : '', t.frequency].filter(Boolean).join(' - ')}
                   <br />
                   <span className="mut">{t.endDate ? `${formatDateTr(t.endDate)} tarihine kadar` : ''}</span>
                 </div>
@@ -354,7 +354,7 @@ function useAnimalContext(animalId: string, exclude?: string) {
 function VisitHeaderInfo({ v }: { v: VisitDetail }) {
   return (
     <span className="mut">
-      {fmtDateTime(v.visitAt)} · {v.vetName ?? 'hekim seçilmedi'} · {VISIT_TYPE_LABEL[v.type]}
+      {fmtDateTime(v.visitAt)} - {v.vetName ?? 'hekim seçilmedi'} - {VISIT_TYPE_LABEL[v.type]}
     </span>
   )
 }
@@ -415,7 +415,7 @@ function SignedVisit({ v }: { v: VisitDetail }) {
               aria-current={x.id === v.id ? 'page' : undefined}
               style={{ padding: '6px 14px', textDecoration: 'none', borderRight: '1px solid var(--line-2)', color: x.id === v.id ? '#fff' : 'var(--ink)', background: x.id === v.id ? 'var(--ink)' : 'transparent', fontSize: 12 }}
             >
-              Versiyon {x.version} · {x.status === 'draft' ? 'taslak' : x.signedAt ? fmtShortDate(x.signedAt) : ''}
+              Versiyon {x.version} - {x.status === 'draft' ? 'taslak' : x.signedAt ? fmtShortDate(x.signedAt) : ''}
             </Link>
           ))}
         </nav>
@@ -434,10 +434,10 @@ function SignedVisit({ v }: { v: VisitDetail }) {
           </div>
         )}
         {abnormal.map((k) => (
-          <div key={k} style={{ color: 'var(--red)' }}><strong>{SYSTEM_LABEL[k]}: anormal</strong>{f.systems[k]?.note ? ` — ${f.systems[k]?.note}` : ''}</div>
+          <div key={k} style={{ color: 'var(--red)' }}><strong>{SYSTEM_LABEL[k]}: anormal</strong>{f.systems[k]?.note ? ` - ${f.systems[k]?.note}` : ''}</div>
         ))}
         {normal.length > 0 && <div className="mut">Normal: {normal.map((k) => SYSTEM_LABEL[k]).join(', ')}</div>}
-        {!vitals.length && !abnormal.length && !normal.length && <span className="mut">—</span>}
+        {!vitals.length && !abnormal.length && !normal.length && <span className="mut">-</span>}
       </ReadSection>
       <ReadSection l="A" title="Değerlendirme">
         {v.diagnoses.length > 0 && <div>Tanı: <strong>{v.diagnoses.join(', ')}</strong></div>}
@@ -476,7 +476,7 @@ function SignedVisit({ v }: { v: VisitDetail }) {
       )}
       <div className="form-foot">
         <span className="mut" style={{ fontSize: 12 }}>
-          {v.status === 'signed' ? `İmzalayan ${v.signedByName ?? ''} · ${v.signedAt ? fmtDateTime(v.signedAt) : ''} · Kayıt değiştirilemez, yalnızca ek/düzeltme eklenir.` : 'Taslak (düzenleme yetkiniz yok).'}
+          {v.status === 'signed' ? `İmzalayan ${v.signedByName ?? ''} - ${v.signedAt ? fmtDateTime(v.signedAt) : ''} - Kayıt değiştirilemez, yalnızca ek/düzeltme eklenir.` : 'Taslak (düzenleme yetkiniz yok).'}
         </span>
         <span style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <button type="button" className="btn" onClick={() => openPrint('visit', v.id)}>Yazdır</button>
@@ -526,14 +526,14 @@ function TreatmentTable({ rows }: { rows: (TreatmentInput & { totalDose?: number
   return (
     <div className="tbl-wrap" style={{ marginBottom: 8 }}>
       <table>
-        <thead><tr><th>İlaç / uygulama</th><th>Doz</th><th>Yol</th><th>Sıklık · süre</th><th>Türü</th><th>E-reçete no</th></tr></thead>
+        <thead><tr><th>İlaç / uygulama</th><th>Doz</th><th>Yol</th><th>Sıklık - süre</th><th>Türü</th><th>E-reçete no</th></tr></thead>
         <tbody>
           {rows.map((t, i) => (
             <tr key={t.id ?? i}>
               <td><strong>{t.drug}</strong>{t.activeIngredient && <span className="mut"> ({t.activeIngredient})</span>}{t.note && <div className="mut" style={{ fontSize: 12 }}>{t.note}</div>}</td>
-              <td className="mono">{t.dose != null ? `${fmtNum(t.dose)} ${t.doseUnit ?? ''}` : ''}{t.totalDose != null && ` → ${fmtNum(t.totalDose)} ${(t.doseUnit ?? '').replace('/kg', '')}`}</td>
+              <td className="mono">{t.dose != null ? `${fmtNum(t.dose)} ${t.doseUnit ?? ''}` : ''}{t.totalDose != null && ` -> ${fmtNum(t.totalDose)} ${(t.doseUnit ?? '').replace('/kg', '')}`}</td>
               <td>{t.route}</td>
-              <td>{[t.frequency, t.duration].filter(Boolean).join(' · ')}</td>
+              <td>{[t.frequency, t.duration].filter(Boolean).join(' - ')}</td>
               <td>{TREATMENT_KIND_LABEL[t.kind]}</td>
               <td className="mono">{t.eReceteNo}</td>
             </tr>
@@ -552,7 +552,7 @@ const VITAL_FIELDS: { k: VitalKey; label: string; unit: string }[] = [
   { k: 'pulse', label: 'Nabız', unit: '/dk' },
   { k: 'resp', label: 'Solunum', unit: '/dk' },
   { k: 'weight', label: 'Kilo', unit: 'kg' },
-  { k: 'bcs', label: 'VKS', unit: '(1–9)' },
+  { k: 'bcs', label: 'VKS', unit: '(1-9)' },
   { k: 'crt', label: 'KDZ', unit: 'sn' },
   { k: 'dehydration', label: 'Dehidrasyon', unit: '%' },
 ]
@@ -627,7 +627,7 @@ function toForm(v: VisitDetail): FormState {
   }
 }
 
-/** Form → API girdisi; sayı hatalarını alan bazında döndürür */
+/** Form -> API girdisi; sayı hatalarını alan bazında döndürür */
 function toPayload(f: FormState): { body: Record<string, unknown>; errors: Record<string, string> } {
   const errors: Record<string, string> = {}
   const vitals: Vitals = {}
@@ -636,7 +636,7 @@ function toPayload(f: FormState): { body: Record<string, unknown>; errors: Recor
     if (Number.isNaN(n)) errors[vf.k] = `${vf.label} sayı olmalı.`
     else if (n != null) {
       const lim = VITAL_LIMITS[vf.k].hard
-      if (n < lim[0] || n > lim[1]) errors[vf.k] = `${vf.label} ${fmtNum(lim[0])}–${lim[1]} arasında olmalı.`
+      if (n < lim[0] || n > lim[1]) errors[vf.k] = `${vf.label} ${fmtNum(lim[0])}-${lim[1]} arasında olmalı.`
       vitals[vf.k] = n
     }
   }
@@ -846,9 +846,9 @@ function VisitForm({ initial }: { initial: VisitDetail }) {
       aria-label="Muayene formu"
     >
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '10px 16px', padding: '10px 14px', borderBottom: '1px solid var(--line)', background: 'var(--head)' }}>
-        <strong style={{ fontSize: 15 }}>{initial.version > 1 ? `Ek/düzeltme · versiyon ${initial.version}` : 'Muayene'}</strong>
+        <strong style={{ fontSize: 15 }}>{initial.version > 1 ? `Ek/düzeltme - versiyon ${initial.version}` : 'Muayene'}</strong>
         <span className="st s-amb" aria-live="polite">
-          Taslak{savedAt ? ` · ${fmtTime(savedAt)}'de kaydedildi` : ''}{dirty ? ' · kaydedilmemiş değişiklik' : ''}
+          Taslak{savedAt ? ` - ${fmtTime(savedAt)}'de kaydedildi` : ''}{dirty ? ' - kaydedilmemiş değişiklik' : ''}
         </span>
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <div className="f" style={{ width: 180 }}>
@@ -858,7 +858,7 @@ function VisitForm({ initial }: { initial: VisitDetail }) {
           <div className="f" style={{ width: 170 }}>
             <label htmlFor="v-vet">Hekim *</label>
             <select id="v-vet" className="inp" value={f.vetId} onChange={(e) => upd('vetId', e.target.value)}>
-              <option value="">— seçin —</option>
+              <option value="">- seçin -</option>
               {vets.data?.map((u) => <option key={u.id} value={u.id}>{u.fullName}</option>)}
             </select>
           </div>
@@ -877,7 +877,7 @@ function VisitForm({ initial }: { initial: VisitDetail }) {
           <button type="button" className="btn sm" onClick={() => qc.invalidateQueries({ queryKey: ['visit', initial.id] }).then(() => window.location.reload())}>Yeniden yükle</button>
         </div>
       )}
-      {initial.amendReason && <div className="mut" style={{ padding: '8px 14px 0' }}>Düzeltme nedeni: {initial.amendReason} · önceki versiyon <Link to={`/muayene/${initial.supersedesId}`}>v{initial.version - 1}</Link> görünür kalır.</div>}
+      {initial.amendReason && <div className="mut" style={{ padding: '8px 14px 0' }}>Düzeltme nedeni: {initial.amendReason} - önceki versiyon <Link to={`/muayene/${initial.supersedesId}`}>v{initial.version - 1}</Link> görünür kalır.</div>}
 
       <div style={secStyle}>
         <span style={slStyle} aria-hidden="true">S</span>
@@ -912,7 +912,7 @@ function VisitForm({ initial }: { initial: VisitDetail }) {
                   />
                   {prev != null && <span className="mono mut" style={{ fontSize: 11 }}>önceki {fmtNum(prev)}{arrow}</span>}
                   {errors[vf.k] && <span className="err">{errors[vf.k]}</span>}
-                  {!errors[vf.k] && warn && <span className="s-amb" style={{ fontSize: 11 }}>{vf.k === 'temp' ? '35–43 dışında' : '±%30 fark — emin misiniz?'}</span>}
+                  {!errors[vf.k] && warn && <span className="s-amb" style={{ fontSize: 11 }}>{vf.k === 'temp' ? '35-43 dışında' : '±%30 fark - emin misiniz?'}</span>}
                 </div>
               )
             })}
@@ -960,7 +960,7 @@ function VisitForm({ initial }: { initial: VisitDetail }) {
               {f.controlDate && (
                 <span style={{ fontSize: 12 }}>
                   <Link to={`/randevular?yeni=1&animal=${initial.animalId}&tarih=${f.controlDate}`}>Randevu ver</Link>
-                  <span className="mut"> · imzalanınca SMS hatırlatma planlanır</span>
+                  <span className="mut"> - imzalanınca SMS hatırlatma planlanır</span>
                 </span>
               )}
             </div>
@@ -1002,7 +1002,7 @@ function VisitForm({ initial }: { initial: VisitDetail }) {
   )
 }
 
-/* Sistem kontrol listesi: tıklayınca normal → anormal → boş; anormalde not alanı */
+/* Sistem kontrol listesi: tıklayınca normal -> anormal -> boş; anormalde not alanı */
 function SystemsChecklist({ value, onChange }: { value: Findings['systems']; onChange(v: Findings['systems']): void }) {
   const cycle = (k: SystemKey) => {
     const cur = value[k]?.status
@@ -1027,7 +1027,7 @@ function SystemsChecklist({ value, onChange }: { value: Findings['systems']; onC
               style={{ display: 'flex', justifyContent: 'space-between', gap: 8, padding: '4px 0', border: 0, borderBottom: '1px solid #F0EEE9', background: 'transparent', font: 'inherit', cursor: 'pointer', textAlign: 'left', color: s === 'abnormal' ? 'var(--red)' : 'var(--ink)' }}
             >
               <span>{SYSTEM_LABEL[k]}</span>
-              {s === 'abnormal' ? <strong>anormal</strong> : <span className="mut">{s === 'normal' ? 'normal' : '—'}</span>}
+              {s === 'abnormal' ? <strong>anormal</strong> : <span className="mut">{s === 'normal' ? 'normal' : '-'}</span>}
             </button>
           )
         })}
@@ -1038,7 +1038,7 @@ function SystemsChecklist({ value, onChange }: { value: Findings['systems']; onC
           className="inp"
           rows={2}
           aria-label={`${SYSTEM_LABEL[k]} notu`}
-          placeholder={`${SYSTEM_LABEL[k]} — bulgu`}
+          placeholder={`${SYSTEM_LABEL[k]} - bulgu`}
           style={{ marginTop: 8 }}
           value={value[k]?.note ?? ''}
           onChange={(e) => onChange({ ...value, [k]: { status: 'abnormal', note: e.target.value } })}
@@ -1127,7 +1127,7 @@ function PhraseTextarea(props: { id: string; rows: number; value: string; onChan
               }}
               style={{ padding: '6px 10px', cursor: 'pointer', background: i === sel ? 'var(--sel)' : undefined, fontSize: 12 }}
             >
-              <span className="mono">/{p.shortcut}</span> <span className="mut">— {p.text}</span>
+              <span className="mono">/{p.shortcut}</span> <span className="mut">- {p.text}</span>
             </li>
           ))}
         </ul>
@@ -1170,7 +1170,7 @@ function DiagnosisPicker({ label, value, onChange }: { label: string; value: str
             id={idBase}
             className="inp"
             style={{ width: 240 }}
-            placeholder="Tanı ekle…"
+            placeholder="Tanı ekle..."
             value={q}
             role="combobox"
             aria-expanded={open && items.length > 0}
@@ -1211,7 +1211,7 @@ function DiagnosisPicker({ label, value, onChange }: { label: string; value: str
                   style={{ padding: '5px 10px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', gap: 8, background: i === sel ? 'var(--sel)' : undefined }}
                 >
                   <span>{s.name}</span>
-                  <span className="mut" style={{ fontSize: 11 }}>{s.category ?? ''}{s.uses ? ` · ${s.uses}×` : ''}</span>
+                  <span className="mut" style={{ fontSize: 11 }}>{s.category ?? ''}{s.uses ? ` - ${s.uses}×` : ''}</span>
                 </li>
               ))}
             </ul>
@@ -1222,7 +1222,7 @@ function DiagnosisPicker({ label, value, onChange }: { label: string; value: str
   )
 }
 
-/* S-42 Tedavi / ilaç satırları */
+/* Tedavi / ilaç satırları */
 function TreatmentEditor(props: {
   rows: TreatmentRowState[]
   onChange(r: TreatmentRowState[]): void
@@ -1269,7 +1269,7 @@ function TreatmentEditor(props: {
       <datalist id="drug-list">{drugs.data?.map((d) => <option key={d.drug} value={d.drug}>{d.activeIngredient ?? ''}</option>)}</datalist>
       <table>
         <thead>
-          <tr><th>İlaç / ürün</th><th>Etken madde</th><th>Doz</th><th>Yol</th><th>Sıklık · süre</th><th>Türü</th><th>E-reçete no</th><th><span className="sr">Sil</span></th></tr>
+          <tr><th>İlaç / ürün</th><th>Etken madde</th><th>Doz</th><th>Yol</th><th>Sıklık - süre</th><th>Türü</th><th>E-reçete no</th><th><span className="sr">Sil</span></th></tr>
         </thead>
         <tbody>
           {rows.map((t, i) => {
@@ -1292,13 +1292,13 @@ function TreatmentEditor(props: {
                     </div>
                     {isPerKg(t.doseUnit) && (
                       <span className="mono" style={{ fontSize: 11 }}>
-                        {total != null ? `→ ${fmtNum(total)} ${t.doseUnit.replace('/kg', '')} (${fmtNum(weight)} kg)` : <span className="s-amb">kilo girilmedi</span>}
+                        {total != null ? `-> ${fmtNum(total)} ${t.doseUnit.replace('/kg', '')} (${fmtNum(weight)} kg)` : <span className="s-amb">kilo girilmedi</span>}
                       </span>
                     )}
                   </td>
                   <td style={cell}>
                     <select className="inp" aria-label="Uygulama yolu" value={t.route} onChange={(e) => set(i, { route: e.target.value })} style={{ width: 96 }}>
-                      <option value="">—</option>
+                      <option value="">-</option>
                       {ROUTES.map((r) => <option key={r} value={r}>{r}</option>)}
                     </select>
                   </td>
@@ -1342,7 +1342,7 @@ function TreatmentEditor(props: {
       </table>
       <div style={{ padding: '6px 4px', display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
         <button type="button" className="btn sm" onClick={() => onChange([...rows, blank()])}>+ Satır ekle</button>
-        <span className="mut" style={{ fontSize: 11 }}>⚠️ E-reçete Bakanlık sisteminde yazılır; burada yalnızca numarası bağlanır.</span>
+        <span className="mut" style={{ fontSize: 11 }}>E-recete Bakanlik sisteminde yazilir; burada yalnizca numarasi baglanir.</span>
       </div>
     </div>
   )
@@ -1377,9 +1377,9 @@ export function AnimalVisitsTab({ animalId }: { animalId?: string }) {
             {list.data?.rows.map((r) => (
               <tr key={r.id} className={`click${r.stale ? ' hot' : ''}`} onClick={() => nav(`/muayene/${r.id}`)}>
                 <td className="mono">{fmtDateTime(r.visitAt)}</td>
-                <td>{r.vetName ?? <span className="mut">—</span>}</td>
+                <td>{r.vetName ?? <span className="mut">-</span>}</td>
                 <td>{VISIT_TYPE_LABEL[r.type]}</td>
-                {content && <td>{r.diagnosisSummary ?? <span className="mut">—</span>}</td>}
+                {content && <td>{r.diagnosisSummary ?? <span className="mut">-</span>}</td>}
                 {content && <td className="mono">{r.controlDate ? formatDateTr(r.controlDate) : ''}</td>}
                 <td><StatusMark s={r.displayStatus} stale={r.stale} />{r.version > 1 && <span className="mut mono"> v{r.version}</span>}</td>
               </tr>
@@ -1414,22 +1414,22 @@ export function AnimalTreatmentsTab({ animalId }: { animalId?: string }) {
       </div>
       <div className="tbl-wrap">
         <table>
-          <thead><tr><th>Tarih</th><th>İlaç / ürün</th><th>Doz</th><th>Yol</th><th>Sıklık · süre</th><th>Türü</th><th>Hekim</th><th>Durum</th></tr></thead>
+          <thead><tr><th>Tarih</th><th>İlaç / ürün</th><th>Doz</th><th>Yol</th><th>Sıklık - süre</th><th>Türü</th><th>Hekim</th><th>Durum</th></tr></thead>
           <tbody>
             {list.data?.map((t) => (
               <tr key={t.id}>
                 <td className="mono"><Link to={`/muayene/${t.visitId}`}>{fmtShortDate(t.visitAt)}</Link></td>
                 <td><strong>{t.drug}</strong>{t.activeIngredient && <span className="mut"> ({t.activeIngredient})</span>}</td>
-                <td className="mono">{t.dose != null ? `${fmtNum(t.dose)} ${t.doseUnit ?? ''}` : ''}{t.totalDose != null && ` → ${fmtNum(t.totalDose)} ${(t.doseUnit ?? '').replace('/kg', '')}`}</td>
+                <td className="mono">{t.dose != null ? `${fmtNum(t.dose)} ${t.doseUnit ?? ''}` : ''}{t.totalDose != null && ` -> ${fmtNum(t.totalDose)} ${(t.doseUnit ?? '').replace('/kg', '')}`}</td>
                 <td>{t.route}</td>
-                <td>{[t.frequency, t.duration].filter(Boolean).join(' · ')}</td>
-                <td>{TREATMENT_KIND_LABEL[t.kind]}{t.eReceteNo && <span className="mono mut"> · {t.eReceteNo}</span>}</td>
+                <td>{[t.frequency, t.duration].filter(Boolean).join(' - ')}</td>
+                <td>{TREATMENT_KIND_LABEL[t.kind]}{t.eReceteNo && <span className="mono mut"> - {t.eReceteNo}</span>}</td>
                 <td>{shortName(t.vetName)}</td>
                 <td>
                   {t.visitStatus === 'draft' ? (
                     <span className="st s-amb">Taslak muayene</span>
                   ) : t.active ? (
-                    <span className="st s-blu">Sürüyor{t.endDate && t.endDate >= today ? ` · ${formatDateTr(t.endDate)}` : ''}</span>
+                    <span className="st s-blu">Sürüyor{t.endDate && t.endDate >= today ? ` - ${formatDateTr(t.endDate)}` : ''}</span>
                   ) : (
                     <span className="st s-gry">Bitti</span>
                   )}

@@ -1,7 +1,7 @@
-// Yedekleme servisi (Modül G): uygulama düzeyinde mantıksal yedek (.pkb), doğrulama, geri yükleme, saklama.
+// Yedekleme servisi : uygulama düzeyinde mantıksal yedek (.pkb), doğrulama, geri yükleme, saklama.
 //
 // Önemli: yedek, alındığı kurulumun veri anahtarlarından BAĞIMSIZDIR.
-//  - "*_enc" sütunları (TCKN, pasaport no, SMS/SMTP sırları …) dışa aktarılırken çözülür ve yedekte
+//  - "*_enc" sütunları (TCKN, pasaport no, SMS/SMTP sırları ...) dışa aktarılırken çözülür ve yedekte
 //    (yedek parolasıyla şifreli bütünün içinde) düz tutulur. Geri yüklemede bu kurulumun anahtarıyla
 //    yeniden şifrelenir; aynı önekli "*_hash" sütunu (ör. tckn_hash) yeniden hesaplanır.
 //  - Ek dosyalar çözülmüş içerikle yedeğe girer; geri yüklemede bu kurulumun dosya anahtarıyla
@@ -63,7 +63,7 @@ const nowOf = (deps: AppDeps) => deps.now?.() ?? new Date()
 
 /**
  * Denetim kaydı; kullanıcı artık yoksa (başka kurulumdan geri yüklemeden sonra eski oturum)
- * user_id boş yazılır — yabancı anahtar hatası yedeği/geri yüklemeyi bozmasın.
+ * user_id boş yazılır - yabancı anahtar hatası yedeği/geri yüklemeyi bozmasın.
  */
 export async function auditSafe(deps: AppDeps, e: AuditEntry) {
   let userId = e.userId
@@ -124,7 +124,7 @@ export async function checkBackupPassword(deps: AppDeps, pw: string): Promise<bo
 }
 
 /**
- * Yedek parolasını belirler/değiştirir. Kurulum sihirbazı (S-01 adım 7) kurtarma koduyla çağırır.
+ * Yedek parolasını belirler/değiştirir. Kurulum sihirbazı (adım 7) kurtarma koduyla çağırır.
  * Parola daha önce belirlendiyse mevcut parola gerekir (force: kurulum/geri yükleme içi kullanım).
  */
 export async function setBackupPassword(
@@ -638,7 +638,7 @@ async function createBackupUnlocked(
   const tmp = join(tmpDir, fileName + '.part')
   try {
     const password = opts.password ?? (await storedPassword(deps))
-    if (!password) throw new AppError(409, 'Yedek parolası belirlenmemiş. Ayarlar → Yedekleme bölümünden parola belirleyin.', 'BACKUP_NO_PASSWORD')
+    if (!password) throw new AppError(409, 'Yedek parolası belirlenmemiş. Ayarlar -> Yedekleme bölümünden parola belirleyin.', 'BACKUP_NO_PASSWORD')
     await mkdir(tmpDir, { recursive: true })
 
     const ctx: { reason: string; createdAt: Date; warnings: string[]; trailer?: BackupTrailer } = { reason, createdAt: startedAt, warnings: [] }
@@ -818,9 +818,9 @@ export async function findBackupFile(deps: AppDeps, backupId: string): Promise<s
 // ---------------------------------------------------------------- geri yükleme
 
 /**
- * Yedekten geri yükler. Sıra: parola/sürüm denetimi → "geri yükleme öncesi" yedek → tek transaction:
- * TRUNCATE … CASCADE → satırlar (FK denetimi sona ertelenir) → ek dosyalar yeniden şifrelenir →
- * sequence'ler → sayım denetimi → commit.
+ * Yedekten geri yükler. Sıra: parola/sürüm denetimi -> "geri yükleme öncesi" yedek -> tek transaction:
+ * TRUNCATE ... CASCADE -> satırlar (FK denetimi sona ertelenir) -> ek dosyalar yeniden şifrelenir ->
+ * sequence'ler -> sayım denetimi -> commit.
  */
 export function restoreBackup(
   deps: AppDeps,

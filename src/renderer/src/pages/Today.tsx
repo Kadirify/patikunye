@@ -1,4 +1,4 @@
-// S-10 Bugün
+// Bugün
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../api'
@@ -56,7 +56,7 @@ export function TodayPage() {
                     </td>
                     <td>{a.ownerName}</td>
                     <td><ChipNo value={a.chipNo} short /></td>
-                    <td>{a.petvet ? <PetvetState {...a.petvet} /> : <span className="mut">—</span>}</td>
+                    <td>{a.petvet ? <PetvetState {...a.petvet} /> : <span className="mut">-</span>}</td>
                   </tr>
                 ))}
               </tbody>
@@ -74,7 +74,7 @@ export function TodayPage() {
           {d?.urgentTasks.length === 0 && <div className="empty">Bu hafta süresi dolan iş yok.</div>}
           {d?.urgentTasks.map((t) => (
             <Link key={t.id} to={`/petvet/${t.id}`} className="list-row">
-              <span><strong>{t.animalName}</strong> · {kindLabel(t.kind).toLocaleLowerCase('tr-TR')} {t.status === 'missing_info' && <span className="s-amb">· eksik bilgi</span>}</span>
+              <span><strong>{t.animalName}</strong> - {kindLabel(t.kind).toLocaleLowerCase('tr-TR')} {t.status === 'missing_info' && <span className="s-amb">- eksik bilgi</span>}</span>
               <span className={`mono ${urgencyClass(t.urgency)}`}>{urgencyText(t.urgency, t.daysLeft)}</span>
             </Link>
           ))}
@@ -82,7 +82,7 @@ export function TodayPage() {
             <>
               <div className="gh">Bu ay</div>
               <div className="list-row" style={{ borderBottom: 0 }}>
-                <span>{d.chipsThisMonth} çip uygulandı · {d.petvet.doneThisMonth} kayıt PETVET'e girildi</span>
+                <span>{d.chipsThisMonth} çip uygulandı - {d.petvet.doneThisMonth} kayıt PETVET'e girildi</span>
                 <span className="mono mut">{formatDateTr(d.today).slice(3)}</span>
               </div>
             </>

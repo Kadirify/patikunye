@@ -78,7 +78,7 @@ export function validateChip(raw: string): ChipResult {
     convertedFromHex = true
   }
 
-  // Eski 125 kHz (FECAVA/AVID) çipler: 9–10 karakter
+  // Eski 125 kHz (FECAVA/AVID) çipler: 9-10 karakter
   if (/^[0-9A-Z]{9,10}$/.test(value) && !/^\d{15}$/.test(value)) {
     return {
       ok: true,
@@ -115,8 +115,8 @@ export function formatChip(value: string): string {
   return value.replace(/(\d{3})(?=\d)/g, '$1 ')
 }
 
-/** Listelerde kısa gösterim: 792…567 890 */
+/** Listelerde kısa gösterim: 792...567 890 */
 export function shortChip(value: string): string {
   if (!/^\d{15}$/.test(value)) return value
-  return `${value.slice(0, 3)}…${value.slice(9, 12)} ${value.slice(12)}`
+  return `${value.slice(0, 3)}...${value.slice(9, 12)} ${value.slice(12)}`
 }

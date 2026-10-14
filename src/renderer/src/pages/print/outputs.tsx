@@ -1,4 +1,4 @@
-// Yazdırma çıktıları Ç-01…Ç-09 (SAYFALAR §14). Veri: GET /api/print/:kind/:id? (tek uç).
+// Yazdirma ciktilari. Veri: GET /api/print/:kind/:id? (tek uc).
 // Görsel dil: sade, siyah-beyaz baskıya uygun; tek vurgu rengi yok, ince çizgiler.
 import type { ReactNode } from 'react'
 import { formatChip } from '@shared/chip'
@@ -52,7 +52,7 @@ function KV({ items, cols = 2 }: { items: [string, ReactNode][]; cols?: number }
       {items.map(([k, v]) => (
         <div key={k} style={{ display: 'contents' }}>
           <dt>{k}</dt>
-          <dd>{v || '—'}</dd>
+          <dd>{v || '-'}</dd>
         </div>
       ))}
     </dl>
@@ -69,7 +69,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 }
 
 function Text({ v }: { v: string | null | undefined }) {
-  return v ? <p style={{ whiteSpace: 'pre-wrap', margin: '0 0 4px' }}>{v}</p> : <p className="mut" style={{ margin: 0 }}>—</p>
+  return v ? <p style={{ whiteSpace: 'pre-wrap', margin: '0 0 4px' }}>{v}</p> : <p className="mut" style={{ margin: 0 }}>-</p>
 }
 
 function Signatures({ labels }: { labels: { title: string; name?: string | null; sub?: string | null }[] }) {
@@ -81,7 +81,7 @@ function Signatures({ labels }: { labels: { title: string; name?: string | null;
           <div style={{ minHeight: '14mm' }} />
           <div className="sig-line">{l.name ?? 'Ad soyad'}</div>
           {l.sub && <div className="mut" style={{ fontSize: '8pt' }}>{l.sub}</div>}
-          <div className="mut" style={{ fontSize: '8pt' }}>İmza · Tarih</div>
+          <div className="mut" style={{ fontSize: '8pt' }}>İmza - Tarih</div>
         </div>
       ))}
     </div>
@@ -127,7 +127,7 @@ function AnimalBlock({ a, o, extra = [] }: { a: PrintAnimal; o: PrintOwner | nul
   )
 }
 
-// ---------------------------------------------------------------- Ç-01 Aşı karnesi
+// ---------------------------------------------------------------- Aşı karnesi
 
 export function VaccineCardDoc({ d, clinic, today }: { d: PrintVaccineCard; clinic: PrintClinic; today: string }) {
   return (
@@ -180,7 +180,7 @@ export function VaccineCardDoc({ d, clinic, today }: { d: PrintVaccineCard; clin
   )
 }
 
-// ---------------------------------------------------------------- Ç-02 Kayıt / çip kartı (85,6 × 54 mm, ön + arka)
+// ---------------------------------------------------------------- Kayıt / çip kartı (85,6 × 54 mm, ön + arka)
 
 export function ChipCardDoc({ d, clinic }: { d: PrintChipCard; clinic: PrintClinic }) {
   const a = d.animal
@@ -198,8 +198,8 @@ export function ChipCardDoc({ d, clinic }: { d: PrintChipCard; clinic: PrintClin
           <div className="photo-box">fotoğraf</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4mm', minWidth: 0 }}>
             <span style={{ fontSize: '13pt', fontWeight: 700, lineHeight: 1.1 }}>{a.name}</span>
-            <span style={{ fontSize: '7pt' }}>{[a.speciesLabel, a.breed].filter(Boolean).join(' · ')}</span>
-            <span style={{ fontSize: '7pt' }}>{[a.sexLabel, a.color, a.birthDate ? birthText(a) : null].filter(Boolean).join(' · ')}</span>
+            <span style={{ fontSize: '7pt' }}>{[a.speciesLabel, a.breed].filter(Boolean).join(' - ')}</span>
+            <span style={{ fontSize: '7pt' }}>{[a.sexLabel, a.color, a.birthDate ? birthText(a) : null].filter(Boolean).join(' - ')}</span>
             <span className="mut" style={{ fontSize: '5.5pt', marginTop: '1.2mm' }}>ÇİP NO</span>
             <span className="mono" style={{ fontSize: '9pt', fontWeight: 600, letterSpacing: '0.03em' }}>{chipText(a.chipNo)}</span>
           </div>
@@ -213,17 +213,17 @@ export function ChipCardDoc({ d, clinic }: { d: PrintChipCard; clinic: PrintClin
         </span>
         <div style={{ marginTop: '2.5mm', display: 'grid', gridTemplateColumns: 'auto minmax(0, 1fr)', gap: '0.6mm 2.5mm', fontSize: '7pt' }}>
           <span className="mut">Klinik</span><span style={{ fontWeight: 600 }}>{clinic.name}</span>
-          <span className="mut">Telefon</span><span className="mono" style={{ fontWeight: 600 }}>{clinic.phone || '—'}</span>
-          <span className="mut">Adres</span><span>{clinicAddress(clinic) || '—'}</span>
+          <span className="mut">Telefon</span><span className="mono" style={{ fontWeight: 600 }}>{clinic.phone || '-'}</span>
+          <span className="mut">Adres</span><span>{clinicAddress(clinic) || '-'}</span>
           {d.showOwner && d.owner && (
             <>
               <span className="mut">Sahibi</span>
-              <span>{d.owner.fullName}{d.owner.phone && <> · <span className="mono">{d.owner.phone}</span></>}</span>
+              <span>{d.owner.fullName}{d.owner.phone && <> - <span className="mono">{d.owner.phone}</span></>}</span>
             </>
           )}
         </div>
         <div className="mut" style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', fontSize: '5.5pt' }}>
-          <span>Kayıt: {formatDateTr(a.chipImplantedAt)}{a.chipVetName ? ` · ${a.chipVetName}` : ''}</span>
+          <span>Kayıt: {formatDateTr(a.chipImplantedAt)}{a.chipVetName ? ` - ${a.chipVetName}` : ''}</span>
           <span>PatiKünye</span>
         </div>
       </div>
@@ -231,7 +231,7 @@ export function ChipCardDoc({ d, clinic }: { d: PrintChipCard; clinic: PrintClin
   )
 }
 
-// ---------------------------------------------------------------- Ç-03 Muayene özeti / Ç-04 Tedavi talimatı
+// ---------------------------------------------------------------- Muayene ozeti / Tedavi talimati
 
 function VisitHeader({ d }: { d: PrintVisit }) {
   const v = d.visit
@@ -245,7 +245,7 @@ function VisitHeader({ d }: { d: PrintVisit }) {
             ['Tarih', fmtDateTime(v.visitAt)],
             ['Tür', v.typeLabel],
             ['Hekim', v.vetName],
-            ['Durum', v.status === 'signed' ? `İmzalı${v.version > 1 ? ` (v${v.version})` : ''} · ${fmtDateTime(v.signedAt)}` : 'TASLAK — imzalanmamış'],
+            ['Durum', v.status === 'signed' ? `İmzalı${v.version > 1 ? ` (v${v.version})` : ''} - ${fmtDateTime(v.signedAt)}` : 'TASLAK - imzalanmamış'],
           ]}
         />
       </Section>
@@ -257,11 +257,11 @@ export function VisitDoc({ d, clinic, today }: { d: PrintVisit; clinic: PrintCli
   const v = d.visit
   return (
     <>
-      <Letterhead clinic={clinic} title="Muayene özeti" sub={d.full ? 'Tam sürüm — klinik içi kullanım' : 'Hasta sahibi sürümü'} today={today} />
+      <Letterhead clinic={clinic} title="Muayene özeti" sub={d.full ? 'Tam sürüm - klinik içi kullanım' : 'Hasta sahibi sürümü'} today={today} />
       <VisitHeader d={d} />
       <Section title="Şikayet / öykü"><Text v={v.subjective} /></Section>
       <Section title="Bulgular">
-        {v.vitals.length > 0 && <p style={{ margin: '0 0 4px' }}>{v.vitals.map((x) => `${x.label}: ${x.value}`).join(' · ')}</p>}
+        {v.vitals.length > 0 && <p style={{ margin: '0 0 4px' }}>{v.vitals.map((x) => `${x.label}: ${x.value}`).join(' - ')}</p>}
         {v.systems.length > 0 ? (
           <table className="pt">
             <tbody>
@@ -271,7 +271,7 @@ export function VisitDoc({ d, clinic, today }: { d: PrintVisit; clinic: PrintCli
             </tbody>
           </table>
         ) : (
-          !v.vitals.length && <p className="mut" style={{ margin: 0 }}>—</p>
+          !v.vitals.length && <p className="mut" style={{ margin: 0 }}>-</p>
         )}
       </Section>
       <Section title="Değerlendirme"><Text v={v.assessment} /></Section>
@@ -333,7 +333,7 @@ export function PrescriptionDoc({ d, clinic, today }: { d: PrintVisit; clinic: P
   const given = d.treatments.filter((t) => t.kind === 'administered')
   return (
     <>
-      <Letterhead clinic={clinic} title="Tedavi talimatı" sub={`${d.animal.name} · ${fmtDateTime(d.visit.visitAt)}`} today={today} />
+      <Letterhead clinic={clinic} title="Tedavi talimatı" sub={`${d.animal.name} - ${fmtDateTime(d.visit.visitAt)}`} today={today} />
       <div className="note-box">
         <strong>Bu belge resmî e-reçete değildir.</strong> Hekiminizin önerdiği ilaçların kullanım talimatıdır. Reçeteye tabi ilaçlar için e-reçete ayrıca düzenlenir.
       </div>
@@ -354,7 +354,7 @@ export function PrescriptionDoc({ d, clinic, today }: { d: PrintVisit; clinic: P
   )
 }
 
-// ---------------------------------------------------------------- Ç-05 Aydınlatma metni + çip onam formu
+// ---------------------------------------------------------------- Aydınlatma metni + çip onam formu
 
 export function KvkkConsentDoc({ d, clinic, today }: { d: PrintKvkkConsent; clinic: PrintClinic; today: string }) {
   const a = d.animal
@@ -367,7 +367,7 @@ export function KvkkConsentDoc({ d, clinic, today }: { d: PrintKvkkConsent; clin
             cols={1}
             items={[
               ['Ad soyad', d.owner.fullName],
-              ['T.C. kimlik no', <span className="mono">{d.owner.tcknMasked || '—'}</span>],
+              ['T.C. kimlik no', <span className="mono">{d.owner.tcknMasked || '-'}</span>],
               ['Telefon', <span className="mono">{d.owner.phone}</span>],
               ['Adres', [d.owner.address, [d.owner.district, d.owner.city].filter(Boolean).join(' / ')].filter(Boolean).join(', ')],
             ]}
@@ -390,14 +390,13 @@ export function KvkkConsentDoc({ d, clinic, today }: { d: PrintKvkkConsent; clin
         </Section>
       </div>
       <Section title={`Aydınlatma metni${d.notice ? ` (sürüm ${d.notice.version})` : ''}`}>
-        <div className="legal">{d.notice?.body ?? 'Etkin aydınlatma metni yok (Ayarlar → KVKK).'}</div>
+        <div className="legal">{d.notice?.body ?? 'Etkin aydınlatma metni yok (Ayarlar -> KVKK).'}</div>
       </Section>
       {d.consent && (
         <Section title={`Açık rıza (sürüm ${d.consent.version})`}>
           <div className="legal">{d.consent.body}</div>
         </Section>
       )}
-      {/* ⚠️ Onam cümlesi örnek metindir; hukukçu/pilot hekim onayıyla düzenlenecek */}
       <Section title="Mikroçip uygulama onamı">
         <p className="legal" style={{ margin: 0 }}>
           Yukarıda bilgileri yer alan hayvanıma mikroçip uygulanmasına ve kimlik bilgilerinin evcil hayvan kayıt sistemine (PETVET) kaydedilmesine onay
@@ -409,10 +408,10 @@ export function KvkkConsentDoc({ d, clinic, today }: { d: PrintKvkkConsent; clin
   )
 }
 
-// ---------------------------------------------------------------- Ç-06 PETVET denetim paketi (S-62)
+// ---------------------------------------------------------------- PETVET denetim paketi
 
 export function AuditPackDoc({ d, clinic, today }: { d: PrintAuditPack; clinic: PrintClinic; today: string }) {
-  const range = `${formatDateTr(d.from)} – ${formatDateTr(d.to)}`
+  const range = `${formatDateTr(d.from)} - ${formatDateTr(d.to)}`
   return (
     <>
       <div className="cover">
@@ -465,14 +464,14 @@ export function AuditPackDoc({ d, clinic, today }: { d: PrintAuditPack; clinic: 
               <tr key={i}>
                 <td className="mono">{i + 1}</td>
                 <td>{r.kindLabel}</td>
-                <td className="mono">{r.chipNo ? formatChip(r.chipNo) : '—'}</td>
+                <td className="mono">{r.chipNo ? formatChip(r.chipNo) : '-'}</td>
                 <td>{r.animalName} <span className="mut">({r.speciesLabel})</span></td>
-                <td>{r.ownerName ?? '—'}{r.tcknMasked && <div className="mono mut">{r.tcknMasked}</div>}</td>
+                <td>{r.ownerName ?? '-'}{r.tcknMasked && <div className="mono mut">{r.tcknMasked}</div>}</td>
                 <td className="mono">{formatDateTr(r.eventDate)}</td>
                 <td className="mono">{formatDateTr(r.dueDate)}</td>
                 <td className="mono">{r.doneDate ? formatDateTr(r.doneDate) : r.statusLabel}</td>
-                <td className="r mono">{r.daysToEntry ?? '—'}</td>
-                <td className="r mono">{r.lateDays == null ? '—' : r.lateDays > 0 ? `+${r.lateDays}` : '0'}</td>
+                <td className="r mono">{r.daysToEntry ?? '-'}</td>
+                <td className="r mono">{r.lateDays == null ? '-' : r.lateDays > 0 ? `+${r.lateDays}` : '0'}</td>
                 <td className="mono">{r.petvetRef ?? ''}</td>
                 <td className="mono">{r.attachments.length || ''}</td>
               </tr>
@@ -499,7 +498,7 @@ export function AuditPackDoc({ d, clinic, today }: { d: PrintAuditPack; clinic: 
   )
 }
 
-// ---------------------------------------------------------------- Ç-07 KVKK talep yanıtı (S-95)
+// ---------------------------------------------------------------- KVKK talep yanıtı
 
 export function KvkkResponseDoc({ d, clinic, today }: { d: PrintKvkkResponse; clinic: PrintClinic; today: string }) {
   const r = d.request
@@ -507,7 +506,6 @@ export function KvkkResponseDoc({ d, clinic, today }: { d: PrintKvkkResponse; cl
   return (
     <>
       <Letterhead clinic={clinic} title="KVKK başvuru yanıtı" today={today} />
-      {/* ⚠️ Yanıt yazısı örnek şablondur; hukukçu onayıyla düzenlenecek */}
       <div style={{ marginTop: '8mm', lineHeight: 1.6 }}>
         <p style={{ margin: 0 }}>Sayın <strong>{d.owner.fullName}</strong></p>
         {addr && <p className="mut" style={{ margin: 0 }}>{addr}</p>}
@@ -535,21 +533,21 @@ export function KvkkResponseDoc({ d, clinic, today }: { d: PrintKvkkResponse; cl
   )
 }
 
-// ---------------------------------------------------------------- Ç-08 Randevu kartı
+// ---------------------------------------------------------------- Randevu kartı
 
 export function AppointmentCardDoc({ d, clinic }: { d: PrintAppointmentCard; clinic: PrintClinic }) {
   return (
     <div className="cards">
       <div className="card">
-        <div className="mut" style={{ fontSize: '6pt', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Randevu kartı · {clinic.name}</div>
+        <div className="mut" style={{ fontSize: '6pt', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Randevu kartı - {clinic.name}</div>
         <div style={{ fontSize: '11pt', fontWeight: 700, marginTop: '2mm' }}>{fmtWeekday(d.startsAt)}</div>
         <div className="mono" style={{ fontSize: '16pt', fontWeight: 600 }}>{fmtTime(d.startsAt)}</div>
         <div style={{ display: 'grid', gridTemplateColumns: 'auto minmax(0, 1fr)', gap: '0.5mm 2.5mm', fontSize: '7pt', marginTop: '1.5mm' }}>
-          <span className="mut">Hasta</span><span>{d.animalName ?? '—'}{d.ownerName ? ` · ${d.ownerName}` : ''}</span>
-          <span className="mut">Hekim</span><span>{d.vetName ?? '—'}</span>
+          <span className="mut">Hasta</span><span>{d.animalName ?? '-'}{d.ownerName ? ` - ${d.ownerName}` : ''}</span>
+          <span className="mut">Hekim</span><span>{d.vetName ?? '-'}</span>
           {d.typeName && <><span className="mut">Tür</span><span>{d.typeName}</span></>}
-          <span className="mut">Adres</span><span>{clinicAddress(clinic) || '—'}</span>
-          <span className="mut">Telefon</span><span className="mono">{clinic.phone || '—'}</span>
+          <span className="mut">Adres</span><span>{clinicAddress(clinic) || '-'}</span>
+          <span className="mut">Telefon</span><span className="mono">{clinic.phone || '-'}</span>
         </div>
         <div className="mut" style={{ marginTop: 'auto', fontSize: '6pt' }}>Gelemeyecekseniz lütfen önceden haber verin.</div>
       </div>
@@ -557,7 +555,7 @@ export function AppointmentCardDoc({ d, clinic }: { d: PrintAppointmentCard; cli
   )
 }
 
-// ---------------------------------------------------------------- Ç-09 İş listeleri
+// ---------------------------------------------------------------- İş listeleri
 
 export function WorklistDoc({ d, clinic, today }: { d: PrintWorklist; clinic: PrintClinic; today: string }) {
   return (
@@ -587,7 +585,7 @@ export function WorklistDoc({ d, clinic, today }: { d: PrintWorklist; clinic: Pr
   )
 }
 
-// ---------------------------------------------------------------- Rapor çıktısı (S-90 [Yazdır])
+// ---------------------------------------------------------------- Rapor çıktısı ([Yazdır])
 
 export function ReportDoc({ d, clinic, today }: { d: ReportResult; clinic: PrintClinic; today: string }) {
   return (
@@ -595,7 +593,7 @@ export function ReportDoc({ d, clinic, today }: { d: ReportResult; clinic: Print
       <Letterhead
         clinic={clinic}
         title={`${d.title} raporu`}
-        sub={`${formatDateTr(d.from)} – ${formatDateTr(d.to)}${d.vetName ? ` · ${d.vetName}` : ''}`}
+        sub={`${formatDateTr(d.from)} - ${formatDateTr(d.to)}${d.vetName ? ` - ${d.vetName}` : ''}`}
         today={today}
       />
       <div style={{ margin: '4mm 0' }}><ReportSummary r={d} /></div>

@@ -62,7 +62,7 @@ export function AppointmentSettingsPage() {
               <TypeRow key={t.id} t={t} onSave={(x) => saveType.mutate(x)} />
             ))}
             <tr>
-              <td><input className="inp" aria-label="Yeni tür adı" placeholder="Yeni tür…" value={nt.name} onChange={(e) => setNt({ ...nt, name: e.target.value })} /></td>
+              <td><input className="inp" aria-label="Yeni tür adı" placeholder="Yeni tür..." value={nt.name} onChange={(e) => setNt({ ...nt, name: e.target.value })} /></td>
               <td><input type="color" aria-label="Renk" value={nt.color} onChange={(e) => setNt({ ...nt, color: e.target.value })} /></td>
               <td><input className="inp mono" style={{ width: 90 }} type="number" min={5} step={5} aria-label="Süre (dk)" value={nt.defaultMinutes} onChange={(e) => setNt({ ...nt, defaultMinutes: Number(e.target.value) })} /> dk</td>
               <td />
@@ -73,7 +73,7 @@ export function AppointmentSettingsPage() {
       </section>
 
       <section className="pnl">
-        <div className="ph"><h2>Resmî tatiller ve kapalı günler</h2><span className="mut" style={{ fontSize: 12 }}>{year}–{year + 1}</span></div>
+        <div className="ph"><h2>Resmî tatiller ve kapalı günler</h2><span className="mut" style={{ fontSize: 12 }}>{year}-{year + 1}</span></div>
         <table>
           <tbody>
             {holidays.data?.map((h) => (

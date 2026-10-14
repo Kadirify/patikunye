@@ -1,6 +1,6 @@
--- Modül G: yedekleme (SAYFALAR S-108)
+-- yedekleme
 -- Not: Bu tablolara users vb. tablolardan yabancı anahtar VERİLMEZ; geri yüklemede
--- "TRUNCATE … CASCADE" bu tabloları boşaltmasın ve kayıtlar kurulum-yerel kalsın diye.
+-- "TRUNCATE ... CASCADE" bu tabloları boşaltmasın ve kayıtlar kurulum-yerel kalsın diye.
 
 -- Tek satırlık yedek yapılandırması (yedek parolası)
 CREATE TABLE IF NOT EXISTS backup_config (

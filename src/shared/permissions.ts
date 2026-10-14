@@ -1,4 +1,4 @@
-// Rol ve izin matrisi (SAYFALAR.md §17). Roller şimdilik sabit; Ayarlar'dan özel rol ileride.
+// Rol ve izin matrisi. Roller şimdilik sabit; Ayarlar'dan özel rol ileride.
 import type { Role } from './api-types'
 
 export const PERMISSIONS = [

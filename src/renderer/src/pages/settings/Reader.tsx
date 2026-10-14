@@ -1,4 +1,4 @@
-// S-107 Çip okuyucu: mod, hız eşiği, canlı test (ham → normalize → doğrulama)
+// Çip okuyucu: mod, hız eşiği, canlı test (ham -> normalize -> doğrulama)
 import { useEffect, useRef, useState } from 'react'
 import { useCan } from '../../session'
 import { cleanChipInput, formatChip, validateChip, type ChipResult } from '@shared/chip'
@@ -19,7 +19,7 @@ export function ReaderSettingsPage() {
   useCtrlS(submit, dirty)
 
   if (!can('settings.manage')) return <NoAccess />
-  if (!r) return <div className="mut">Yükleniyor…</div>
+  if (!r) return <div className="mut">Yükleniyor...</div>
 
   return (
     <>
@@ -53,7 +53,7 @@ export function ReaderSettingsPage() {
         <Row label="Hız eşiği" htmlFor="r-gap">
           <input id="r-gap" type="number" min={5} max={300} className="inp mono" style={{ width: 80 }} value={r.maxGapMs} onChange={(e) => setR({ ...r, maxGapMs: Number(e.target.value) })} />
           <span>ms</span>
-          <span className="mut" style={{ fontSize: 12 }}>Tuşlar arası bu süreden kısa gelen giriş okuyucu sayılır. Varsayılan 35 ms ⚠️ okuyucuyla test edin.</span>
+          <span className="mut" style={{ fontSize: 12 }}>Tuslar arasi bu sureden kisa gelen giris okuyucu sayilir. Varsayilan 35 ms.</span>
         </Row>
         <Row label="Ses" last>
           <label className="ck"><input type="checkbox" checked={r.sound ?? true} onChange={(e) => setR({ ...r, sound: e.target.checked })} />Okumada ses çal</label>
@@ -111,12 +111,12 @@ function LiveTest({ maxGapMs }: { maxGapMs: number }) {
             <dt>Ham değer</dt>
             <dd className="mono">{JSON.stringify(res.raw)}</dd>
             <dt>Temizlenmiş</dt>
-            <dd className="mono">{res.cleaned || '—'}</dd>
+            <dd className="mono">{res.cleaned || '-'}</dd>
             <dt>Sonuç</dt>
             <dd>
               {res.result.ok ? (
                 <>
-                  <span className="st s-ok">Geçerli · {res.result.format === 'iso' ? 'ISO 15 hane' : 'eski format'}</span>{' '}
+                  <span className="st s-ok">Geçerli - {res.result.format === 'iso' ? 'ISO 15 hane' : 'eski format'}</span>{' '}
                   <strong className="mono">{formatChip(res.result.value)}</strong>
                   {res.result.convertedFromHex && <span className="mut"> (hex'ten çevrildi)</span>}
                   {res.result.warnings.map((w) => <div key={w} className="s-amb" style={{ fontSize: 12 }}>{w}</div>)}
@@ -127,8 +127,8 @@ function LiveTest({ maxGapMs }: { maxGapMs: number }) {
             </dd>
             <dt>Tuş aralığı</dt>
             <dd className="mono">
-              {res.avgGap === null ? '—' : `ort. ${res.avgGap} ms · en uzun ${res.maxGap} ms`}{' '}
-              {res.maxGap !== null && (res.maxGap <= maxGapMs ? <span className="s-ok">okuyucu olarak algılanır</span> : <span className="s-amb">eşikten yavaş ({maxGapMs} ms) — elle yazım gibi görünür</span>)}
+              {res.avgGap === null ? '-' : `ort. ${res.avgGap} ms - en uzun ${res.maxGap} ms`}{' '}
+              {res.maxGap !== null && (res.maxGap <= maxGapMs ? <span className="s-ok">okuyucu olarak algılanır</span> : <span className="s-amb">eşikten yavaş ({maxGapMs} ms) - elle yazım gibi görünür</span>)}
             </dd>
           </dl>
         )}

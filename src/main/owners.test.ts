@@ -1,4 +1,4 @@
-// Modül B testleri: sahipler (CRUD, iyimser kilit, TCKN, birleştirme, silme, CSV) ve hayvan işlemleri
+//  testleri: sahipler (CRUD, iyimser kilit, TCKN, birleştirme, silme, CSV) ve hayvan işlemleri
 // (form, durum değişiklikleri, PETVET görevleri, çip uygula/düzelt, izinler)
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { startTestBackend, type TestBackend } from './test-helpers'
@@ -102,7 +102,7 @@ describe('sahipler', () => {
     expect(stale.status).toBe(409)
     expect(stale.data.code).toBe('VERSION_CONFLICT')
     const o = await getOwner(ownerId)
-    expect(o).toMatchObject({ city: 'İzmir', version: 2, tcknLast4: '0146' }) // TCKN boş gönderildi → değişmedi
+    expect(o).toMatchObject({ city: 'İzmir', version: 2, tcknLast4: '0146' }) // TCKN boş gönderildi -> değişmedi
     expect(o.marketingConsentAt).toBeTruthy()
     expect(o.consents.filter((c) => c.type === 'marketing').map((c) => c.granted)).toEqual([true, false])
   })
@@ -182,7 +182,7 @@ describe('sahipler', () => {
     const gone = await t.api<{ details: { mergedInto: string } }>('GET', `/api/owners/${dupOwnerId}`)
     expect(gone.status).toBe(404)
     expect(gone.data.details.mergedInto).toBe(keep)
-    // Görev yeni sahibe taşındı ve TCKN artık var → bekliyor
+    // Görev yeni sahibe taşındı ve TCKN artık var -> bekliyor
     const task = (await tasksOf(dupReg.animalId))[0]
     expect(task).toMatchObject({ ownerName: 'Ayşe Demir', status: 'pending' })
   })
@@ -271,7 +271,7 @@ describe('hayvanlar', () => {
     const task = a.petvetTasks.find((x) => x.kind === 'CHIP_NEW')!
     expect((await t.api('POST', `/api/chips/${chipId}/correct`, { newChipNo: '792091555000003', reason: 'Yanlış yazıldı' }, secretary.token)).status).toBe(403)
     expect((await t.api('POST', `/api/chips/${chipId}/correct`, { newChipNo: '792091555000003', reason: '' })).status).toBe(400)
-    // Görev henüz girilmedi → UPDATE açılmaz, görev yeni çipe bağlanır
+    // Görev henüz girilmedi -> UPDATE açılmaz, görev yeni çipe bağlanır
     const r1 = await t.api<ChipActionResult>('POST', `/api/chips/${chipId}/correct`, { newChipNo: '792091555000003', reason: 'Yanlış yazıldı' })
     expect(r1.status, JSON.stringify(r1.data)).toBe(200)
     expect(r1.data.petvetTaskId).toBeNull()
@@ -281,7 +281,7 @@ describe('hayvanlar', () => {
     // Eski numara artık bulunmaz
     const look = await t.api<{ match: unknown }>('GET', '/api/chips/lookup?no=792091555000001')
     expect(look.data.match).toBeNull()
-    // Görevi "girildi" yap, tekrar düzelt → UPDATE
+    // Görevi "girildi" yap, tekrar düzelt -> UPDATE
     expect((await t.api('POST', `/api/petvet/tasks/${task.id}/done`, { petvetRef: 'X1' })).status).toBe(200)
     const r2 = await t.api<ChipActionResult>('POST', `/api/chips/${r1.data.chipId}/correct`, { newChipNo: '792091555000004', reason: 'Yine yanlış' })
     expect(r2.data).toMatchObject({ petvetKind: 'UPDATE', petvetStatus: 'pending' })
@@ -300,7 +300,7 @@ describe('hayvanlar', () => {
     expect(look.data.match?.animal.id).toBe(animalId)
   })
 
-  it('kayıp → bulundu: açık LOST görevi iptal, FOUND açılmaz', async () => {
+  it('kayıp -> bulundu: açık LOST görevi iptal, FOUND açılmaz', async () => {
     expect((await t.api('POST', `/api/animals/${animalId}/lost`, { date: '2026-10-26' }, tech.token)).status).toBe(403)
     const lost = await t.api<StatusResult>('POST', `/api/animals/${animalId}/lost`, { date: '2026-10-26', city: 'Ankara', place: 'Park' }, secretary.token)
     expect(lost.status, JSON.stringify(lost.data)).toBe(200)

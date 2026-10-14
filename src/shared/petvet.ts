@@ -19,24 +19,24 @@ export const PETVET_KIND_LABEL: Record<PetvetTaskKind, string> = {
   TRANSFER: 'Sahip devri',
   DEATH: 'Ölüm bildirimi',
   LOST: 'Kayıp bildirimi',
-  FOUND: 'Bulundu',
+  FOUND: 'Bulundu bildirimi',
   UPDATE: 'Bilgi düzeltme',
 }
 
 export const PETVET_KIND_DESCRIPTION: Record<PetvetTaskKind, string> = {
-  CHIP_NEW: 'Yeni uygulanan mikroçip TARBİL'e bildirilir.',
-  VACCINE: 'Kuduz aşısı uygulaması TARBİL'e bildirilir.',
-  TRANSFER: 'Hayvan sahip değişikliği TARBİL'e güncellenir.',
-  DEATH: 'Hayvan ölümü TARBİL'e bildirilir.',
-  LOST: 'Kayıp hayvan bilgisi TARBİL'e bildirilir.',
-  FOUND: 'Bulunan hayvan bilgisi TARBİL'de güncellenir.',
-  UPDATE: 'Hayvan veya sahip bilgisi düzeltmesi TARBİL'e iletilir.',
+  CHIP_NEW: 'Yeni uygulanan mikrocip TARBIL\'e bildirilir.',
+  VACCINE: 'Kuduz asisi uygulamasi TARBIL\'e bildirilir.',
+  TRANSFER: 'Hayvan sahip degisikligi TARBIL\'e guncellenir.',
+  DEATH: 'Hayvan olumu TARBIL\'e bildirilir.',
+  LOST: 'Kayip hayvan bilgisi TARBIL\'e bildirilir.',
+  FOUND: 'Bulunan hayvan bilgisi TARBIL\'de guncellenir.',
+  UPDATE: 'Hayvan veya sahip bilgisi duzeltmesi TARBIL\'e iletilir.',
 }
 
 /**
  * Varsayılan süreler (gün).
  * CHIP_NEW/VACCINE/TRANSFER/UPDATE = 15 gün (10.03.2026 tarihli Bakanlık genelgesi, PETVET kılavuzu md. 4).
- * DEATH = 30 gün, LOST/FOUND = 7 gün (doğrulanacak).
+ * DEATH = 30 gün, LOST/FOUND = 7 gün.
  */
 export const DEFAULT_PETVET_DAYS: Record<PetvetTaskKind, number> = {
   CHIP_NEW: 15,
@@ -81,14 +81,14 @@ export function todayIstanbul(now = new Date()): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Istanbul' }).format(now)
 }
 
-/** 2026-10-27 → 27.10.2026 */
+/** 2026-10-27 -> 27.10.2026 */
 export function formatDateTr(iso: string | null | undefined): string {
   if (!iso) return ''
   const [y, m, d] = iso.slice(0, 10).split('-')
   return `${d}.${m}.${y}`
 }
 
-/** 27.10.2026 → 2026-10-27 (geçersizse null) */
+/** 27.10.2026 -> 2026-10-27 (geçersizse null) */
 export function parseDateTr(s: string): string | null {
   const m = /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/.exec(s.trim())
   if (!m) return null

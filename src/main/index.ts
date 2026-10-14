@@ -1,4 +1,4 @@
-// Electron ana süreci: pencereyi hemen açar, veritabanı + API'yi başlatır (ilk açılışta adım adım),
+// Electron ana süreci: pencereyi hemen açar, veritabanı + API'yi başlatır (ilk açılışta adım adım)
 // tepside çalışmaya devam eder, kapanışta veritabanını düzgün durdurur.
 import { app, BrowserWindow, dialog, ipcMain, Menu, nativeImage, safeStorage, session, shell, Tray } from 'electron'
 import { execFile } from 'node:child_process'
@@ -44,7 +44,7 @@ const STEP_LABELS: Record<string, string> = {
   host: 'Ana bilgisayara bağlanılıyor',
 }
 
-/* İstemci modu yapılandırması (yerel ağdaki ana bilgisayara bağlı bilgisayar) — DPAPI ile şifreli */
+/* İstemci modu yapılandırması (yerel ağdaki ana bilgisayara bağlı bilgisayar) - DPAPI ile şifreli */
 const clientFile = join(dataRoot, 'client.bin')
 async function loadClient(): Promise<ClientConfig | null> {
   if (!existsSync(clientFile)) return null
@@ -172,7 +172,7 @@ function trayIcon() {
 
 function createTray() {
   tray = new Tray(trayIcon())
-  tray.setToolTip('PatiKünye — hatırlatmalar ve otomatik yedek için çalışıyor')
+  tray.setToolTip('PatiKünye - hatırlatmalar ve otomatik yedek için çalışıyor')
   tray.setContextMenu(
     Menu.buildFromTemplate([
       { label: 'PatiKünye\'yi aç', click: () => showWindow() },
@@ -241,7 +241,7 @@ async function createWindow() {
   else await win.loadFile(join(__dirname, '../renderer/index.html'))
 }
 
-/* Otomatik güncelleme (S-113). Güncelleme sunucusu adresi verilmişse çalışır:
+/* Otomatik güncelleme. Güncelleme sunucusu adresi verilmişse çalışır:
    ortam değişkeni PATIKUNYE_UPDATE_URL ya da kurulum klasöründeki update-url.txt */
 type UpdState = { state: 'disabled' | 'idle' | 'checking' | 'available' | 'downloading' | 'ready' | 'none' | 'error'; version?: string; error?: string; percent?: number }
 let upd: UpdState = { state: 'disabled' }
@@ -300,7 +300,7 @@ ipcMain.on('win:toggle-maximize', () => (win?.isMaximized() ? win.unmaximize() :
 ipcMain.on('win:close', () => win?.close())
 ipcMain.on('sys:show-log', () => shell.showItemInFolder(logFile))
 
-/* Yerel ağ — istemci eşleştirme (S-03) */
+/* Yerel ağ - istemci eşleştirme */
 ipcMain.handle('net:discover', () => discoverHosts())
 ipcMain.handle('net:hello', (_e, address: string) => hello(normalizeHostUrl(address)))
 ipcMain.handle('net:pair', async (_e, input: { url: string; code: string; deviceName: string; fingerprint: string }) => {
@@ -328,7 +328,7 @@ ipcMain.handle('sys:choose-folder', async (_e, title?: string) => {
 
 ipcMain.handle('sys:bitlocker', async () => {
   // Yönetici yetkisi gerektirmeyen yöntem: Kabuk özelliği System.Volume.BitLockerProtection
-  // 1 = açık, 2 = kapalı, 3 = şifreleniyor, 5 = açılıyor (Windows sürümüne göre) ⚠️ doğrulanacak
+  // 1 = acik, 2 = kapali, 3 = sifreleniyor, 5 = aciliyor
   if (process.platform !== 'win32') return 'unknown'
   const drive = (process.env.SystemDrive ?? 'C:').replace(/\\$/, '')
   return new Promise((resolve) => {

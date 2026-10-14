@@ -1,4 +1,4 @@
--- Modül B: hayvanlar — ek klinik alanlar, durum geçmişi, sahiplik geçmişi nedeni
+-- hayvanlar - ek klinik alanlar, durum geçmişi, sahiplik geçmişi nedeni
 
 ALTER TABLE animals ADD COLUMN IF NOT EXISTS chronic_diseases text[] NOT NULL DEFAULT '{}'::text[];
 ALTER TABLE animals ADD COLUMN IF NOT EXISTS blood_group varchar(20);

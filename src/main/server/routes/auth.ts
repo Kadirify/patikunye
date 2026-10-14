@@ -105,8 +105,8 @@ export const username = z
   .string()
   .trim()
   .toLowerCase()
-  .regex(/^[a-z0-9._-]{3,40}$/, 'Kullanıcı adı 3–40 karakter; harf, rakam, nokta, tire içerebilir.')
-export const pinSchema = z.string().regex(/^\d{4,6}$/, 'PIN 4–6 haneli rakam olmalı.')
+  .regex(/^[a-z0-9._-]{3,40}$/, 'Kullanıcı adı 3-40 karakter; harf, rakam, nokta, tire içerebilir.')
+export const pinSchema = z.string().regex(/^\d{4,6}$/, 'PIN 4-6 haneli rakam olmalı.')
 
 const setupSchema = z.object({
   clinicName: z.string().trim().min(2, 'Klinik adı gerekli.'),
@@ -143,7 +143,7 @@ export const toUserDto = (u: typeof users.$inferSelect): UserDto => ({
   chamberRegNo: u.chamberRegNo,
 })
 
-/** Modül F sütunları (migrations/700_admin.sql) drizzle şemasında olmadığı için düz SQL ile okunur */
+/** sütunları (migrations/700_admin.sql) drizzle şemasında olmadığı için düz SQL ile okunur */
 interface UserExtra {
   pin_allowed: boolean
   must_change_password: boolean
@@ -194,7 +194,7 @@ export function authRoutes(app: FastifyInstance, deps: AppDeps, sessions: Sessio
       action: 'login_failed',
       entity: 'user',
       entityId: userId,
-      summary: `${name}${what}${locked ? ' · 5 hatalı deneme, 5 dk kilitlendi' : ''}`,
+      summary: `${name}${what}${locked ? ' - 5 hatalı deneme, 5 dk kilitlendi' : ''}`,
     })
   }
 
@@ -243,7 +243,7 @@ export function authRoutes(app: FastifyInstance, deps: AppDeps, sessions: Sessio
     return finishLogin(u, 'password')
   })
 
-  // S-04: PIN ile giriş (yönetici kullanıcıya PIN izni vermiş ve kullanıcı PIN belirlemiş olmalı)
+  // PIN ile giriş (yönetici kullanıcıya PIN izni vermiş ve kullanıcı PIN belirlemiş olmalı)
   app.post('/api/auth/pin-login', async (req) => {
     const body = parse(pinLoginSchema, req.body)
     if (sessions.isLocked(body.username)) {
@@ -281,7 +281,7 @@ export function authRoutes(app: FastifyInstance, deps: AppDeps, sessions: Sessio
     return { token, user: toUserDto(u), clinicName: await clinicName() } satisfies SessionDto
   })
 
-  // S-115: kendi parolasını değiştirme
+  // kendi parolasını değiştirme
   app.post('/api/auth/change-password', async (req) => {
     const s = requireUser(req)
     const body = parse(changePasswordSchema, req.body)
@@ -301,7 +301,7 @@ export function authRoutes(app: FastifyInstance, deps: AppDeps, sessions: Sessio
     return { ok: true }
   })
 
-  // S-05 kilit ekranı: mevcut oturumun sahibi parola veya PIN ile doğrular
+  // kilit ekranı: mevcut oturumun sahibi parola veya PIN ile doğrular
   app.post('/api/auth/unlock', async (req) => {
     const s = requireUser(req)
     const body = parse(unlockSchema, req.body)
@@ -318,7 +318,7 @@ export function authRoutes(app: FastifyInstance, deps: AppDeps, sessions: Sessio
     }
     if (!ok) {
       const locked = sessions.fail(u.username)
-      await writeAudit(db, { userId: u.id, action: 'login_failed', entity: 'user', entityId: u.id, summary: `${u.username} (kilit açma)${locked ? ' · oturum kapatıldı' : ''}` })
+      await writeAudit(db, { userId: u.id, action: 'login_failed', entity: 'user', entityId: u.id, summary: `${u.username} (kilit açma)${locked ? ' - oturum kapatıldı' : ''}` })
       if (locked) {
         // 5 hatalı denemede oturum kapatılır; kullanıcı giriş ekranına döner
         sessions.revokeUser(u.id)
@@ -343,7 +343,7 @@ export function authRoutes(app: FastifyInstance, deps: AppDeps, sessions: Sessio
     return { user: toUserDto(u), clinicName: c?.name ?? '' }
   })
 
-  // S-115 Profilim
+  // Profilim
   app.get('/api/auth/profile', async (req) => {
     const s = requireUser(req)
     const [u] = await db.select().from(users).where(eq(users.id, s.id)).limit(1)

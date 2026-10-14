@@ -1,4 +1,4 @@
-// Ayarlar modülü (F): /ayarlar/* iç yönlendirmesi. F'nin sayfaları SettingsLayout ile sarılır;
+// Ayarlar modülü: /ayarlar/* iç yönlendirmesi. F'nin sayfaları SettingsLayout ile sarılır;
 // diğer modüllerin yerleştirilen sayfaları kendi düzenleriyle olduğu gibi gösterilir.
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { SettingsLayout } from '../components/SettingsNav'

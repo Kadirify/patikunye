@@ -59,7 +59,7 @@ export const api = {
   put: <T>(path: string, body?: unknown) => request<T>('PUT', path, body ?? {}),
   patch: <T>(path: string, body?: unknown) => request<T>('PATCH', path, body ?? {}),
   del: <T>(path: string) => request<T>('DELETE', path),
-  /** Oturum anahtarıyla dosya indirir (img/iframe doğrudan başlık gönderemediği için) → object URL */
+  /** Oturum anahtarıyla dosya indirir (img/iframe doğrudan başlık gönderemediği için) -> object URL */
   async blobUrl(path: string): Promise<string> {
     const res = await fetch(base + path, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
     if (!res.ok) throw new HttpError(res.status, 'Dosya alınamadı.')

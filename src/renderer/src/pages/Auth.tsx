@@ -1,4 +1,4 @@
-// S-04 Giriş (Ayarlar modülü F): kullanıcı kartları, parola / PIN girişi, ilk girişte zorunlu parola değişikliği
+// Giriş (Ayarlar modülü F): kullanıcı kartları, parola / PIN girişi, ilk girişte zorunlu parola değişikliği
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { api, HttpError } from '../api'
@@ -93,7 +93,7 @@ export function LoginPage() {
                     <span className="mut" style={{ fontSize: 12 }}>{u.pinEnabled ? 'PIN' : ''}</span>
                     <span className="mut" style={{ fontSize: 12 }}>
                       {ROLE_LABEL[u.role]}
-                      {u.lastLoginAt ? ` · son giriş ${relativeLogin(u.lastLoginAt)}` : ''}
+                      {u.lastLoginAt ? ` - son giriş ${relativeLogin(u.lastLoginAt)}` : ''}
                     </span>
                   </button>
                 ))}
@@ -139,7 +139,7 @@ export function LoginPage() {
               />
             </Field>
             <button className="btn p" style={{ height: 38 }} disabled={busy || !selected || !secret}>
-              {busy ? 'Giriş yapılıyor…' : 'Giriş'}
+              {busy ? 'Giriş yapılıyor...' : 'Giriş'}
             </button>
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, fontSize: 13 }}>
               {sel?.pinEnabled ? (
@@ -149,7 +149,7 @@ export function LoginPage() {
               ) : (
                 <span />
               )}
-              <button type="button" className="btn sm" onClick={() => setInfo('Parolanızı klinik yöneticisi Ayarlar → Kullanıcılar ekranından sıfırlar. Size verilen geçici parolayla girdiğinizde yeni parola belirlersiniz.')}>
+              <button type="button" className="btn sm" onClick={() => setInfo('Parolanızı klinik yöneticisi Ayarlar -> Kullanıcılar ekranından sıfırlar. Size verilen geçici parolayla girdiğinizde yeni parola belirlersiniz.')}>
                 Parolamı unuttum
               </button>
             </div>
@@ -205,7 +205,7 @@ function ForcePasswordChange({ token, fullName, onDone, onCancel }: { token: str
           </Field>
           <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
             <button type="button" className="btn" onClick={onCancel}>Vazgeç</button>
-            <button className="btn p" disabled={busy || !pw || !pw2}>{busy ? 'Kaydediliyor…' : 'Parolayı kaydet ve gir'}</button>
+            <button className="btn p" disabled={busy || !pw || !pw2}>{busy ? 'Kaydediliyor...' : 'Parolayı kaydet ve gir'}</button>
           </div>
         </form>
       </div>

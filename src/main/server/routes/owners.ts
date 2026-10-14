@@ -1,4 +1,4 @@
-// Modül B — Sahipler: S-20 liste, S-21 form, S-22 detay, birleştirme, silme, KVKK rıza geçmişi
+// Sahipler: liste, form, detay, birleştirme, silme, KVKK rıza geçmişi
 import type { FastifyInstance } from 'fastify'
 import { and, eq, inArray, isNull, sql } from 'drizzle-orm'
 import { z } from 'zod'
@@ -58,7 +58,7 @@ export const ownerInputSchema = z.object({
   emergencyPhone: z.string().trim().optional(),
   kvkkNotice: z.boolean().refine((v) => v, 'Aydınlatma metni verilmeden kayıt yapılamaz.'),
   reminderConsent: z.boolean().optional(),
-  // S-21 ek alanlar (hepsi isteğe bağlı; hızlı kayıt göndermez)
+  // ek alanlar (hepsi isteğe bağlı; hızlı kayıt göndermez)
   isForeign: z.boolean().optional(),
   foreignDocNo: optText(40),
   phone2: optText(20),
@@ -165,7 +165,7 @@ export async function createOwner(tx: Tx, crypto: FieldCrypto, input: OwnerInput
 
 const visitExprCache = new WeakMap<object, string | null>()
 
-/** visits tablosu (modül C) varsa son ziyaret için kullanılacak sütun ifadesi; yoksa null */
+/** visits tablosu  varsa son ziyaret için kullanılacak sütun ifadesi; yoksa null */
 async function visitsSource(db: Db): Promise<string | null> {
   if (visitExprCache.has(db)) return visitExprCache.get(db)!
   const r = await db.$client.query<{ column_name: string }>(
@@ -402,7 +402,7 @@ export function ownerRoutes(app: FastifyInstance, deps: AppDeps) {
   const today = () => deps.today?.() ?? todayIstanbul()
   const now = () => deps.now?.() ?? new Date()
 
-  // Basit arama (hızlı kayıt, devir, birleştirme seçicileri) — dizi döndürür
+  // Basit arama (hızlı kayıt, devir, birleştirme seçicileri) - dizi döndürür
   app.get('/api/owners', async (req) => {
     requirePerm(req, 'owners.read')
     const { q } = parse(z.object({ q: z.string().optional() }), req.query)
@@ -421,14 +421,14 @@ export function ownerRoutes(app: FastifyInstance, deps: AppDeps) {
     )
   })
 
-  // S-20 liste (filtreli, sayfalı)
+  // liste (filtreli, sayfalı)
   app.get('/api/owners/list', async (req) => {
     requirePerm(req, 'owners.read')
     const f = parse(listSchema, req.query)
     return queryOwners(db, crypto, today(), { ...f, limit: Math.min(f.limit ?? 50, 200) })
   })
 
-  // S-20 CSV dışa aktarma (TCKN içermez)
+  // CSV dışa aktarma (TCKN içermez)
   app.get('/api/owners/export.csv', async (req, reply) => {
     const u = requirePerm(req, 'owners.export')
     const f = parse(listSchema, req.query)
@@ -494,7 +494,7 @@ export function ownerRoutes(app: FastifyInstance, deps: AppDeps) {
     return loadOwnerDetail(db, id)
   })
 
-  // S-21 düzenleme (iyimser kilit)
+  // düzenleme (iyimser kilit)
   app.put('/api/owners/:id', async (req) => {
     const u = requirePerm(req, 'owners.write')
     const { id } = parse(idParam, req.params)
@@ -558,7 +558,7 @@ export function ownerRoutes(app: FastifyInstance, deps: AppDeps) {
         diff.tckn = ['****' + cur.tcknLast4, null]
       }
 
-      // Rıza değişiklikleri → consents geçmişi
+      // Rıza değişiklikleri -> consents geçmişi
       const channel = input.kvkkMethod ?? 'printed'
       const consentSet: Record<string, unknown> = {}
       if (!cur.kvkkNoticeAt) {
@@ -593,7 +593,7 @@ export function ownerRoutes(app: FastifyInstance, deps: AppDeps) {
         action: 'update',
         entity: 'owner',
         entityId: id,
-        summary: `${next.firstName} ${next.lastName}${diff.tckn ? ' · TCKN değiştirildi' : ''}`,
+        summary: `${next.firstName} ${next.lastName}${diff.tckn ? ' - TCKN değiştirildi' : ''}`,
         diff: Object.keys(diff).length ? diff : undefined,
       })
       return { id, version: cur.version + 1 }
@@ -615,7 +615,7 @@ export function ownerRoutes(app: FastifyInstance, deps: AppDeps) {
     }
   })
 
-  // S-22 Geçmiş sekmesi
+  // Geçmiş sekmesi
   app.get('/api/owners/:id/history', async (req) => {
     requirePerm(req, 'owners.read')
     const { id } = parse(idParam, req.params)
@@ -632,7 +632,7 @@ export function ownerRoutes(app: FastifyInstance, deps: AppDeps) {
 
   // Sil (yumuşak). Aktif hayvanı varsa engellenir.
   app.delete('/api/owners/:id', async (req) => {
-    const u = requirePerm(req, 'owners.merge') // ⚠️ ayrı 'owners.delete' izni yok; matriste merge/delete birlikte (yalnız yönetici)
+    const u = requirePerm(req, 'owners.merge')
     const { id } = parse(idParam, req.params)
     await db.transaction(async (tx) => {
       const [cur] = await tx.select().from(owners).where(eq(owners.id, id)).for('update').limit(1)

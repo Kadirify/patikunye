@@ -1,4 +1,4 @@
-// Yedekleme modülü (G): S-108 Yedekleme ve S-111 Veritabanı ayar sayfaları
+// Yedekleme modülü: Yedekleme ve Veritabanı ayar sayfaları
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '../api'
@@ -25,7 +25,7 @@ import {
 
 const TZ = 'Europe/Istanbul'
 function fmtDateTime(iso: string | null, long = false): string {
-  if (!iso) return '—'
+  if (!iso) return '-'
   const d = new Date(iso)
   const p = Object.fromEntries(
     new Intl.DateTimeFormat('tr-TR', { timeZone: TZ, day: '2-digit', month: '2-digit', year: long ? 'numeric' : '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })
@@ -35,7 +35,7 @@ function fmtDateTime(iso: string | null, long = false): string {
   return `${p.day}.${p.month}.${p.year} ${p.hour}:${p.minute}`
 }
 function fmtBytes(n: number | null): string {
-  if (n === null || n === undefined) return '—'
+  if (n === null || n === undefined) return '-'
   const u = ['B', 'KB', 'MB', 'GB', 'TB']
   let i = 0
   let v = n
@@ -74,15 +74,15 @@ function Row({ label, htmlFor, children, last }: { label: string; htmlFor?: stri
 
 /** Kenar çubuğu / durum çubuğu da kullanabilir: son yedek durumu metni */
 export function backupStatusText(s: BackupStatusDto | undefined): { cls: string; text: string } {
-  if (!s) return { cls: 's-gry', text: 'Yedek durumu yükleniyor…' }
-  if (s.running) return { cls: 's-blu', text: 'Yedek alınıyor…' }
+  if (!s) return { cls: 's-gry', text: 'Yedek durumu yükleniyor...' }
+  if (s.running) return { cls: 's-blu', text: 'Yedek alınıyor...' }
   if (!s.passwordSet) return { cls: 's-red', text: 'Yedek parolası belirlenmemiş' }
   if (!s.lastSuccessAt) return { cls: 's-red', text: 'Henüz yedek alınmadı' }
   const cls = s.state === 'ok' ? 's-ok' : s.state === 'warn' ? 's-amb' : 's-red'
-  return { cls, text: `Son yedek ${fmtDateTime(s.lastSuccessAt)} · ${relHours(s.hoursAgo)}${s.lastError ? ' · son deneme başarısız' : ''}` }
+  return { cls, text: `Son yedek ${fmtDateTime(s.lastSuccessAt)} - ${relHours(s.hoursAgo)}${s.lastError ? ' - son deneme başarısız' : ''}` }
 }
 
-// ---------------------------------------------------------------- S-108
+// ---------------------------------------------------------------- 
 
 export function BackupPage() {
   const can = useCan()
@@ -122,11 +122,11 @@ export function BackupPage() {
         <div className="right">
           {can('backup.restore') && (
             <button type="button" className="btn" onClick={() => setRestoreFor(null)}>
-              Geri yükle…
+              Geri yükle...
             </button>
           )}
           <button type="button" className="btn p" disabled={run.isPending || status.data?.running} onClick={() => run.mutate()}>
-            {run.isPending ? 'Yedek alınıyor…' : 'Şimdi yedek al'}
+            {run.isPending ? 'Yedek alınıyor...' : 'Şimdi yedek al'}
           </button>
         </div>
       </div>
@@ -218,7 +218,7 @@ function TargetsPanel() {
                   ) : !t.exists && t.lastOkAt ? (
                     <span className="st s-red">Ulaşılamıyor (USB takılı mı?)</span>
                   ) : t.sameDisk ? (
-                    <span className="st s-amb">Uyarı · sistem diskiyle aynı</span>
+                    <span className="st s-amb">Uyarı - sistem diskiyle aynı</span>
                   ) : t.lastOkAt ? (
                     <span className="st s-ok">Tamam</span>
                   ) : (
@@ -246,7 +246,7 @@ function TargetsPanel() {
       </div>
       {q.data?.some((t) => t.isDefault) && (
         <div className="mut" style={{ padding: '8px 12px', fontSize: 12 }}>
-          Hedef eklenmediği için yedekler veri klasörüne yazılıyor. Disk bozulursa yedek de gider — harici USB disk ya da ağ klasörü ekleyin.
+          Hedef eklenmediği için yedekler veri klasörüne yazılıyor. Disk bozulursa yedek de gider - harici USB disk ya da ağ klasörü ekleyin.
         </div>
       )}
       {adding && (
@@ -285,7 +285,7 @@ function TargetsPanel() {
             <span className={`st ${!test.writable ? 's-red' : test.sameDisk ? 's-amb' : 's-ok'}`}>
               {!test.writable
                 ? `Yazılamıyor: ${test.error}`
-                : `Yazılabilir · ${test.kind} · boş ${fmtBytes(test.freeBytes)}${test.sameDisk ? ' · sistem diskiyle aynı (harici disk önerilir)' : ''}`}
+                : `Yazılabilir - ${test.kind} - boş ${fmtBytes(test.freeBytes)}${test.sameDisk ? ' - sistem diskiyle aynı (harici disk önerilir)' : ''}`}
             </span>
           )}
           {err && <span className="err">{err}</span>}
@@ -361,7 +361,7 @@ function SchedulePanel() {
         <span className="mono">{q.data.passwordSet ? '••••••••••••' : <span className="s-red">Belirlenmedi</span>}</span>
         {can('backup.restore') && (
           <button type="button" className="btn" style={{ height: 26, fontSize: 12 }} onClick={() => setPwOpen((x) => !x)}>
-            {q.data.passwordSet ? 'Değiştir…' : 'Belirle…'}
+            {q.data.passwordSet ? 'Değiştir...' : 'Belirle...'}
           </button>
         )}
         <span className="mut" style={{ fontSize: 12 }}>
@@ -370,7 +370,7 @@ function SchedulePanel() {
       </Row>
       {pwOpen && <PasswordForm passwordSet={q.data.passwordSet} onDone={() => setPwOpen(false)} />}
       <Row label="Bulut yedek" last>
-        <span className="mut">Sonraki sürümde (Türkiye'deki sunucuya şifreli).</span>
+        <span className="mut">Henuz desteklenmiyor.</span>
       </Row>
     </section>
   )
@@ -433,7 +433,7 @@ function PasswordForm({ passwordSet, onDone }: { passwordSet: boolean; onDone: (
 }
 
 function targetSummary(t: BackupListItem['targets']): string {
-  if (!t.length) return '—'
+  if (!t.length) return '-'
   return t.map((x) => (x.ok ? x.path : `${x.path} ✗`)).join(' + ')
 }
 
@@ -468,7 +468,7 @@ function HistoryPanel({
       <div className="ph">
         <h2>Son yedekler</h2>
         <span className="mut" style={{ fontSize: 12 }}>
-          PostgreSQL · uygulama yedeği (.pkb) · AES-256 şifreli
+          PostgreSQL - uygulama yedeği (.pkb) - AES-256 şifreli
         </span>
       </div>
       <div className="tbl-wrap">
@@ -497,10 +497,10 @@ function HistoryPanel({
                   <td>
                     {b.error ? (
                       <span className="st s-red" title={b.error}>
-                        Başarısız: {b.error.length > 60 ? b.error.slice(0, 60) + '…' : b.error}
+                        Başarısız: {b.error.length > 60 ? b.error.slice(0, 60) + '...' : b.error}
                       </span>
                     ) : !b.finishedAt ? (
-                      <span className="st s-blu">Sürüyor…</span>
+                      <span className="st s-blu">Sürüyor...</span>
                     ) : b.verifyOk === true ? (
                       <span className="st s-ok" title={fmtDateTime(b.verifiedAt, true)}>
                         {b.verifyResult ?? 'Doğrulandı'}
@@ -516,11 +516,11 @@ function HistoryPanel({
                     {!b.error && b.finishedAt && (
                       <>
                         <button type="button" className="btn" style={smBtn} disabled={verify.isPending} onClick={() => verify.mutate(b.id)}>
-                          {verify.isPending && verify.variables === b.id ? 'Doğrulanıyor…' : 'Doğrula'}
+                          {verify.isPending && verify.variables === b.id ? 'Doğrulanıyor...' : 'Doğrula'}
                         </button>{' '}
                         {canRestore && (
                           <button type="button" className="btn" style={smBtn} onClick={() => onRestore(b.id)}>
-                            Geri yükle…
+                            Geri yükle...
                           </button>
                         )}
                       </>
@@ -531,7 +531,7 @@ function HistoryPanel({
             })}
           </tbody>
         </table>
-        {loading && <div className="empty">Yükleniyor…</div>}
+        {loading && <div className="empty">Yükleniyor...</div>}
         {items?.length === 0 && <div className="empty">Henüz yedek alınmadı. "Şimdi yedek al" ile ilk yedeği alın.</div>}
         {!!error && <div className="alert" style={{ margin: 12 }}>{errMsg(error)}</div>}
       </div>
@@ -633,7 +633,7 @@ function RestoreDialog({ initialId, items, onClose }: { initialId: string | null
               >
                 {usable.map((b) => (
                   <option key={b.id} value={b.id}>
-                    {fmtDateTime(b.startedAt, true)} · {BACKUP_REASON_LABEL[b.reason as BackupReason] ?? b.reason} · {fmtBytes(b.size)}
+                    {fmtDateTime(b.startedAt, true)} - {BACKUP_REASON_LABEL[b.reason as BackupReason] ?? b.reason} - {fmtBytes(b.size)}
                   </option>
                 ))}
               </select>
@@ -659,12 +659,12 @@ function RestoreDialog({ initialId, items, onClose }: { initialId: string | null
               <input id="rs-pw" type="password" className="inp" autoComplete="off" value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
             <button type="button" className="btn" disabled={!password || check.isPending || (source === 'list' ? !backupId : !path.trim())} onClick={() => check.mutate()}>
-              {check.isPending ? 'Denetleniyor…' : 'Önce doğrula'}
+              {check.isPending ? 'Denetleniyor...' : 'Önce doğrula'}
             </button>
           </div>
           {checked && (
             <span className="st s-ok">
-              {fmtDateTime(checked.createdAt, true)} tarihli yedek (sürüm {checked.appVersion}) · {checked.summary}
+              {fmtDateTime(checked.createdAt, true)} tarihli yedek (sürüm {checked.appVersion}) - {checked.summary}
             </span>
           )}
           <div className="f">
@@ -688,7 +688,7 @@ function RestoreDialog({ initialId, items, onClose }: { initialId: string | null
               Vazgeç
             </button>
             <button type="submit" className="btn p" disabled={!ready || restore.isPending} style={ready ? { background: 'var(--red)', borderColor: 'var(--red)' } : undefined}>
-              {restore.isPending ? 'Geri yükleniyor…' : 'Geri yükle'}
+              {restore.isPending ? 'Geri yükleniyor...' : 'Geri yükle'}
             </button>
           </div>
         </div>
@@ -697,7 +697,7 @@ function RestoreDialog({ initialId, items, onClose }: { initialId: string | null
   )
 }
 
-// ---------------------------------------------------------------- S-111
+// ---------------------------------------------------------------- 
 
 export function DatabaseSettingsPage() {
   const can = useCan()
@@ -745,12 +745,12 @@ export function DatabaseSettingsPage() {
             Tanı paketi
           </button>
           <button type="button" className="btn p" disabled={maint.isPending} onClick={() => maint.mutate()}>
-            {maint.isPending ? 'Bakım sürüyor…' : 'Bakım çalıştır'}
+            {maint.isPending ? 'Bakım sürüyor...' : 'Bakım çalıştır'}
           </button>
         </div>
       </div>
       {q.isError && <div className="alert">{errMsg(q.error)}</div>}
-      {q.isLoading && <div className="mut">Yükleniyor…</div>}
+      {q.isLoading && <div className="mut">Yükleniyor...</div>}
       {d && (
         <>
           <section className="pnl">
@@ -761,7 +761,7 @@ export function DatabaseSettingsPage() {
               <span className="mono">PostgreSQL {d.version}</span>
             </Row>
             <Row label="Port">
-              <span className="mono">{d.port ?? '—'}</span>
+              <span className="mono">{d.port ?? '-'}</span>
               <span className="mut">yalnızca bu bilgisayardan (127.0.0.1)</span>
             </Row>
             <Row label="Veri klasörü">

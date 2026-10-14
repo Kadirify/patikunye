@@ -1,10 +1,10 @@
-// Randevu modülü (E) uçtan uca testleri
+// Randevu modülü uçtan uca testleri
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { startTestBackend, type TestBackend } from './test-helpers'
 import type { AppointmentConfigDto, AppointmentDto, AppointmentSaveResult, WaitingRoomDto } from '../shared/appointments'
 
 let t: TestBackend
-// 27.10.2026 Salı, 10:00 İstanbul — testler saati ilerletebilir
+// 27.10.2026 Salı, 10:00 İstanbul - testler saati ilerletebilir
 let nowVal = new Date('2026-10-27T10:00:00+03:00')
 let cfg: AppointmentConfigDto
 let animalId = ''
@@ -165,7 +165,7 @@ describe('taşıma ve iyimser kilit', () => {
 })
 
 describe('durum geçişleri', () => {
-  it('Planlandı → Geldi → Muayenede → Tamamlandı; geçersiz geçiş 409', async () => {
+  it('Planlandı -> Geldi -> Muayenede -> Tamamlandı; geçersiz geçiş 409', async () => {
     const c = await t.api<AppointmentSaveResult>('POST', '/api/appointments', body({ startsAt: at('10:00'), vetId: vet2 }))
     const id = c.data.id
     const arrived = await t.api<AppointmentDto>('POST', `/api/appointments/${id}/status`, { status: 'arrived' })
@@ -242,7 +242,7 @@ describe('bekleme salonu ve randevusuz hasta', () => {
     expect(wr.data.today).toBe('2026-10-27')
     const kont = wr.data.items.find((x) => x.id === w.data.id)!
     expect(kont.waitMinutes).toBe(20)
-    // 09:00 randevusu hâlâ "planlandı" → gelmedi önerisi
+    // 09:00 randevusu hâlâ "planlandı" -> gelmedi önerisi
     const nine = wr.data.items.find((x) => x.time === '09:00')!
     expect(nine.suggestNoShow).toBe(true)
     // 14:00 randevusu için henüz öneri yok
@@ -293,10 +293,10 @@ describe('randevu türleri ve izinler', () => {
     expect((await t.api('GET', '/api/appointments', undefined, null)).status).toBe(401)
     expect((await t.api('GET', '/api/waiting-room', undefined, null)).status).toBe(401)
     const sec = await t.loginAs('secretary')
-    // Sekreter randevu verebilir…
+    // Sekreter randevu verebilir...
     const ok = await t.api('POST', '/api/appointments', body({ startsAt: at('10:30', '2026-11-02') }), sec.token)
     expect(ok.status).toBe(200)
-    // …ama randevu türü ve tatil ayarlarını değiştiremez
+    // ...ama randevu türü ve tatil ayarlarını değiştiremez
     expect((await t.api('POST', '/api/appointment-types', { name: 'Deneme', color: '#123456', defaultMinutes: 20 }, sec.token)).status).toBe(403)
     expect((await t.api('POST', '/api/holidays', { date: '2026-12-31', name: 'Yılbaşı arifesi' }, sec.token)).status).toBe(403)
     const vet = await t.loginAs('vet')

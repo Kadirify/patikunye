@@ -1,4 +1,4 @@
--- Modül D — Aşılar: ürünler, protokoller, uygulamalar, aşı planı (vadeler)
+-- Aşılar: ürünler, protokoller, uygulamalar, aşı planı (vadeler)
 
 CREATE TABLE IF NOT EXISTS vaccine_products (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -79,23 +79,23 @@ CREATE TABLE IF NOT EXISTS animal_vaccine_protocols (
   PRIMARY KEY (animal_id, kind)
 );
 
--- ⚠️ ÖRNEK ürünler; hekim onayıyla düzenlenecek. Marka adları yalnızca örnektir, bağışıklık süreleri doğrulanacak.
+-- Ornek urunler. Marka adlari yalnizca ornektir, bagisiklik sureleri klinige gore ayarlanmali.
 INSERT INTO vaccine_products (name, manufacturer, kind, species, immunity_days, notes)
 SELECT * FROM (VALUES
-  ('Rabisin', 'Boehringer Ingelheim', 'rabies', ARRAY['cat','dog','ferret'], 365, '⚠️ örnek'),
-  ('Nobivac Rabies', 'MSD', 'rabies', ARRAY['cat','dog','ferret'], 365, '⚠️ örnek'),
-  ('Nobivac DHPPi+L', 'MSD', 'combo', ARRAY['dog'], 365, '⚠️ örnek'),
-  ('Vanguard Plus 5/L4', 'Zoetis', 'combo', ARRAY['dog'], 365, '⚠️ örnek'),
-  ('Purevax RCP', 'Boehringer Ingelheim', 'combo', ARRAY['cat'], 365, '⚠️ örnek'),
-  ('Purevax FeLV', 'Boehringer Ingelheim', 'felv', ARRAY['cat'], 365, '⚠️ örnek'),
-  ('Nobivac KC', 'MSD', 'kc', ARRAY['dog'], 365, '⚠️ örnek'),
-  ('Merilym 3', 'Boehringer Ingelheim', 'lyme', ARRAY['dog'], 365, '⚠️ örnek'),
-  ('Milbemax', 'Elanco', 'internal_parasite', ARRAY['cat','dog'], 90, '⚠️ örnek'),
-  ('Bravecto', 'MSD', 'external_parasite', ARRAY['cat','dog'], 84, '⚠️ örnek')
+  ('Rabisin', 'Boehringer Ingelheim', 'rabies', ARRAY['cat','dog','ferret'], 365, 'ornek'),
+  ('Nobivac Rabies', 'MSD', 'rabies', ARRAY['cat','dog','ferret'], 365, 'ornek'),
+  ('Nobivac DHPPi+L', 'MSD', 'combo', ARRAY['dog'], 365, 'ornek'),
+  ('Vanguard Plus 5/L4', 'Zoetis', 'combo', ARRAY['dog'], 365, 'ornek'),
+  ('Purevax RCP', 'Boehringer Ingelheim', 'combo', ARRAY['cat'], 365, 'ornek'),
+  ('Purevax FeLV', 'Boehringer Ingelheim', 'felv', ARRAY['cat'], 365, 'ornek'),
+  ('Nobivac KC', 'MSD', 'kc', ARRAY['dog'], 365, 'ornek'),
+  ('Merilym 3', 'Boehringer Ingelheim', 'lyme', ARRAY['dog'], 365, 'ornek'),
+  ('Milbemax', 'Elanco', 'internal_parasite', ARRAY['cat','dog'], 90, 'ornek'),
+  ('Bravecto', 'MSD', 'external_parasite', ARRAY['cat','dog'], 84, 'ornek')
 ) AS v(name, manufacturer, kind, species, immunity_days, notes)
 WHERE NOT EXISTS (SELECT 1 FROM vaccine_products);
 
--- ⚠️ ÖRNEK protokoller; hekim onayıyla düzenlenecek (yaş ve aralıklar doğrulanacak).
+-- Ornek protokoller; yas ve araliklar klinige gore ayarlanmali.
 INSERT INTO vaccine_protocols (species, kind, name, steps)
 SELECT * FROM (VALUES
   ('dog', 'combo', 'Köpek karma (DHPPi+L)', '[{"label":"1. doz","minAgeWeeks":6},{"label":"2. doz","afterPrevWeeks":3},{"label":"3. doz","afterPrevWeeks":3},{"label":"Yıllık rapel","afterPrevWeeks":52,"thenEveryDays":365}]'::jsonb),

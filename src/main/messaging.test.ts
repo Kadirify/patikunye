@@ -1,4 +1,4 @@
-// Modül M — mesajlar ve hatırlatmalar testleri
+// mesajlar ve hatırlatmalar testleri
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { startTestBackend, type TestBackend } from './test-helpers'
 import { cancelAnimalReminders, cancelReminders, computeSendTimes, scheduleReminder } from './server/services/reminders'
@@ -168,7 +168,7 @@ describe('gönderim motoru', () => {
       kind: 'control', ownerId: reg.ownerId, animalId: reg.animalId, sourceType: 'visit', sourceId: sid,
       eventAt: at('2026-10-29T00:00:00+03:00'), vars: {},
     })
-    // 1 gün önce = 28.10 10:00. Saat 28.10 08:00 (sessiz) → gönderilmez
+    // 1 gün önce = 28.10 10:00. Saat 28.10 08:00 (sessiz) -> gönderilmez
     clock = at('2026-10-28T08:00:00+03:00')
     const q = await processDueReminders(t.backend.deps)
     expect(q.quiet).toBe(true)
@@ -187,7 +187,7 @@ describe('gönderim motoru', () => {
     expect(m.rows[0].body).toContain('29.10.2026')
   })
 
-  it('hata → 5 dk, 30 dk, 2 sa sonra yeniden dener → kalıcı başarısız', async () => {
+  it('hata -> 5 dk, 30 dk, 2 sa sonra yeniden dener -> kalıcı başarısız', async () => {
     const fail: MessageProvider = { name: 'sahte', send: async () => ({ ok: false, providerMsgId: null, error: 'Geçici hata' }) }
     const reg = await t.registerAnimal()
     const sid = src()

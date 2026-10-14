@@ -1,4 +1,4 @@
-// S-05 Kilit ekranı: işlem yapılmazsa ya da Ctrl+L ile. Açık sayfa bulanıklaşır, kişisel veri görünmez.
+// Kilit ekranı: işlem yapılmazsa ya da Ctrl+L ile. Açık sayfa bulanıklaşır, kişisel veri görünmez.
 import { useEffect, useRef, useState } from 'react'
 import { api } from '../api'
 import { useSession } from '../session'
@@ -35,7 +35,7 @@ export function LockScreen({ onUnlock }: { onUnlock(): void }) {
     setErr('')
     setBusy(true)
     try {
-      // PIN (4–6 hane) ya da parola
+      // PIN (4-6 hane) ya da parola
       await api.post('/api/auth/unlock', /^\d{4,6}$/.test(secret) ? { pin: secret } : { password: secret })
       onUnlock()
     } catch (er) {

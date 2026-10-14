@@ -170,7 +170,7 @@ export class DbSupervisor {
     mkdirSync(dataDir, { recursive: true })
     const pwFile = join(dataDir, '..', `.pw-${process.pid}`)
     writeFileSync(pwFile, s.superPassword, { mode: 0o600 })
-    this.log(`initdb → ${dataDir}`)
+    this.log(`initdb -> ${dataDir}`)
     try {
       const base = ['-D', dataDir, '-U', 'postgres', `--pwfile=${pwFile}`, '--auth=scram-sha-256', '--encoding=UTF8']
       try {

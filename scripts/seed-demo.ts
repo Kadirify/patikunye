@@ -1,6 +1,6 @@
 // Kurulu uygulamanın (veya .dev-data'nın) veritabanına örnek veri basar.
-//   npx tsx scripts/seed-demo.ts --dev          → ./.dev-data
-//   npx tsx scripts/seed-demo.ts --app [--size 60] → %APPDATA%\PatiKünye\data (uygulama açıkken de çalışır)
+//   npx tsx scripts/seed-demo.ts --dev          -> ./.dev-data
+//   npx tsx scripts/seed-demo.ts --app [--size 60] -> %APPDATA%\PatiKünye\data (uygulama açıkken de çalışır)
 // Anahtarlar yalnızca bellekte çözülür; hiçbir yere yazılmaz/yazdırılmaz. Çalışan PostgreSQL durdurulmaz.
 import { join, resolve } from 'node:path'
 import { randomUUID } from 'node:crypto'

@@ -1,4 +1,4 @@
-// Muayene ve tedavi modülü (C) — API girdi/çıktı tipleri ve ortak kurallar (S-40, S-41, S-42)
+// Muayene ve tedavi modülü - API girdi/çıktı tipleri ve ortak kurallar
 import type { Sex, Species } from './api-types'
 
 export const VISIT_TYPES = ['exam', 'control', 'emergency', 'vaccine', 'surgery', 'home'] as const
@@ -54,13 +54,13 @@ export interface Vitals {
   resp?: number | null
   /** Kilo kg */
   weight?: number | null
-  /** Vücut kondisyon skoru 1–9 */
+  /** Vücut kondisyon skoru 1-9 */
   bcs?: number | null
   /** Kapiller dolum zamanı (sn) */
   crt?: number | null
   /** Dehidrasyon % */
   dehydration?: number | null
-  /** Mukoza (serbest metin: pembe, soluk, ikterik…) */
+  /** Mukoza (serbest metin: pembe, soluk, ikterik...) */
   mucosa?: string | null
 }
 
@@ -74,7 +74,7 @@ export interface Findings {
   systems: Partial<Record<SystemKey, SystemFinding>>
 }
 
-/** Doğrulama sınırları (SAYFALAR §16.3). hard = engel, warn = uyarı */
+/** Doğrulama sınırları. hard = engel, warn = uyarı */
 export const VITAL_LIMITS = {
   temp: { hard: [30, 45], warn: [35, 43], label: 'Ateş' },
   pulse: { hard: [1, 400], label: 'Nabız' },
@@ -194,7 +194,7 @@ export interface VisitOwnerDto {
   district: string | null
 }
 
-/** GET /api/visits/:id — yazdırma modülü (Ç-03, Ç-04) de kullanır */
+/** GET /api/visits/:id - yazdırma modülü de kullanır */
 export interface VisitDetail {
   id: string
   /** true ise kullanıcının içerik izni yok (sekreter): yalnızca tarih/hekim/tür dolu */
@@ -328,7 +328,7 @@ export function allergyMatch(allergies: string[], t: { drug?: string | null; act
   return null
 }
 
-/** "7 gün", "2 hafta", "1 ay" → gün sayısı (anlaşılmazsa null) */
+/** "7 gün", "2 hafta", "1 ay" -> gün sayısı (anlaşılmazsa null) */
 export function parseDurationDays(s: string | null | undefined): number | null {
   if (!s) return null
   const m = /(\d+)\s*(gün|gun|g|hafta|hf|ay)?/i.exec(s)
@@ -340,7 +340,7 @@ export function parseDurationDays(s: string | null | undefined): number | null {
   return n
 }
 
-/** mg/kg doz → toplam doz (3 ondalığa yuvarlanır) */
+/** mg/kg doz -> toplam doz (3 ondalığa yuvarlanır) */
 export function totalDose(dose: number | null | undefined, unit: string | null | undefined, weightKg: number | null | undefined): number | null {
   if (!isPerKg(unit) || dose == null || !weightKg) return null
   return Math.round(dose * weightKg * 1000) / 1000

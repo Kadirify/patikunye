@@ -1,4 +1,4 @@
-// Veritabanı durumu, bakım ve tanı paketi (S-111, S-02 "Tanı paketini kaydet")
+// Veritabanı durumu, bakım ve tanı paketi (, "Tanı paketini kaydet")
 import { open, stat } from 'node:fs/promises'
 import { join } from 'node:path'
 import type { AppDeps } from '../../context'
@@ -65,7 +65,7 @@ export async function dbStatus(deps: AppDeps): Promise<DbStatusDto> {
   }
 }
 
-/** VACUUM ANALYZE — transaction dışında (havuzdan tek komut, otomatik commit) */
+/** VACUUM ANALYZE - transaction dışında (havuzdan tek komut, otomatik commit) */
 export async function runMaintenance(deps: AppDeps): Promise<{ ms: number }> {
   const t0 = Date.now()
   await deps.db.$client.query('vacuum (analyze)')

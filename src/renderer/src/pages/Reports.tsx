@@ -1,4 +1,4 @@
-// Raporlar modülü (H): S-90 Raporlar sayfası + yazdırma önizlemesi (PrintPage, ./print/*)
+// Raporlar modülü: Raporlar sayfası + yazdırma önizlemesi (PrintPage, ./print/*)
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
@@ -77,7 +77,7 @@ export function ReportsPage() {
   const printParams = () => Object.fromEntries(Object.entries(filter).filter(([, v]) => !!v)) as Record<string, string>
 
   if (meta.isError) return <div className="alert">{(meta.error as Error).message}</div>
-  if (!m) return <div className="mut">Yükleniyor…</div>
+  if (!m) return <div className="mut">Yükleniyor...</div>
 
   const r = report.data
   return (
@@ -197,7 +197,7 @@ export function ReportsPage() {
               </section>
 
               {report.isError && <div className="alert">{(report.error as Error).message}</div>}
-              {report.isLoading && <div className="mut">Hazırlanıyor…</div>}
+              {report.isLoading && <div className="mut">Hazırlanıyor...</div>}
               {r && (
                 <>
                   <ReportSummary r={r} />
@@ -222,7 +222,7 @@ export function ReportsPage() {
   )
 }
 
-// S-62: PETVET denetim paketi — tarih aralığı + filtreler → Ç-06 yazdırma önizlemesi (PDF olarak kaydedilebilir)
+// PETVET denetim paketi - tarih araligi + filtreler -> yazdirma onizlemesi (PDF olarak kaydedilebilir)
 function AuditPackPanel({ meta }: { meta: ReportsMetaDto }) {
   const [[from, to], setRange] = useState<[string, string]>(prevMonth(meta.today))
   const [kinds, setKinds] = useState<PetvetTaskKind[]>([])
@@ -235,8 +235,8 @@ function AuditPackPanel({ meta }: { meta: ReportsMetaDto }) {
       <div className="ph"><h2>PETVET denetim paketi</h2></div>
       <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: 12 }}>
         <p className="mut" style={{ margin: 0 }}>
-          Kapak, tür bazında özet, satır satır görev listesi (çip, hayvan, sahip — TCKN maskeli, uygulama ve PETVET giriş tarihi, gün farkı, referans no) ve yüklenen belge listesi.
-          Önizlemede "Yazdır" → "PDF olarak kaydet" ile dosya adı otomatik gelir. Oluşturma denetim kaydına yazılır.
+          Kapak, tür bazında özet, satır satır görev listesi (çip, hayvan, sahip - TCKN maskeli, uygulama ve PETVET giriş tarihi, gün farkı, referans no) ve yüklenen belge listesi.
+          Önizlemede "Yazdır" -> "PDF olarak kaydet" ile dosya adı otomatik gelir. Oluşturma denetim kaydına yazılır.
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px 14px', alignItems: 'flex-end' }}>
           <div className="f">
@@ -296,7 +296,7 @@ function AuditPackPanel({ meta }: { meta: ReportsMetaDto }) {
   )
 }
 
-// Ç-09: iş listeleri (sade tablo, elle not almak için)
+// Is listeleri (sade tablo, elle not almak icin)
 function ListsPanel({ meta }: { meta: ReportsMetaDto }) {
   const [days, setDays] = useState(7)
   const [vetId, setVetId] = useState(meta.fixedVetId ?? '')
@@ -306,7 +306,7 @@ function ListsPanel({ meta }: { meta: ReportsMetaDto }) {
       <div style={{ padding: 12, display: 'flex', flexDirection: 'column', gap: 14 }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'flex-end' }}>
           <div className="f">
-            <label htmlFor="wl-vet">PETVET iş listesi — hekim</label>
+            <label htmlFor="wl-vet">PETVET iş listesi - hekim</label>
             <select id="wl-vet" className="inp" style={{ width: 200 }} value={vetId} onChange={(e) => setVetId(e.target.value)}>
               <option value="">Tüm hekimler</option>
               {meta.vets.map((v) => <option key={v.id} value={v.id}>{v.fullName}</option>)}
@@ -316,7 +316,7 @@ function ListsPanel({ meta }: { meta: ReportsMetaDto }) {
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'flex-end' }}>
           <div className="f">
-            <label htmlFor="wl-days">Aşı arama listesi — kaç gün içinde vadesi gelen</label>
+            <label htmlFor="wl-days">Aşı arama listesi - kaç gün içinde vadesi gelen</label>
             <input id="wl-days" className="inp mono" type="number" min={0} max={90} value={days} onChange={(e) => setDays(Math.max(0, Math.min(90, Number(e.target.value) || 0)))} style={{ width: 100 }} />
           </div>
           <button className="btn" onClick={() => openPrint('worklist', undefined, { list: 'vaccine-calls', days: String(days) })}>Aşı arama listesini yazdır</button>

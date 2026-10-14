@@ -1,4 +1,4 @@
-// S-115 Profilim: parola değiştir, PIN belirle/kaldır, bildirim tercihleri
+// Profilim: parola değiştir, PIN belirle/kaldır, bildirim tercihleri
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '../../api'
@@ -11,10 +11,10 @@ export function ProfilePage() {
   const q = useQuery({ queryKey: ['profile'], queryFn: () => api.get<ProfileDto>('/api/auth/profile') })
   const p = q.data
   if (q.isError) return <div className="alert">{errText(q.error)}</div>
-  if (!p) return <div className="mut">Yükleniyor…</div>
+  if (!p) return <div className="mut">Yükleniyor...</div>
   return (
     <>
-      <div className="page-head"><h1>Profilim</h1><span className="mut">{p.fullName} · {ROLE_LABEL[p.role]} · <span className="mono">{p.username}</span></span></div>
+      <div className="page-head"><h1>Profilim</h1><span className="mut">{p.fullName} - {ROLE_LABEL[p.role]} - <span className="mono">{p.username}</span></span></div>
       <PasswordForm changedAt={p.passwordChangedAt} />
       <PinForm p={p} />
       <PrefsForm prefs={p.prefs} />
@@ -91,12 +91,12 @@ function PinForm({ p }: { p: ProfileDto }) {
     >
       <div className="ph"><h2>PIN ile giriş</h2><span className="mut" style={{ fontSize: 12 }}>{p.pinSet ? 'PIN belirlenmiş' : 'PIN yok'}</span></div>
       {!p.pinAllowed ? (
-        <div style={{ padding: 12 }} className="mut">Klinik yöneticisi sizin için PIN girişine izin vermemiş (Ayarlar → Kullanıcılar).</div>
+        <div style={{ padding: 12 }} className="mut">Klinik yöneticisi sizin için PIN girişine izin vermemiş (Ayarlar -> Kullanıcılar).</div>
       ) : (
         <>
           <div style={{ padding: 12, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px 12px' }}>
             <Field label="Mevcut parola" htmlFor="pin-cur"><input id="pin-cur" type="password" className="inp" value={cur} onChange={(e) => setCur(e.target.value)} autoComplete="current-password" /></Field>
-            <Field label="Yeni PIN (4–6 rakam)" htmlFor="pin-new">
+            <Field label="Yeni PIN (4-6 rakam)" htmlFor="pin-new">
               <input id="pin-new" type="password" inputMode="numeric" maxLength={6} className="inp mono" style={{ letterSpacing: '0.3em' }} value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))} autoComplete="off" />
             </Field>
           </div>

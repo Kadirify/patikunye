@@ -1,4 +1,4 @@
-// S-100 Klinik: bilgiler ve çalışma saatleri (resmî tatiller randevu modülündedir)
+// Klinik: bilgiler ve çalışma saatleri (resmî tatiller randevu modülündedir)
 import { useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '../../api'
@@ -42,7 +42,7 @@ function ClinicInfoForm() {
   })
   const dirty = !!f && JSON.stringify(f) !== JSON.stringify(q.data)
   useCtrlS(() => f && dirty && save.mutate(f), dirty)
-  if (!f) return <section className="pnl empty">{q.isError ? errText(q.error) : 'Yükleniyor…'}</section>
+  if (!f) return <section className="pnl empty">{q.isError ? errText(q.error) : 'Yükleniyor...'}</section>
   const set = (k: keyof ClinicInfoDto) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value })
 
   return (
@@ -86,7 +86,7 @@ function WorkHoursForm() {
   useEffect(() => {
     if (s.data && !rows) setRows(s.data.workHours)
   }, [s.data, rows])
-  if (!rows) return <section className="pnl empty">Yükleniyor…</section>
+  if (!rows) return <section className="pnl empty">Yükleniyor...</section>
   const upd = (day: number, patch: Partial<WH>) => setRows(rows.map((r) => (r.day === day ? { ...r, ...patch } : r)))
   const byDay = (d: number): WH => rows.find((r) => r.day === d) ?? { day: d, open: '09:00', close: '18:00', closed: true }
 
@@ -117,7 +117,7 @@ function WorkHoursForm() {
                   <td><input type="time" className="inp mono" style={{ width: 100 }} value={r.close} disabled={r.closed} onChange={(e) => upd(d, { close: e.target.value })} aria-label={`${DAY_NAMES[d]} kapanış`} /></td>
                   <td style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                     <input type="time" className="inp mono" style={{ width: 100 }} value={r.breakStart ?? ''} disabled={r.closed} onChange={(e) => upd(d, { breakStart: e.target.value })} aria-label={`${DAY_NAMES[d]} öğle arası başlangıç`} />
-                    –
+                    -
                     <input type="time" className="inp mono" style={{ width: 100 }} value={r.breakEnd ?? ''} disabled={r.closed} onChange={(e) => upd(d, { breakEnd: e.target.value })} aria-label={`${DAY_NAMES[d]} öğle arası bitiş`} />
                   </td>
                 </tr>

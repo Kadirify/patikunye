@@ -1,4 +1,4 @@
-// S-101 Kullanıcılar: liste, yeni / düzenle, parola sıfırla, devre dışı bırak, oturumları kapat
+// Kullanıcılar: liste, yeni / düzenle, parola sıfırla, devre dışı bırak, oturumları kapat
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '../../api'
@@ -64,8 +64,8 @@ export function UsersSettingsPage() {
                   <td><strong>{u.fullName}</strong>{u.id === me?.id && <span className="mut"> (siz)</span>}</td>
                   <td className="mono">{u.username}</td>
                   <td>{ROLE_LABEL[u.role]}</td>
-                  <td className="mono">{u.chamberRegNo ?? '—'}</td>
-                  <td>{u.pinAllowed ? (u.pinSet ? 'İzinli · belirlendi' : 'İzinli') : <span className="mut">Kapalı</span>}</td>
+                  <td className="mono">{u.chamberRegNo ?? '-'}</td>
+                  <td>{u.pinAllowed ? (u.pinSet ? 'İzinli - belirlendi' : 'İzinli') : <span className="mut">Kapalı</span>}</td>
                   <td>
                     {!u.active ? <span className="st s-gry">Devre dışı</span> : u.mustChangePassword ? <span className="st s-amb">Parola değişikliği bekliyor</span> : <span className="st s-ok">Etkin</span>}
                   </td>

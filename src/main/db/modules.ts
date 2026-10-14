@@ -1,6 +1,6 @@
 // Modül migration'ları: migrations/*.sql dosyaları ada göre sırayla, bir kez çalıştırılır.
 // (drizzle/ klasöründeki ilk şema drizzle'ın kendi migrator'ıyla çalışır; modüller buraya ekler.)
-// Dosya adı biçimi: NNN_modul_aciklama.sql — NNN modül bloğu: 100 temel, 200 sahip/hayvan, 300 muayene,
+// Dosya adı biçimi: NNN_modul_aciklama.sql - NNN modül bloğu: 100 temel, 200 sahip/hayvan, 300 muayene
 // 400 aşı, 500 mesaj, 600 randevu, 700 ayarlar/kvkk, 800 yedek, 900 rapor, 950 ağ.
 import { readdirSync, readFileSync, existsSync } from 'node:fs'
 import { join } from 'node:path'

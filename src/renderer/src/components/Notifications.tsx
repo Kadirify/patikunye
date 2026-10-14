@@ -1,4 +1,4 @@
-// S-13 Bildirim merkezi: modüllerin özet uçlarından türetilir (ayrı bildirim tablosu yok).
+// Bildirim merkezi: modüllerin özet uçlarından türetilir (ayrı bildirim tablosu yok).
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'

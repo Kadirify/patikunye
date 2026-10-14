@@ -1,4 +1,4 @@
--- Modül M — Mesajlar ve hatırlatmalar (SAYFALAR.md S-80, S-82, S-105, S-106, §15.4)
+-- Mesajlar ve hatırlatmalar
 
 -- Hatırlatma kuyruğu: her satır tek bir gönderim (aynı aşı için 7 gün önce / 1 gün önce ayrı satırlardır)
 create table if not exists reminders (
@@ -12,7 +12,7 @@ create table if not exists reminders (
   to_address text,
   template_key varchar(40) not null,
   vars jsonb not null default '{}',
-  body_override text,                              -- S-80 "Düzenle": yalnızca bu mesaj için metin
+  body_override text,                              -- yalnizca bu mesaj icin ozel metin
   event_at timestamptz,                            -- olay zamanı (randevu saati / aşı vadesi)
   send_at timestamptz not null,
   status varchar(20) not null default 'planned',   -- planned | queued | sent | delivered | failed | permanent_failed | cancelled | no_consent | expired
@@ -30,7 +30,7 @@ create index if not exists reminders_source_idx on reminders (source_type, sourc
 create index if not exists reminders_animal_idx on reminders (animal_id);
 create index if not exists reminders_owner_idx on reminders (owner_id);
 
--- Gönderilen her mesajın kaydı (S-82)
+-- Gönderilen her mesajın kaydı
 create table if not exists messages (
   id uuid primary key default gen_random_uuid(),
   reminder_id uuid references reminders(id),
@@ -50,7 +50,7 @@ create table if not exists messages (
 create index if not exists messages_sent_at_idx on messages (sent_at desc);
 create index if not exists messages_owner_idx on messages (owner_id);
 
--- Şablonlar (S-106)
+-- Şablonlar
 create table if not exists message_templates (
   key varchar(40) not null,
   channel varchar(10) not null,
@@ -78,7 +78,7 @@ insert into message_templates (key, channel, subject, body, builtin) values
   ('control_reminder', 'sms', null, 'Sayın {sahip_ad}, {hayvan_ad} için kontrol muayenesi zamanı {tarih}. Randevu için: {klinik_tel} - {klinik_ad}', true),
   ('vaccine_reminder', 'email', '{hayvan_ad} için aşı hatırlatması', E'Sayın {sahip_ad},\n\n{hayvan_ad} için {asi_ad} aşısının zamanı {tarih}.\nRandevu almak için bizi arayabilirsiniz: {klinik_tel}\n\n{klinik_ad}', true),
   ('vaccine_overdue', 'email', '{hayvan_ad} için gecikmiş aşı', E'Sayın {sahip_ad},\n\n{hayvan_ad} için {asi_ad} aşısı {tarih} tarihinde yapılmalıydı. Gecikmemesi için lütfen bizi arayın: {klinik_tel}\n\n{klinik_ad}', true),
-  ('appointment_confirm', 'email', 'Randevunuz oluşturuldu', E'Sayın {sahip_ad},\n\n{hayvan_ad} için randevunuz {tarih} {saat} olarak oluşturuldu.\nHekim: {hekim_ad}\n\n{klinik_ad} · {klinik_tel}', true),
+  ('appointment_confirm', 'email', 'Randevunuz oluşturuldu', E'Sayın {sahip_ad},\n\n{hayvan_ad} için randevunuz {tarih} {saat} olarak oluşturuldu.\nHekim: {hekim_ad}\n\n{klinik_ad} - {klinik_tel}', true),
   ('appointment_reminder', 'email', 'Randevu hatırlatması', E'Sayın {sahip_ad},\n\n{hayvan_ad} için randevunuz {tarih} {saat}.\nGelemeyecekseniz lütfen haber verin: {klinik_tel}\n\n{klinik_ad}', true),
   ('appointment_cancel', 'email', 'Randevunuz iptal edildi', E'Sayın {sahip_ad},\n\n{hayvan_ad} için {tarih} {saat} randevunuz iptal edilmiştir.\nYeni randevu için: {klinik_tel}\n\n{klinik_ad}', true),
   ('control_reminder', 'email', '{hayvan_ad} için kontrol hatırlatması', E'Sayın {sahip_ad},\n\n{hayvan_ad} için kontrol muayenesi zamanı {tarih}.\nRandevu için: {klinik_tel}\n\n{klinik_ad}', true)

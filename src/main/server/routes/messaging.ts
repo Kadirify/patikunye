@@ -1,4 +1,4 @@
-// Mesajlar modülü API'si (S-80 kuyruk, S-82 geçmiş, S-105 ayarlar, S-106 şablonlar)
+// Mesajlar modülü API'si (kuyruk, geçmiş, ayarlar, şablonlar)
 import type { FastifyInstance } from 'fastify'
 import { sql, type SQL } from 'drizzle-orm'
 import { z } from 'zod'
@@ -65,7 +65,7 @@ export function messagingRoutes(app: FastifyInstance, deps: AppDeps) {
     return r
   }
 
-  /* ---------- S-80 kuyruk ---------- */
+  /* ---------- kuyruk ---------- */
 
   app.get('/api/messaging/summary', async (req) => {
     requirePerm(req, 'messages.send')
@@ -205,7 +205,7 @@ export function messagingRoutes(app: FastifyInstance, deps: AppDeps) {
     return { ok: true }
   })
 
-  /** S-80 "Düzenle": yalnızca bu mesaj için metin (null → şablona dön) */
+  /** "Düzenle": yalnızca bu mesaj için metin (null -> şablona dön) */
   app.put('/api/messaging/reminders/:id/body', async (req) => {
     const u = requirePerm(req, 'messages.send')
     const { id } = parse(z.object({ id: z.string().uuid('Geçersiz kimlik.') }), req.params)
@@ -219,7 +219,7 @@ export function messagingRoutes(app: FastifyInstance, deps: AppDeps) {
     return { ok: true }
   })
 
-  /* ---------- S-82 mesaj geçmişi ---------- */
+  /* ---------- mesaj geçmişi ---------- */
 
   app.get('/api/messaging/messages', async (req) => {
     requirePerm(req, 'messages.send')
@@ -275,7 +275,7 @@ export function messagingRoutes(app: FastifyInstance, deps: AppDeps) {
     } satisfies MessageHistoryResult
   })
 
-  /* ---------- S-106 şablonlar ---------- */
+  /* ---------- şablonlar ---------- */
 
   const mapTpl = (t: { key: string; channel: 'sms' | 'email'; subject: string | null; body: string; builtin: boolean; updated_at: Date }): MessageTemplateDto => ({
     key: t.key,
@@ -357,7 +357,7 @@ export function messagingRoutes(app: FastifyInstance, deps: AppDeps) {
     return { body, subject: b.subject ? fillTemplate(b.subject, vars) : null, count: smsSegments(body), unknown: unknownVariables(b.body) }
   })
 
-  /* ---------- S-105 ayarlar ---------- */
+  /* ---------- ayarlar ---------- */
 
   async function settingsDto(): Promise<MessagingSettingsDto> {
     const m = (await getSettings(db)).messaging
@@ -402,7 +402,7 @@ export function messagingRoutes(app: FastifyInstance, deps: AppDeps) {
         email: z.object({
           enabled: z.boolean(),
           host: z.string().trim().max(200),
-          port: z.number().int().min(1).max(65535, 'Port 1–65535 arasında olmalı.').nullable(),
+          port: z.number().int().min(1).max(65535, 'Port 1-65535 arasında olmalı.').nullable(),
           secure: z.boolean(),
           user: z.string().trim().max(200),
           from: z.string().trim().max(200),
@@ -432,7 +432,7 @@ export function messagingRoutes(app: FastifyInstance, deps: AppDeps) {
     return settingsDto()
   })
 
-  /** Sırlar ayrı uçla yazılır; değer asla geri döndürülmez. Boş değer → sırrı siler. */
+  /** Sırlar ayrı uçla yazılır; değer asla geri döndürülmez. Boş değer -> sırrı siler. */
   app.put('/api/messaging/secrets/:kind', async (req) => {
     const u = requirePerm(req, 'settings.manage')
     const { kind } = parse(z.object({ kind: channelSchema }), req.params)

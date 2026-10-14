@@ -1,4 +1,4 @@
-// S-95 KVKK talepleri ve S-114 KVKK metinleri
+// KVKK talepleri ve KVKK metinleri
 import { useEffect, useState } from 'react'
 import { Link, NavLink, Route, Routes, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -46,7 +46,7 @@ export function KvkkPage() {
 }
 
 function DaysLeft({ r }: { r: KvkkRequestDto }) {
-  if (r.status !== 'open') return <span className="mut">—</span>
+  if (r.status !== 'open') return <span className="mut">-</span>
   const cls = r.daysLeft < 0 ? 's-red' : r.daysLeft <= 7 ? 's-amb' : 's-gry'
   return <span className={`mono ${cls}`} style={{ fontWeight: 600 }}>{r.daysLeft < 0 ? `${-r.daysLeft} gün gecikti` : r.daysLeft === 0 ? 'bugün son' : `${r.daysLeft} gün`}</span>
 }
@@ -160,7 +160,7 @@ function NewRequest({ ownerId, onClose, onCreated }: { ownerId: string | null; o
                 {found.data?.map((o) => (
                   <button key={o.id} type="button" className="list-row" style={{ textAlign: 'left', border: 0, background: 'transparent', width: '100%' }} onClick={() => setOwner(o)}>
                     <strong>{o.name}</strong>{' '}
-                    <span className="mut">{o.phoneLast4 ? `tel …${o.phoneLast4}` : ''}{o.tcknLast4 ? ` · TCKN …${o.tcknLast4}` : ''}{o.anonymized ? ' · anonim' : ''}</span>
+                    <span className="mut">{o.phoneLast4 ? `tel ...${o.phoneLast4}` : ''}{o.tcknLast4 ? ` - TCKN ...${o.tcknLast4}` : ''}{o.anonymized ? ' - anonim' : ''}</span>
                   </button>
                 ))}
                 {found.data?.length === 0 && <span className="mut">Sonuç yok.</span>}
@@ -228,21 +228,21 @@ function RequestDetail() {
   }
 
   if (q.isError) return <div className="alert">{errText(q.error)}</div>
-  if (!r) return <div className="mut">Yükleniyor…</div>
+  if (!r) return <div className="mut">Yükleniyor...</div>
   const open = r.status === 'open'
 
   return (
     <>
-      <nav className="crumb" aria-label="Konum"><Link to="/ayarlar/kvkk">KVKK talepleri</Link> › {KVKK_REQUEST_TYPE_LABEL[r.type]} — {r.ownerName}</nav>
+      <nav className="crumb" aria-label="Konum"><Link to="/ayarlar/kvkk">KVKK talepleri</Link> › {KVKK_REQUEST_TYPE_LABEL[r.type]} - {r.ownerName}</nav>
       <div className="pnl" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px 20px', padding: '12px 14px', alignItems: 'center', borderColor: open && r.daysLeft < 0 ? 'var(--red)' : undefined }}>
         <div>
           <h2 style={{ fontSize: 16, margin: 0 }}>{KVKK_REQUEST_TYPE_LABEL[r.type]}</h2>
-          <span className="mut">{r.ownerName}{r.ownerAnonymized ? ' (anonimleştirildi)' : ''} · {KVKK_CHANNEL_LABEL[r.channel]} · başvuru {formatDateTr(r.receivedAt)}</span>
+          <span className="mut">{r.ownerName}{r.ownerAnonymized ? ' (anonimleştirildi)' : ''} - {KVKK_CHANNEL_LABEL[r.channel]} - başvuru {formatDateTr(r.receivedAt)}</span>
           {r.note && <div style={{ fontSize: 13 }}>{r.note}</div>}
         </div>
         <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
           <div><StatusTag s={r.status} /> <DaysLeft r={r} /></div>
-          <div className="mono mut" style={{ fontSize: 12 }}>son gün {formatDateTr(r.dueDate)}{r.closedAt ? ` · kapandı ${fmtDateTime(r.closedAt)}` : ''}</div>
+          <div className="mono mut" style={{ fontSize: 12 }}>son gün {formatDateTr(r.dueDate)}{r.closedAt ? ` - kapandı ${fmtDateTime(r.closedAt)}` : ''}</div>
         </div>
       </div>
 
@@ -251,7 +251,7 @@ function RequestDetail() {
         <div style={{ padding: 12, display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
           <button className="btn" onClick={exportCopy} disabled={r.ownerAnonymized}>Veri kopyası indir (JSON)</button>
           <Link className="btn" to={`/sahipler/${r.ownerId}`}>Sahip kaydını aç (düzeltme)</Link>
-          <button className="btn" onClick={() => setAnon(true)} disabled={r.ownerAnonymized}>Anonimleştir…</button>
+          <button className="btn" onClick={() => setAnon(true)} disabled={r.ownerAnonymized}>Anonimleştir...</button>
           <button className="btn" onClick={() => openPrint('kvkk-response', r.id)}>Yanıt yazısı yazdır</button>
           {exportErr && <span className="err">{exportErr}</span>}
         </div>
@@ -305,7 +305,7 @@ function AnonymizeDialog({ ownerId, requestId, onClose }: { ownerId: string; req
   return (
     <Modal title="Anonimleştirme önizlemesi" onClose={onClose} width={640}>
       {!p ? (
-        <div className="empty">{pv.isError ? errText(pv.error) : 'Yükleniyor…'}</div>
+        <div className="empty">{pv.isError ? errText(pv.error) : 'Yükleniyor...'}</div>
       ) : (
         <form
           onSubmit={(e) => {
@@ -315,7 +315,7 @@ function AnonymizeDialog({ ownerId, requestId, onClose }: { ownerId: string; req
         >
           <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
             <div className="alert" style={{ fontSize: 13 }}>Bu işlem <strong>geri alınamaz</strong>. Kişisel veriler kalıcı olarak silinir.</div>
-            <div>Ad: <strong>{p.currentName}</strong> → <strong>{p.anonymName}</strong></div>
+            <div>Ad: <strong>{p.currentName}</strong> -> <strong>{p.anonymName}</strong></div>
             <div>
               <div style={{ fontWeight: 600, marginBottom: 4 }}>Silinecek alanlar</div>
               <ul style={{ margin: 0, paddingLeft: 18, columns: 2, fontSize: 13 }}>
@@ -332,7 +332,7 @@ function AnonymizeDialog({ ownerId, requestId, onClose }: { ownerId: string; req
                 </tbody>
               </table>
             </div>
-            <div className="mut" style={{ fontSize: 12 }}>Not: Denetim kaydındaki geçmiş özetler değiştirilemez (hash zinciri). ⚠️ Saklama gerekçeleri hukukçuyla netleşmeli.</div>
+            <div className="mut" style={{ fontSize: 12 }}>Not: Denetim kaydindaki gecmis ozetler degistirilemez (hash zinciri).</div>
             <Field label={`Onay için "${ANONYMIZE_CONFIRM}" yazın`} htmlFor="an-c" error={fieldErr(run.error, 'confirm')}>
               <input id="an-c" className="inp mono" value={confirmText} onChange={(e) => setConfirmText(e.target.value)} autoComplete="off" />
             </Field>
@@ -382,7 +382,7 @@ function Texts() {
           <button key={k} className={`btn sm${kind === k ? ' p' : ''}`} onClick={() => { setKind(k); setBody(null) }}>{KVKK_TEXT_LABEL[k]}</button>
         ))}
       </div>
-      <div className="alert amb" style={{ fontSize: 13 }}>Uygulamayla gelen metinler örnektir; kullanmadan önce hukukçu onayı gerekir. Her kayıt yeni sürüm oluşturur, eski onaylar eski sürüme bağlı kalır. VERBİS kayıt yükümlülüğünü kliniğinize göre kontrol edin.</div>
+      <div className="alert amb" style={{ fontSize: 13 }}>Uygulamayla gelen metinler ornektir; kullanmadan once hukuki danismanlik alin. Her kayit yeni surum olusturur, eski onaylar eski surume bagli kalir. VERBIS kayit yukumlulugunu kliniginize gore kontrol edin.</div>
       <form
         className="pnl"
         onSubmit={(e) => {
@@ -390,7 +390,7 @@ function Texts() {
           if (dirty) save.mutate()
         }}
       >
-        <div className="ph"><h2>{KVKK_TEXT_LABEL[kind]}</h2><span className="mut" style={{ fontSize: 12 }}>{cur ? `Sürüm ${cur.version} · ${fmtDateTime(cur.publishedAt)}` : ''}</span></div>
+        <div className="ph"><h2>{KVKK_TEXT_LABEL[kind]}</h2><span className="mut" style={{ fontSize: 12 }}>{cur ? `Sürüm ${cur.version} - ${fmtDateTime(cur.publishedAt)}` : ''}</span></div>
         <div style={{ padding: 12 }}>
           <textarea className="inp" aria-label="Metin" style={{ height: 320, padding: 10, lineHeight: 1.5 }} value={text} onChange={(e) => setBody(e.target.value)} />
         </div>

@@ -3,18 +3,17 @@
 // Kaynaklar (İletimerkezi'nin geliştirici sitesi toplusmsapi.com):
 //  - Gönderim: https://www.toplusmsapi.com/en/sms/gonder/json
 //    POST https://api.iletimerkezi.com/v1/send-sms/json
-//    { request: { authentication: { key, hash }, order: { sender, sendDateTime: [], iys, iysList,
+//    { request: { authentication: { key, hash }, order: { sender, sendDateTime: [], iys, iysList
 //      message: { text, receipents: { number: [...] } } } } }   ("receipents" yazımı API'de böyle)
 //    Başarı: response.status.code = 200, response.order.id
 //  - Bakiye: https://www.toplusmsapi.com/en/hesap/bakiye/json
-//    POST https://api.iletimerkezi.com/v1/get-balance/json → response.balance.{amount, sms}
+//    POST https://api.iletimerkezi.com/v1/get-balance/json -> response.balance.{amount, sms}
 //  - Resmî PHP SDK: https://github.com/iletimerkezi/iletimerkezi-php (istemci API anahtarı + API hash alır)
 //
 // Ayarlar eşlemesi: "kullanıcı adı" = API anahtarı (key), şifreli sır = API hash (panelden alınır).
-// ⚠️ doğrulanacak: hash'in panelde hazır verildiği mi yoksa key+secret'tan istemcide mi üretildiği
-//    (dokümanda algoritma yazmıyor). Gerçek hesapla denenmedi.
-// İYS: hatırlatmalar bilgilendirme amaçlı olduğundan iys = "0" gönderilir.
-// ⚠️ doğrulanacak (hukuk): aşı/randevu hatırlatmasının ticari ileti sayılmadığı varsayımı (PLAN.md §5).
+// Hash'in panelden mi yoksa key+secret'tan mi uretildigi netlesmeli (dokumanda algoritma yazmiyor).
+// Gercek hesapla denenmedi.
+// IYS: hatirlatmalar bilgilendirme amacli oldugundan iys = "0" gonderilir.
 import { HTTP_TIMEOUT_MS, toLocalGsm, type FetchLike, type MessageProvider, type SendResult } from './types'
 
 const BASE = 'https://api.iletimerkezi.com/v1'

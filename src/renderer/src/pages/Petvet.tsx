@@ -1,4 +1,4 @@
-// S-60 PETVET iş listesi ve S-61 görev detayı
+// PETVET iş listesi ve görev detayı
 import { useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -30,7 +30,7 @@ export function PetvetListPage() {
     <>
       <div className="page-head">
         <h1>PETVET işleri</h1>
-        <span className="mut">Bakanlık sistemine (hbs.tarbil.gov.tr) girilmesi gerekenler · yeni çip için süre 15 gün</span>
+        <span className="mut">Bakanlık sistemine (hbs.tarbil.gov.tr) girilmesi gerekenler - yeni çip için süre 15 gün</span>
       </div>
       <nav aria-label="Durum filtresi" className="pnl fstrip">
         {FILTERS.map((f) => (
@@ -40,7 +40,7 @@ export function PetvetListPage() {
             style={f.key === 'overdue' && filter !== f.key && summary.data?.overdue ? { color: 'var(--red)' } : undefined}
             onClick={() => setParams({ f: f.key })}
           >
-            <span className="v">{summary.data ? f.n(summary.data) : '–'}</span>
+            <span className="v">{summary.data ? f.n(summary.data) : '-'}</span>
             <span className="kx">{f.label}</span>
           </button>
         ))}
@@ -56,12 +56,12 @@ export function PetvetListPage() {
                 <tr key={t.id} className={`click${t.urgency === 'overdue' && t.status !== 'done' ? ' hot' : ''}`} onClick={() => nav(`/petvet/${t.id}`)}>
                   <td className="mono">{formatDateTr(t.dueDate)}</td>
                   <td className={`mono ${t.status === 'done' ? 'mut' : urgencyClass(t.urgency)}`} style={{ fontWeight: 600 }}>
-                    {t.status === 'done' ? '—' : urgencyText(t.urgency, t.daysLeft)}
+                    {t.status === 'done' ? '-' : urgencyText(t.urgency, t.daysLeft)}
                   </td>
                   <td>{kindLabel(t.kind)}</td>
                   <td><strong>{t.animalName}</strong> <span className="mut">{speciesLabel(t.species)}</span></td>
                   <td><ChipNo value={t.chipNo} short /></td>
-                  <td>{t.ownerName}{t.missingFields.includes('owner.tckn') && <span className="s-amb"> — TCKN yok</span>}</td>
+                  <td>{t.ownerName}{t.missingFields.includes('owner.tckn') && <span className="s-amb"> - TCKN yok</span>}</td>
                   <td>{t.vetName}</td>
                   <td><PetvetState status={t.status} urgency={t.urgency} daysLeft={t.daysLeft} /></td>
                 </tr>
@@ -123,18 +123,18 @@ export function PetvetTaskPage() {
 
   const t = q.data
   if (q.isError) return <div className="alert">{(q.error as Error).message}</div>
-  if (!t) return <div className="mut">Yükleniyor…</div>
+  if (!t) return <div className="mut">Yükleniyor...</div>
   const group = (g: 'owner' | 'animal') => t.copyFields.filter((f) => f.group === g)
   const open = t.status === 'pending' || t.status === 'missing_info'
   const allText = t.copyFields.map((f) => `${f.label}\t${f.value}`).join('\n')
 
   return (
     <>
-      <nav className="crumb" aria-label="Konum"><Link to="/petvet">PETVET işleri</Link> › {kindLabel(t.kind)} — {t.animalName}</nav>
+      <nav className="crumb" aria-label="Konum"><Link to="/petvet">PETVET işleri</Link> › {kindLabel(t.kind)} - {t.animalName}</nav>
       <div className="pnl" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '10px 20px', padding: '12px 14px', borderColor: open && t.urgency === 'overdue' ? 'var(--red)' : undefined }}>
         <div>
-          <h1 style={{ fontSize: 18 }}>{kindLabel(t.kind)} kaydı · {t.animalName}</h1>
-          <span className="mut">Olay tarihi {formatDateTr(t.eventDate)}{t.vetName ? ` · ${t.vetName}` : ''}</span>
+          <h1 style={{ fontSize: 18 }}>{kindLabel(t.kind)} kaydı - {t.animalName}</h1>
+          <span className="mut">Olay tarihi {formatDateTr(t.eventDate)}{t.vetName ? ` - ${t.vetName}` : ''}</span>
         </div>
         <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
           {open ? (
@@ -159,7 +159,7 @@ export function PetvetTaskPage() {
             {group(g).map((f) => (
               <div key={f.key} className="cp">
                 <span className="k">{f.label}</span>
-                <span className="v" style={f.key === 'chipNo' ? { fontWeight: 600 } : undefined}>{f.value || <span className="mut">—</span>}</span>
+                <span className="v" style={f.key === 'chipNo' ? { fontWeight: 600 } : undefined}>{f.value || <span className="mut">-</span>}</span>
                 <CopyButton value={f.value} label={f.label} />
               </div>
             ))}
@@ -195,7 +195,7 @@ export function PetvetTaskPage() {
         </form>
       ) : (
         <div className="alert ok" style={{ maxWidth: 820 }}>
-          PETVET'e girildi{t.doneAt ? ` · ${new Date(t.doneAt).toLocaleString('tr-TR')}` : ''}{t.petvetRef ? ` · referans ${t.petvetRef}` : ''}{t.note ? ` · ${t.note}` : ''}
+          PETVET'e girildi{t.doneAt ? ` - ${new Date(t.doneAt).toLocaleString('tr-TR')}` : ''}{t.petvetRef ? ` - referans ${t.petvetRef}` : ''}{t.note ? ` - ${t.note}` : ''}
         </div>
       )}
       {t.copyFields.some((f) => f.key === 'tckn' && f.value) && (

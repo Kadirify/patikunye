@@ -61,7 +61,7 @@ export const speciesLabel = (s: Species) => SPECIES_LABEL[s]
 
 export function ChipNo({ value, short }: { value: string | null; short?: boolean }) {
   if (!value) return <span className="s-red">çipsiz</span>
-  const v = short && /^\d{15}$/.test(value) ? `${value.slice(0, 3)}…${value.slice(9, 12)} ${value.slice(12)}` : formatChip(value)
+  const v = short && /^\d{15}$/.test(value) ? `${value.slice(0, 3)}...${value.slice(9, 12)} ${value.slice(12)}` : formatChip(value)
   return <span className="mono">{v}</span>
 }
 
@@ -77,7 +77,7 @@ export function age(birthDate: string | null, today = new Date()): string {
 }
 
 export function animalLine(a: Pick<AnimalListItem, 'species' | 'breed' | 'birthDate'>) {
-  return [SPECIES_LABEL[a.species], a.breed, age(a.birthDate)].filter(Boolean).join(' · ')
+  return [SPECIES_LABEL[a.species], a.breed, age(a.birthDate)].filter(Boolean).join(' - ')
 }
 
 /* Bildirim (toast) */

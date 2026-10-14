@@ -1,4 +1,4 @@
-// Ayarlar sayfaları için ortak küçük parçalar (modül F)
+// Ayarlar sayfaları için ortak küçük parçalar 
 import { useEffect, useRef, type ReactNode } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api, HttpError } from '../../api'
@@ -110,4 +110,4 @@ export function downloadText(fileName: string, text: string, mime = 'text/plain;
   setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
 
-export const fmtDateTime = (iso: string | null) => (iso ? new Date(iso).toLocaleString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—')
+export const fmtDateTime = (iso: string | null) => (iso ? new Date(iso).toLocaleString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-')

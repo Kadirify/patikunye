@@ -7,14 +7,14 @@
 //     6  u8  log2(N)   7 u8 r   8 u8 p
 //     9  16 bayt tuz
 //    25  12 bayt IV (AES-256-GCM)
-//    37  32 bayt parola denetimi (scrypt çıktısının ikinci yarısı → yanlış parola hemen anlaşılır)
+//    37  32 bayt parola denetimi (scrypt çıktısının ikinci yarısı -> yanlış parola hemen anlaşılır)
 //   [şifreli gövde]  AES-256-GCM( gzip( kayıt akışı ) )
 //   [16 bayt GCM etiketi]
 //
 // Kayıt akışı: art arda [u8 tür][u32 BE uzunluk][yük] kayıtları.
 //   META(1)      JSON: biçim, uygulama sürümü, oluşturma zamanı, migration listesi, tablolar ve sütunlar
 //   TABLE(2)     JSON: { name, columns }
-//   ROW(3)       satırın JSON metni (to_jsonb) — tablo başına NDJSON
+//   ROW(3)       satırın JSON metni (to_jsonb) - tablo başına NDJSON
 //   TABLE_END(4) JSON: { name, rows, sha256 }
 //   FILE(5)      JSON: { attachmentId, size, sha256 }  (çözülmüş içerik)
 //   FILE_DATA(6) ham bayt parçası

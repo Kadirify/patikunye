@@ -27,13 +27,13 @@ export interface HistoryResult {
   appointments: number
   deaths: number
   petvetDone: number
-  /** Kayıt tarihlerini geriye çekmek için: hayvan → çip tarihi */
+  /** Kayıt tarihlerini geriye çekmek için: hayvan -> çip tarihi */
   backdate: { animalId: string; ownerId: string; date: string }[]
   errors: string[]
 }
 
 /**
- * from (örn. 2020-02-03) ile bugünün ~3 ay öncesi arasında çiplenen hayvanlar; her yıl karma + kuduz aşısı,
+ * from (örn. 2020-02-03) ile bugünün ~3 ay öncesi arasında çiplenen hayvanlar; her yıl karma + kuduz aşısı
  * yıllar içinde muayeneler ve bitmiş randevular, birkaç vefat. 2023 öncesinde tek hekim yöneticidir.
  */
 export async function seedHistory(call: Call, opts: { today: string; from: string; to?: string; uniform?: boolean; count: number; log?: (m: string) => void }): Promise<HistoryResult> {
@@ -113,7 +113,7 @@ export async function seedHistory(call: Call, opts: { today: string; from: strin
     const animalId = reg.data.animalId
     res.backdate.push({ animalId, ownerId: reg.data.ownerId, date: implant })
 
-    // Aşılar: çip günü karma, 2–4 hafta sonra kuduz; her yıl tekrar. Bazı sahipler bir süre sonra gelmeyi bırakır.
+    // Aşılar: çip günü karma, 2-4 hafta sonra kuduz; her yıl tekrar. Bazı sahipler bir süre sonra gelmeyi bırakır.
     const quitAfter = chance(0.3) ? int(1, 3) : 99
     let d = implant
     for (let year = 0; d < end && year <= quitAfter; year++) {
@@ -138,7 +138,7 @@ export async function seedHistory(call: Call, opts: { today: string; from: strin
       d = weekday(addDaysIso(d, int(355, 380)))
     }
 
-    // Muayeneler; çoğu bir randevudan gelir (randevu: geldi → muayenede → bitti)
+    // Muayeneler; çoğu bir randevudan gelir (randevu: geldi -> muayenede -> bitti)
     const n = int(1, 5)
     for (let k = 0; k < n; k++) {
       const vd = weekday(addDaysIso(implant, int(5, Math.max(6, days(implant, end) - 1))))

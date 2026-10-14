@@ -1,4 +1,4 @@
-// Randevu modülü (E): S-70 takvim, S-71 randevu formu, S-72 bekleme salonu, Bugün ekranı randevu kartı
+// Randevu modülü: takvim, randevu formu, bekleme salonu, Bugün ekranı randevu kartı
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
@@ -78,7 +78,7 @@ function StatusBadge({ a }: { a: AppointmentDto }) {
     return <span className={`st ${late ? 's-red' : 's-amb'}`}>Bekliyor {a.waitMinutes ?? 0} dk</span>
   }
   if (a.status === 'done') return <span className="st s-ok">Bitti</span>
-  if (a.suggestNoShow) return <span className="st s-amb">Gecikti · gelmedi?</span>
+  if (a.suggestNoShow) return <span className="st s-amb">Gecikti - gelmedi?</span>
   return <span className={`st ${APPOINTMENT_STATUS_CLASS[a.status]}`}>{APPOINTMENT_STATUS_LABEL[a.status]}</span>
 }
 
@@ -108,7 +108,7 @@ function useConfig() {
   return useQuery({ queryKey: ['appt-config'], queryFn: () => api.get<AppointmentConfigDto>('/api/appointments/config'), staleTime: 60_000 })
 }
 
-/** Durum değiştirme (hata → toast) */
+/** Durum değiştirme (hata -> toast) */
 function useStatusAction() {
   const qc = useQueryClient()
   const toast = useToast()
@@ -129,7 +129,7 @@ function warnText(w: AppointmentWarning[]) {
   return w.map((x) => x.message).join(' ')
 }
 
-/* ---------- Hasta seçici (S-71) ---------- */
+/* ---------- Hasta seçici ---------- */
 
 type Patient =
   | { kind: 'animal'; id: string; label: string; sub: string }
@@ -145,7 +145,7 @@ function PatientPicker({ value, onChange }: { value: Patient | null; onChange: (
   if (value?.kind === 'animal') {
     return (
       <div style={{ border: '1px solid var(--accent)', background: '#eef3fa', borderRadius: 2, padding: '6px 10px', display: 'flex', gap: 10, alignItems: 'center' }}>
-        <span><strong>{value.label}</strong> <span className="mut">· {value.sub}</span></span>
+        <span><strong>{value.label}</strong> <span className="mut">- {value.sub}</span></span>
         <button type="button" className="btn sm" style={{ marginLeft: 'auto' }} onClick={() => onChange(null)}>Değiştir</button>
       </div>
     )
@@ -171,8 +171,8 @@ function PatientPicker({ value, onChange }: { value: Patient | null; onChange: (
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
       <div style={{ display: 'flex', gap: 8 }}>
-        <input className="inp" style={{ flex: 1 }} aria-label="Hasta ara" placeholder="Hayvan adı, sahip, telefon, çip…" value={q} onChange={(e) => setQ(e.target.value)} autoComplete="off" autoFocus />
-        <button type="button" className="btn" onClick={() => onChange({ kind: 'new', ownerName: '', phone: '', animalName: '', species: 'cat' })}>Yeni hasta…</button>
+        <input className="inp" style={{ flex: 1 }} aria-label="Hasta ara" placeholder="Hayvan adı, sahip, telefon, çip..." value={q} onChange={(e) => setQ(e.target.value)} autoComplete="off" autoFocus />
+        <button type="button" className="btn" onClick={() => onChange({ kind: 'new', ownerName: '', phone: '', animalName: '', species: 'cat' })}>Yeni hasta...</button>
       </div>
       {search.data && search.data.length > 0 && (
         <div style={{ border: '1px solid var(--line)', borderRadius: 2, maxHeight: 220, overflowY: 'auto' }}>
@@ -182,9 +182,9 @@ function PatientPicker({ value, onChange }: { value: Patient | null; onChange: (
               type="button"
               className="list-row"
               style={{ width: '100%', border: 0, borderBottom: '1px solid var(--line-3)', background: '#fff', textAlign: 'left', cursor: 'pointer' }}
-              onClick={() => onChange({ kind: 'animal', id: x.id, label: x.name, sub: [animalLine(x), x.ownerName, formatTrPhone(x.ownerPhone)].filter(Boolean).join(' · ') })}
+              onClick={() => onChange({ kind: 'animal', id: x.id, label: x.name, sub: [animalLine(x), x.ownerName, formatTrPhone(x.ownerPhone)].filter(Boolean).join(' - ') })}
             >
-              <span><strong>{x.name}</strong> <span className="mut">· {animalLine(x)}</span></span>
+              <span><strong>{x.name}</strong> <span className="mut">- {animalLine(x)}</span></span>
               <span className="mut">{x.ownerName}</span>
             </button>
           ))}
@@ -201,7 +201,7 @@ function patientBody(p: Patient | null) {
   return { newPatient: { ownerName: p.ownerName, phone: p.phone, animalName: p.animalName, species: p.species } }
 }
 
-/* ---------- S-71 Randevu formu ---------- */
+/* ---------- Randevu formu ---------- */
 
 interface FormPreset {
   date?: string
@@ -218,7 +218,7 @@ function AppointmentForm({ cfg, edit, preset, onClose }: { cfg: AppointmentConfi
   const defVet = preset.vetId ?? cfg.vets.find((v) => v.id === user?.id)?.id ?? cfg.vets[0]?.id ?? ''
   const [patient, setPatient] = useState<Patient | null>(() => {
     if (!edit) return null
-    if (edit.animalId) return { kind: 'animal', id: edit.animalId, label: edit.animalName, sub: [edit.ownerName, formatTrPhone(edit.ownerPhone)].filter(Boolean).join(' · ') }
+    if (edit.animalId) return { kind: 'animal', id: edit.animalId, label: edit.animalName, sub: [edit.ownerName, formatTrPhone(edit.ownerPhone)].filter(Boolean).join(' - ') }
     return { kind: 'new', ownerName: edit.ownerName ?? '', phone: formatTrPhone(edit.ownerPhone), animalName: edit.animalName, species: edit.species ?? 'other' }
   })
   const [f, setF] = useState(() => ({
@@ -247,7 +247,7 @@ function AppointmentForm({ cfg, edit, preset, onClose }: { cfg: AppointmentConfi
   useEffect(() => {
     if (pre.data && !patient) {
       const o = pre.data.owners.find((x) => x.isPrimary) ?? pre.data.owners[0]
-      setPatient({ kind: 'animal', id: pre.data.id, label: pre.data.name, sub: [animalLine(pre.data), o?.fullName, formatTrPhone(o?.phone)].filter(Boolean).join(' · ') })
+      setPatient({ kind: 'animal', id: pre.data.id, label: pre.data.name, sub: [animalLine(pre.data), o?.fullName, formatTrPhone(o?.phone)].filter(Boolean).join(' - ') })
     }
   }, [pre.data]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -344,7 +344,7 @@ function AppointmentForm({ cfg, edit, preset, onClose }: { cfg: AppointmentConfi
                 }}
                 required
               >
-                {activeTypes.map((t) => <option key={t.id} value={t.id}>{t.name} · {t.defaultMinutes} dk</option>)}
+                {activeTypes.map((t) => <option key={t.id} value={t.id}>{t.name} - {t.defaultMinutes} dk</option>)}
               </select>
             </Field>
             <Field label="Neden / not" htmlFor="ap-r" style={{ gridColumn: 'span 2' }}>
@@ -368,10 +368,10 @@ function AppointmentForm({ cfg, edit, preset, onClose }: { cfg: AppointmentConfi
           )}
         </div>
         <div className="form-foot">
-          <span className="mut" style={{ fontSize: 12 }}>Ctrl+S kaydet · Esc kapat</span>
+          <span className="mut" style={{ fontSize: 12 }}>Ctrl+S kaydet - Esc kapat</span>
           <div style={{ display: 'flex', gap: 8 }}>
             <button type="button" className="btn" onClick={onClose}>Vazgeç</button>
-            <button type="submit" className="btn p" disabled={busy}>{busy ? 'Kaydediliyor…' : 'Kaydet'}</button>
+            <button type="submit" className="btn p" disabled={busy}>{busy ? 'Kaydediliyor...' : 'Kaydet'}</button>
           </div>
         </div>
       </form>
@@ -404,7 +404,7 @@ function CancelDialog({ a, onClose }: { a: AppointmentDto; onClose: () => void }
     }
   }
   return (
-    <Modal title={`Randevu iptali · ${a.animalName} ${formatDateTr(a.date)} ${a.time}`} onClose={onClose} width={480}>
+    <Modal title={`Randevu iptali - ${a.animalName} ${formatDateTr(a.date)} ${a.time}`} onClose={onClose} width={480}>
       <form onSubmit={submit}>
         <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
           <fieldset style={{ border: 0, padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -443,15 +443,15 @@ function SummaryDialog({ a, onClose, onEdit, onCancel }: { a: AppointmentDto; on
     <div style={{ display: 'grid', gridTemplateColumns: '110px 1fr', gap: 8, padding: '4px 0' }}><span className="mut">{k}</span><span>{v}</span></div>
   )
   return (
-    <Modal title={`${a.time}–${a.endTime} · ${a.animalName}`} onClose={onClose} width={460}>
+    <Modal title={`${a.time}-${a.endTime} - ${a.animalName}`} onClose={onClose} width={460}>
       <div style={{ padding: '10px 16px' }}>
-        {row('Hasta', <>{a.animalId ? <Link to={`/hayvanlar/${a.animalId}`}>{a.animalName}</Link> : a.animalName}{a.species && <span className="mut"> · {SPECIES_LABEL[a.species]}</span>} <PatientTags a={a} /></>)}
-        {row('Sahip', a.ownerName ?? '—')}
-        {row('Telefon', <span className="mono">{formatTrPhone(a.ownerPhone) || '—'}</span>)}
-        {row('Tarih', `${formatDateTr(a.date)} ${a.time}–${a.endTime} (${a.durationMinutes} dk)`)}
+        {row('Hasta', <>{a.animalId ? <Link to={`/hayvanlar/${a.animalId}`}>{a.animalName}</Link> : a.animalName}{a.species && <span className="mut"> - {SPECIES_LABEL[a.species]}</span>} <PatientTags a={a} /></>)}
+        {row('Sahip', a.ownerName ?? '-')}
+        {row('Telefon', <span className="mono">{formatTrPhone(a.ownerPhone) || '-'}</span>)}
+        {row('Tarih', `${formatDateTr(a.date)} ${a.time}-${a.endTime} (${a.durationMinutes} dk)`)}
         {row('Hekim', a.vetName ?? <span className="s-amb">Seçilmedi</span>)}
-        {row('Tür', a.typeName ?? '—')}
-        {row('Neden / not', a.reason || '—')}
+        {row('Tür', a.typeName ?? '-')}
+        {row('Neden / not', a.reason || '-')}
         {row('Durum', <><StatusBadge a={a} />{a.overlap && <span className="tag s-amb" style={{ marginLeft: 6 }}>Çift kayıt</span>}</>)}
         {a.status === 'cancelled' && row('İptal', `${a.cancelledBySide === 'owner' ? 'Sahip' : 'Klinik'}: ${a.cancelReason ?? ''}`)}
       </div>
@@ -736,11 +736,11 @@ function TimeGrid({
                     aria-label={`${a.time} ${a.animalName}, ${APPOINTMENT_STATUS_LABEL[a.status]}`}
                   >
                     <strong>{a.time} {a.animalName}</strong>
-                    {!compact && <> · {a.reason || a.typeName}</>}
-                    {a.status !== 'planned' && <> · <span className={APPOINTMENT_STATUS_CLASS[a.status]}>{APPOINTMENT_STATUS_LABEL[a.status].toLocaleLowerCase('tr-TR')}</span></>}
-                    {a.overlap && <> · <span className="s-amb">çift kayıt</span></>}
+                    {!compact && <> - {a.reason || a.typeName}</>}
+                    {a.status !== 'planned' && <> - <span className={APPOINTMENT_STATUS_CLASS[a.status]}>{APPOINTMENT_STATUS_LABEL[a.status].toLocaleLowerCase('tr-TR')}</span></>}
+                    {a.overlap && <> - <span className="s-amb">çift kayıt</span></>}
                     {compact && a.vetName && <div className="mut">{shortName(a.vetName)}</div>}
-                    {!compact && h >= 50 && <div className="mut">{[a.ownerName, formatTrPhone(a.ownerPhone)].filter(Boolean).join(' · ')}</div>}
+                    {!compact && h >= 50 && <div className="mut">{[a.ownerName, formatTrPhone(a.ownerPhone)].filter(Boolean).join(' - ')}</div>}
                   </button>
                   {movable && (
                     <div
@@ -767,7 +767,7 @@ function TimeGrid({
   )
 }
 
-/* ---------- S-70 Randevu takvimi ---------- */
+/* ---------- Randevu takvimi ---------- */
 
 type View = 'day' | 'week' | 'list'
 
@@ -794,7 +794,7 @@ export function AppointmentsPage() {
   const cfgQ = useConfig()
   const cfg = cfgQ.data
 
-  // ?yeni=1&animal=ID&tarih=YYYY-MM-DD → ön doldurmalı form
+  // ?yeni=1&animal=ID&tarih=YYYY-MM-DD -> ön doldurmalı form
   useEffect(() => {
     if (params.get('yeni') === '1') {
       setForm({ edit: null, preset: { animalId: params.get('animal') ?? undefined, date: params.get('tarih') ?? undefined } })
@@ -840,7 +840,7 @@ export function AppointmentsPage() {
       ? [
           ...vets.map((v) => {
             const items = onGrid.filter((a) => a.vetId === v.id)
-            return { key: v.id, title: <>{v.fullName} <span className="mut" style={{ fontWeight: 400, marginLeft: 6 }}>· {items.length} randevu</span></>, date, vetId: v.id, items }
+            return { key: v.id, title: <>{v.fullName} <span className="mut" style={{ fontWeight: 400, marginLeft: 6 }}>- {items.length} randevu</span></>, date, vetId: v.id, items }
           }),
           ...(onGrid.some((a) => !a.vetId) ? [{ key: 'none', title: <span className="s-amb">Hekim seçilmedi</span>, date, vetId: null, items: onGrid.filter((a) => !a.vetId) }] : []),
         ]
@@ -851,7 +851,7 @@ export function AppointmentsPage() {
             key: d,
             title: (
               <button type="button" style={{ all: 'unset', cursor: 'pointer', color: d === today ? 'var(--accent)' : undefined }} onClick={() => { setDate(d); setView('day') }}>
-                {DAYS_SHORT[weekdayOf(d)]} {formatDateTr(d).slice(0, 5)} <span className="mut" style={{ fontWeight: 400 }}>· {items.length}</span>
+                {DAYS_SHORT[weekdayOf(d)]} {formatDateTr(d).slice(0, 5)} <span className="mut" style={{ fontWeight: 400 }}>- {items.length}</span>
               </button>
             ),
             date: d,
@@ -899,7 +899,7 @@ export function AppointmentsPage() {
         <button type="button" className="btn" onClick={() => setDate(today)}>Bugün</button>
         <button type="button" className="btn" aria-label={view === 'day' ? 'Sonraki gün' : 'Sonraki hafta'} onClick={() => shift(1)}>›</button>
         <strong style={{ fontSize: 14, marginLeft: 6 }}>
-          {view === 'day' ? longDate(date) : `${formatDateTr(from)} – ${formatDateTr(to)}`}
+          {view === 'day' ? longDate(date) : `${formatDateTr(from)} - ${formatDateTr(to)}`}
         </strong>
         {cfg?.holidays.find((h) => h.date === date) && view === 'day' && <span className="tag s-amb">{cfg.holidays.find((h) => h.date === date)!.name}</span>}
         <div className="right">
@@ -951,7 +951,7 @@ export function AppointmentsPage() {
               {cfg?.types.filter((t) => t.active).map((t) => (
                 <span key={t.id} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12 }}>
                   <span style={{ width: 12, height: 12, border: `1px solid ${t.color}`, background: tint(t.color) }} />
-                  {t.name} · {t.defaultMinutes} dk
+                  {t.name} - {t.defaultMinutes} dk
                 </span>
               ))}
               <span className="mut" style={{ fontSize: 12 }}>Kesik çerçeve: randevusuz gelen</span>
@@ -961,7 +961,7 @@ export function AppointmentsPage() {
 
         <section className="pnl" style={{ flex: '999 1 560px', minWidth: 0, overflowX: 'auto' }}>
           {!cfg ? (
-            <div className="empty">Yükleniyor…</div>
+            <div className="empty">Yükleniyor...</div>
           ) : view === 'list' ? (
             <div className="tbl-wrap">
               <table>
@@ -977,9 +977,9 @@ export function AppointmentsPage() {
                       <td>{a.ownerName}<div className="mut mono">{formatTrPhone(a.ownerPhone)}</div></td>
                       <td>
                         <span style={{ display: 'inline-block', width: 10, height: 10, marginRight: 6, border: `1px solid ${a.typeColor ?? '#8FA9D3'}`, background: tint(a.typeColor) }} />
-                        {a.typeName}{a.reason && <span className="mut"> · {a.reason}</span>}
+                        {a.typeName}{a.reason && <span className="mut"> - {a.reason}</span>}
                       </td>
-                      <td>{a.vetName ?? <span className="s-amb">—</span>}</td>
+                      <td>{a.vetName ?? <span className="s-amb">-</span>}</td>
                       <td><StatusBadge a={a} />{a.overlap && <span className="tag s-amb" style={{ marginLeft: 6 }}>Çift</span>}</td>
                     </tr>
                   ))}
@@ -1024,9 +1024,9 @@ export function AppointmentsPage() {
         <Modal title="Randevuyu taşı" onClose={() => setPendingMove(null)} width={460}>
           <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
             <span>
-              <strong>{pendingMove.a.animalName}</strong>: {formatDateTr(pendingMove.a.date)} {pendingMove.a.time} →{' '}
+              <strong>{pendingMove.a.animalName}</strong>: {formatDateTr(pendingMove.a.date)} {pendingMove.a.time} ->{' '}
               <strong>{formatDateTr(pendingMove.date)} {fromMinutes(pendingMove.start)}</strong>
-              {pendingMove.vetId !== pendingMove.a.vetId && <> · {vetName(pendingMove.vetId)}</>}
+              {pendingMove.vetId !== pendingMove.a.vetId && <> - {vetName(pendingMove.vetId)}</>}
             </span>
             <span>Sahibe değişiklik mesajı gönderilsin mi?</span>
           </div>
@@ -1043,12 +1043,12 @@ export function AppointmentsPage() {
   )
 }
 
-/* ---------- S-72 Bekleme salonu ---------- */
+/* ---------- Bekleme salonu ---------- */
 
 type LaneKey = 'waiting' | 'arrived' | 'in_exam' | 'done' | 'no_show'
 const LANES: { key: LaneKey; title: string; target: AppointmentStatus; statuses: AppointmentStatus[] }[] = [
   { key: 'waiting', title: 'Bekleniyor', target: 'planned', statuses: ['planned', 'confirmed'] },
-  { key: 'arrived', title: 'Geldi · bekliyor', target: 'arrived', statuses: ['arrived'] },
+  { key: 'arrived', title: 'Geldi - bekliyor', target: 'arrived', statuses: ['arrived'] },
   { key: 'in_exam', title: 'Muayenede', target: 'in_exam', statuses: ['in_exam'] },
   { key: 'done', title: 'Tamamlandı', target: 'done', statuses: ['done'] },
   { key: 'no_show', title: 'Gelmedi', target: 'no_show', statuses: ['no_show'] },
@@ -1086,13 +1086,13 @@ function WalkInDialog({ cfg, onClose }: { cfg: AppointmentConfigDto; onClose: ()
           <div className="g4" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
             <Field label="Hekim" htmlFor="wi-v">
               <select id="wi-v" className="inp" value={vetId} onChange={(e) => setVetId(e.target.value)}>
-                <option value="">— Sonra seçilecek —</option>
+                <option value="">- Sonra seçilecek -</option>
                 {cfg.vets.map((v) => <option key={v.id} value={v.id}>{v.fullName}</option>)}
               </select>
             </Field>
             <Field label="Tür" htmlFor="wi-t">
               <select id="wi-t" className="inp" value={typeId} onChange={(e) => setTypeId(e.target.value)}>
-                <option value="">—</option>
+                <option value="">-</option>
                 {cfg.types.filter((t) => t.active).map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
               </select>
             </Field>
@@ -1101,7 +1101,7 @@ function WalkInDialog({ cfg, onClose }: { cfg: AppointmentConfigDto; onClose: ()
           {err && <div className="alert" role="alert">{err}</div>}
         </div>
         <div className="form-foot">
-          <span className="mut" style={{ fontSize: 12 }}>Hasta doğrudan "Geldi · bekliyor" sütununa eklenir.</span>
+          <span className="mut" style={{ fontSize: 12 }}>Hasta doğrudan "Geldi - bekliyor" sütununa eklenir.</span>
           <div style={{ display: 'flex', gap: 8 }}>
             <button type="button" className="btn" onClick={onClose}>Vazgeç</button>
             <button type="submit" className="btn p" disabled={busy}>Ekle</button>
@@ -1157,11 +1157,11 @@ function WaitCard({ a, canWrite, onDragStart, onAction, onOpen }: {
         <button type="button" onClick={onOpen} style={{ all: 'unset', cursor: 'pointer', fontWeight: 600 }}>{a.animalName}</button>
         {right}
       </div>
-      <span className="mut">{[a.species ? SPECIES_LABEL[a.species] : null, a.ownerName].filter(Boolean).join(' · ')}</span>
+      <span className="mut">{[a.species ? SPECIES_LABEL[a.species] : null, a.ownerName].filter(Boolean).join(' - ')}</span>
       <span>
-        {a.walkIn ? 'Randevusuz' : a.typeName}{a.reason && ` · ${a.reason}`}{a.vetName && ` · ${shortName(a.vetName)}`}
-        {a.status === 'in_exam' && a.room && ` · ${a.room}`}
-        {a.status === 'arrived' && !a.walkIn && <> · <span className="mono">{a.time}</span></>}
+        {a.walkIn ? 'Randevusuz' : a.typeName}{a.reason && ` - ${a.reason}`}{a.vetName && ` - ${shortName(a.vetName)}`}
+        {a.status === 'in_exam' && a.room && ` - ${a.room}`}
+        {a.status === 'arrived' && !a.walkIn && <> - <span className="mono">{a.time}</span></>}
       </span>
       <span style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
         <PatientTags a={a} />
@@ -1169,7 +1169,7 @@ function WaitCard({ a, canWrite, onDragStart, onAction, onOpen }: {
       </span>
       {a.suggestNoShow && canWrite && (
         <span className="s-amb" style={{ fontSize: 12 }}>
-          30 dk geçti · <button type="button" className="btn sm" onClick={() => onAction('no_show')}>Gelmedi</button>
+          30 dk geçti - <button type="button" className="btn sm" onClick={() => onAction('no_show')}>Gelmedi</button>
         </span>
       )}
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
@@ -1224,7 +1224,7 @@ export function WaitingRoomPage() {
     <>
       <div className="page-head">
         <h1>Bekleme salonu</h1>
-        <span className="mut">Kartı sürükleyerek durumu değiştirin · tüm bilgisayarlarda anlık güncellenir</span>
+        <span className="mut">Kartı sürükleyerek durumu değiştirin - tüm bilgisayarlarda anlık güncellenir</span>
         <div className="right">
           <Link to="/randevular" className="btn">Takvim</Link>
           {canWrite && <button type="button" className="btn p" onClick={() => setWalkIn(true)} disabled={!cfgQ.data}>+ Randevusuz hasta</button>}
@@ -1283,7 +1283,7 @@ export function WaitingRoomPage() {
                     onOpen={() => setSel(a)}
                   />
                 ))}
-                {q.data && list.length === 0 && <span className="mut" style={{ fontSize: 12, textAlign: 'center', padding: 12 }}>—</span>}
+                {q.data && list.length === 0 && <span className="mut" style={{ fontSize: 12, textAlign: 'center', padding: 12 }}>-</span>}
               </div>
             </section>
           )
@@ -1292,7 +1292,7 @@ export function WaitingRoomPage() {
 
       {walkIn && cfgQ.data && <WalkInDialog cfg={cfgQ.data} onClose={() => setWalkIn(false)} />}
       {examFor && (
-        <Modal title={`Muayeneye al · ${examFor.animalName}`} onClose={() => setExamFor(null)} width={420}>
+        <Modal title={`Muayeneye al - ${examFor.animalName}`} onClose={() => setExamFor(null)} width={420}>
           <form
             onSubmit={async (e) => {
               e.preventDefault()
@@ -1339,7 +1339,7 @@ export function WaitingRoomPage() {
   )
 }
 
-/* ---------- S-10 Bugün ekranı: bugünkü randevular ---------- */
+/* ---------- Bugün ekranı: bugünkü randevular ---------- */
 
 const PANEL_ORDER: Record<AppointmentStatus, number> = { in_exam: 0, arrived: 1, planned: 2, confirmed: 2, done: 3, no_show: 4, cancelled: 5 }
 
@@ -1366,7 +1366,7 @@ export function TodayAppointmentsPanel({ animalId }: { animalId?: string } = {})
       <div className="ph">
         <h2>
           {animalId ? 'Yaklaşan randevular' : 'Randevular'}
-          {!animalId && q.data && <span className="mut" style={{ fontWeight: 400, marginLeft: 8 }}>{all.length} randevu · {waiting} kişi bekliyor</span>}
+          {!animalId && q.data && <span className="mut" style={{ fontWeight: 400, marginLeft: 8 }}>{all.length} randevu - {waiting} kişi bekliyor</span>}
         </h2>
         <div style={{ display: 'flex', gap: 6 }}>
           <Link to="/bekleme" className="btn" style={{ height: 26, fontSize: 12 }}>Bekleme salonu</Link>
@@ -1395,13 +1395,13 @@ export function TodayAppointmentsPanel({ animalId }: { animalId?: string } = {})
                   {a.animalId ? <Link to={`/hayvanlar/${a.animalId}`} style={{ color: 'inherit', textDecoration: 'none' }}><strong>{a.animalName}</strong></Link> : <strong>{a.animalName}</strong>}{' '}
                   <PatientTags a={a} />
                   <div className="mut">
-                    {[a.species ? SPECIES_LABEL[a.species] : null, a.breed].filter(Boolean).join(' · ')}
-                    {a.animalId && !a.chipNo && <> · <span className="s-red">çipsiz</span></>}
+                    {[a.species ? SPECIES_LABEL[a.species] : null, a.breed].filter(Boolean).join(' - ')}
+                    {a.animalId && !a.chipNo && <> - <span className="s-red">çipsiz</span></>}
                   </div>
                 </td>
                 <td>{a.ownerName}</td>
                 <td>{a.reason || a.typeName}</td>
-                <td>{shortName(a.vetName) || <span className="s-amb">—</span>}</td>
+                <td>{shortName(a.vetName) || <span className="s-amb">-</span>}</td>
                 <td>
                   <StatusBadge a={a} />
                   {can('appointments.write') && (a.status === 'planned' || a.status === 'confirmed') && a.date === today && (
@@ -1421,7 +1421,7 @@ export function TodayAppointmentsPanel({ animalId }: { animalId?: string } = {})
       </div>
       {rows.length > shown.length && (
         <div className="tfoot mut" style={{ fontSize: 12 }}>
-          {shown.length} / {rows.length} gösteriliyor · <Link to="/randevular">tümü</Link>
+          {shown.length} / {rows.length} gösteriliyor - <Link to="/randevular">tümü</Link>
         </div>
       )}
     </section>

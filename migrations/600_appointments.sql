@@ -1,4 +1,4 @@
--- Modül E: Randevu, bekleme salonu, randevu türleri, tatiller
+-- Randevu, bekleme salonu, randevu türleri, tatiller
 
 create table if not exists appointment_types (
   id uuid primary key default gen_random_uuid(),

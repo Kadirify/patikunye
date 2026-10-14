@@ -19,7 +19,7 @@ export function TitleBar({ subtitle }: { subtitle?: string }) {
       <div className="t">
         <Logo />
         <strong>PatiKünye</strong>
-        {subtitle && <span className="mut" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>— {subtitle}</span>}
+        {subtitle && <span className="mut" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>- {subtitle}</span>}
       </div>
       {w && (
         <>
@@ -76,13 +76,13 @@ function SideFooter() {
         : 'Henüz yedek yok'
   return (
     <div className="side-foot">
-      <span>{!window.patikunye ? 'Tarayıcı geliştirme modu' : mode?.mode === 'client' ? `İstemci · ${mode.host ?? ''}` : 'Ana bilgisayar'}</span>
+      <span>{!window.patikunye ? 'Tarayıcı geliştirme modu' : mode?.mode === 'client' ? `İstemci - ${mode.host ?? ''}` : 'Ana bilgisayar'}</span>
       {bkText && (
         <Link to="/ayarlar/yedekleme" style={{ color: b?.state === 'err' ? 'var(--red)' : b?.state === 'warn' ? 'var(--amb)' : 'inherit', textDecoration: 'none' }}>
           {bkText}
         </Link>
       )}
-      <span>PostgreSQL 18 · {window.patikunye?.version ? `v${window.patikunye.version}` : 'geliştirme'}</span>
+      <span>PostgreSQL 18 - {window.patikunye?.version ? `v${window.patikunye.version}` : 'geliştirme'}</span>
     </div>
   )
 }
@@ -135,7 +135,7 @@ export function Layout() {
   })
 
   useEffect(() => {
-    // Klavye kısayolları (SAYFALAR.md §18)
+    // Klavye kısayolları
     const NAV = ['/', '/randevular', '/bekleme', '/hayvanlar', '/sahipler', '/muayeneler', '/asilar', '/petvet', '/mesajlar']
     function onKey(e: KeyboardEvent) {
       const k = e.key.toLowerCase()

@@ -1,4 +1,4 @@
-// S-11 Global arama / komut paleti (Ctrl+K)
+// Global arama / komut paleti (Ctrl+K)
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
@@ -83,13 +83,13 @@ export function CommandPalette({ onClose }: { onClose(): void }) {
         key: 'a' + a.id,
         group: 'Hayvanlar',
         title: a.name,
-        sub: [animalLine(a), a.ownerName].filter(Boolean).join(' · '),
+        sub: [animalLine(a), a.ownerName].filter(Boolean).join(' - '),
         go: `/hayvanlar/${a.id}`,
         alt: `/muayene/yeni?animal=${a.id}`,
       }),
     )
     const ow = (owners.data ?? []).slice(0, 6).map(
-      (o): Item => ({ key: 'o' + o.id, group: 'Sahipler', title: o.fullName, sub: `${formatTrPhone(o.phone)} · ${o.animalCount} hayvan`, go: `/sahipler/${o.id}` }),
+      (o): Item => ({ key: 'o' + o.id, group: 'Sahipler', title: o.fullName, sub: `${formatTrPhone(o.phone)} - ${o.animalCount} hayvan`, go: `/sahipler/${o.id}` }),
     )
     return [...an, ...ow, ...cmds]
   }, [term, animals.data, owners.data, can])
@@ -117,7 +117,7 @@ export function CommandPalette({ onClose }: { onClose(): void }) {
           ref={input}
           className="inp"
           style={{ height: 44, fontSize: 15, border: 0, borderBottom: '1px solid var(--line)', borderRadius: 0, outline: 'none' }}
-          placeholder="Hayvan, sahip, telefon, çip no ya da komut…"
+          placeholder="Hayvan, sahip, telefon, çip no ya da komut..."
           aria-label="Ara"
           value={q}
           onChange={(e) => setQ(e.target.value)}
@@ -152,9 +152,9 @@ export function CommandPalette({ onClose }: { onClose(): void }) {
                 >
                   <span>
                     <strong>{it.title}</strong>
-                    {it.sub && <span className="mut"> · {it.sub}</span>}
+                    {it.sub && <span className="mut"> - {it.sub}</span>}
                   </span>
-                  <span className="mono mut" style={{ fontSize: 11 }}>{i === sel ? (it.alt ? 'Enter · Ctrl+Enter muayene' : 'Enter') : ''}</span>
+                  <span className="mono mut" style={{ fontSize: 11 }}>{i === sel ? (it.alt ? 'Enter - Ctrl+Enter muayene' : 'Enter') : ''}</span>
                 </button>
               </div>
             )

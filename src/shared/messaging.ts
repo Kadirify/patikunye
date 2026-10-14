@@ -1,4 +1,4 @@
-// Mesajlar ve hatırlatmalar (Modül M) — sunucu ve arayüzün ortak tipleri + saf yardımcılar.
+// Mesajlar ve hatırlatmalar  - sunucu ve arayüzün ortak tipleri + saf yardımcılar.
 
 export const REMINDER_STATUSES = [
   'planned',
@@ -40,7 +40,7 @@ export const REMINDER_KIND_LABEL: Record<string, string> = {
   custom: 'Özel',
 }
 
-/** S-80 sekmeleri */
+/** sekmeleri */
 export const QUEUE_TABS = ['planned', 'today', 'sent', 'failed', 'cancelled'] as const
 export type QueueTab = (typeof QUEUE_TABS)[number]
 export const QUEUE_TAB_LABEL: Record<QueueTab, string> = {
@@ -51,7 +51,7 @@ export const QUEUE_TAB_LABEL: Record<QueueTab, string> = {
   cancelled: 'İptal / izin yok',
 }
 
-/** Uygulamayla gelen şablon anahtarları (S-106) */
+/** Uygulamayla gelen şablon anahtarları */
 export const TEMPLATE_KEYS = [
   'vaccine_reminder',
   'appointment_confirm',
@@ -105,9 +105,9 @@ const GSM_BASIC =
   '@£$¥èéùìòÇ\nØø\rÅåΔ_ΦΓΛΩΠΨΣΘΞÆæßÉ !"#¤%&\'()*+,-./0123456789:;<=>?¡ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜ§¿abcdefghijklmnopqrstuvwxyzäöñüà'
 const GSM_EXT = '^{}\\[~]|€\f'
 /** Türkçe karakterler: biri varsa mesaj Türkçe/Unicode kodlamayla gider (70/67).
- *  ⚠️ Sağlayıcıya göre değişir: bazı sağlayıcılar Türkçe tek kaydırma (single shift) tablosuyla
+ *  Saglayiciya gore degisir: bazi saglayicilar Turkce tek kaydirma (single shift) tablosuyla
  *  155/149 karakter uygular, bazıları Türkçe karakterleri Latin'e çevirir. Netgsm'de `encoding: 'TR'`
- *  seçildiğinde fiyatlandırma ve boy hesabı değişir. Pilot sağlayıcının tarifesiyle doğrulanacak. */
+ *  seçildiğinde fiyatlandırma ve boy hesabı değişir. */
 const TR_CHARS = /[şŞğĞıİçÇöÖüÜ]/
 
 export interface SmsCount {
@@ -134,7 +134,7 @@ export function smsSegments(text: string): SmsCount {
   return { chars, segments, single, perSegment, unicode, remaining: cap - chars }
 }
 
-/** +905321234567 → 0532 *** ** 67 (listelerde maskeli gösterim) */
+/** +905321234567 -> 0532 *** ** 67 (listelerde maskeli gösterim) */
 export function maskAddress(addr: string | null | undefined): string {
   if (!addr) return ''
   const m = /^\+90(\d{3})(\d{3})(\d{2})(\d{2})$/.exec(addr)
@@ -144,7 +144,7 @@ export function maskAddress(addr: string | null | undefined): string {
   return addr.length > 4 ? `${'*'.repeat(addr.length - 4)}${addr.slice(-4)}` : addr
 }
 
-/** "21:00" → 1260 */
+/** "21:00" -> 1260 */
 export function hhmmToMinutes(s: string): number {
   const [h, m] = s.split(':').map(Number)
   return (h || 0) * 60 + (m || 0)

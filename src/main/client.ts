@@ -1,4 +1,4 @@
-// Yerel ağ modu — istemci bilgisayar tarafı: keşif, eşleştirme, sabitlenmiş sertifikayla bağlantı.
+// Yerel ağ modu - istemci bilgisayar tarafı: keşif, eşleştirme, sabitlenmiş sertifikayla bağlantı.
 import { request } from 'node:https'
 import { Bonjour } from 'bonjour-service'
 import { certFingerprint } from './network'

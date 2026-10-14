@@ -1,4 +1,4 @@
--- Modül B: sahipler — KVKK rıza geçmişi ve ek sahip alanları
+-- sahipler - KVKK rıza geçmişi ve ek sahip alanları
 
 -- Rıza geçmişi: her değişiklik yeni satır (kim, ne zaman, hangi metin sürümü, hangi kanal)
 CREATE TABLE IF NOT EXISTS consents (

@@ -1,4 +1,4 @@
-// Randevu modülü (E) — sunucu ve arayüzün paylaştığı tipler ve yardımcılar.
+// Randevu modülü - sunucu ve arayüzün paylaştığı tipler ve yardımcılar.
 // Saat dilimi: Europe/Istanbul (2016'dan beri sabit UTC+3, yaz saati yok).
 import type { Species } from './api-types'
 import type { ClinicSettings } from './settings'
@@ -28,8 +28,8 @@ export const APPOINTMENT_STATUS_CLASS: Record<AppointmentStatus, string> = {
 }
 
 /**
- * İzinli durum geçişleri (SAYFALAR §15.2):
- * Planlandı → Onaylandı (ops.) → Geldi → Muayenede → Tamamlandı; yan dallar İptal, Gelmedi.
+ * İzinli durum geçişleri:
+ * Planlandı -> Onaylandı (ops.) -> Geldi -> Muayenede -> Tamamlandı; yan dallar İptal, Gelmedi.
  * Bekleme salonunda yanlış sürüklemeyi düzeltmek için bir adım geri almaya izin verilir.
  * İptal son durumdur (yeniden randevu yeni kayıt açar).
  */
@@ -123,7 +123,7 @@ export interface AppointmentDto {
   overlap: boolean
   /** Bekleme ("Geldi") ya da muayene süresi, dakika */
   waitMinutes: number | null
-  /** Randevu saatinden 30 dk geçti, hâlâ gelmedi → "Gelmedi" önerisi */
+  /** Randevu saatinden 30 dk geçti, hâlâ gelmedi -> "Gelmedi" önerisi */
   suggestNoShow: boolean
   /** Yeni hasta mini kaydı (hayvan kaydı yok) */
   isNewPatient: boolean
@@ -201,7 +201,7 @@ export interface AppointmentConfigDto {
 
 export const TZ = 'Europe/Istanbul'
 
-/** Yerel tarih + saat → ISO (Istanbul sabit +03:00) */
+/** Yerel tarih + saat -> ISO (Istanbul sabit +03:00) */
 export function istanbulIso(date: string, time: string): string {
   return `${date}T${time.length === 5 ? time + ':00' : time}+03:00`
 }
@@ -235,7 +235,7 @@ export function fromMinutes(min: number): string {
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
 }
 
-/** Haftanın günü (0 = pazar) — yerel tarih metninden */
+/** Haftanın günü (0 = pazar) - yerel tarih metninden */
 export function weekdayOf(date: string): number {
   return new Date(date + 'T12:00:00Z').getUTCDay()
 }
@@ -260,10 +260,10 @@ export function scheduleWarnings(
     return out
   }
   if (startMin < toMinutes(wh.open) || endMin > toMinutes(wh.close)) {
-    out.push({ code: 'OUTSIDE_HOURS', message: `Çalışma saatleri dışında (${wh.open}–${wh.close}).` })
+    out.push({ code: 'OUTSIDE_HOURS', message: `Çalışma saatleri dışında (${wh.open}-${wh.close}).` })
   }
   if (wh.breakStart && wh.breakEnd && startMin < toMinutes(wh.breakEnd) && endMin > toMinutes(wh.breakStart)) {
-    out.push({ code: 'BREAK', message: `Öğle arasına denk geliyor (${wh.breakStart}–${wh.breakEnd}).` })
+    out.push({ code: 'BREAK', message: `Öğle arasına denk geliyor (${wh.breakStart}-${wh.breakEnd}).` })
   }
   return out
 }

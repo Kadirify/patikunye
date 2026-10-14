@@ -1,4 +1,4 @@
-// Sistem ayarları: S-109 Ağ ve cihazlar, S-113 Güncellemeler
+// Sistem ayarları: Ağ ve cihazlar, Güncellemeler
 import { useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '../api'
@@ -68,9 +68,9 @@ export function NetworkSettingsPage() {
         <section className="pnl" style={{ padding: 14 }}>
           <dl className="kv">
             <dt>Bu bilgisayar</dt>
-            <dd>{st.client?.deviceName} · istemci</dd>
+            <dd>{st.client?.deviceName} - istemci</dd>
             <dt>Ana bilgisayar</dt>
-            <dd>{st.client?.clinicName} · <span className="mono">{st.client?.hostUrl}</span></dd>
+            <dd>{st.client?.clinicName} - <span className="mono">{st.client?.hostUrl}</span></dd>
           </dl>
           <div style={{ marginTop: 12 }}>
             <button
@@ -155,8 +155,8 @@ export function NetworkSettingsPage() {
             <tbody>
               {devices.data?.map((d) => (
                 <tr key={d.id} style={d.revokedAt ? { opacity: 0.55 } : undefined}>
-                  <td><strong>{d.name}</strong>{d.revokedAt && <span className="mut"> · bağlantı kesildi</span>}</td>
-                  <td className="mono">{d.lastSeenAt ? new Date(d.lastSeenAt).toLocaleString('tr-TR') : '—'}</td>
+                  <td><strong>{d.name}</strong>{d.revokedAt && <span className="mut"> - bağlantı kesildi</span>}</td>
+                  <td className="mono">{d.lastSeenAt ? new Date(d.lastSeenAt).toLocaleString('tr-TR') : '-'}</td>
                   <td className="mono">{d.lastIp ?? ''}</td>
                   <td className="mono">{new Date(d.pairedAt).toLocaleDateString('tr-TR')}</td>
                   <td>
@@ -187,7 +187,7 @@ export function NetworkSettingsPage() {
 const UPD_TEXT: Record<UpdateStatus['state'], string> = {
   disabled: 'Güncelleme sunucusu tanımlı değil (geliştirme sürümü ya da istemci bilgisayar).',
   idle: 'Bekliyor',
-  checking: 'Denetleniyor…',
+  checking: 'Denetleniyor...',
   available: 'Yeni sürüm var',
   downloading: 'İndiriliyor',
   ready: 'Kurulmaya hazır',
@@ -214,8 +214,8 @@ export function UpdatesSettingsPage() {
           <dt>Durum</dt>
           <dd>
             {u ? UPD_TEXT[u.state] : 'Bilinmiyor'}
-            {u?.version && <span className="mono"> · v{u.version}</span>}
-            {u?.state === 'downloading' && u.percent !== undefined && <span className="mono"> · %{u.percent}</span>}
+            {u?.version && <span className="mono"> - v{u.version}</span>}
+            {u?.state === 'downloading' && u.percent !== undefined && <span className="mono"> - %{u.percent}</span>}
             {u?.error && <div className="err">{u.error}</div>}
           </dd>
         </dl>
@@ -236,7 +236,7 @@ export function UpdatesSettingsPage() {
                   if (!r.ok) toast(r.error ?? 'Güncelleme yapılamadı.', 'err')
                 }}
               >
-                {busy ? 'Yedek alınıyor…' : 'Yedek al ve güncelle'}
+                {busy ? 'Yedek alınıyor...' : 'Yedek al ve güncelle'}
               </button>
             )}
           </div>

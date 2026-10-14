@@ -1,4 +1,4 @@
-// S-110 PETVET ayarları: görev süreleri, görev açan aşı türleri, uyarı günü, belge zorunluluğu, TARBİL adresi
+// PETVET ayarları: görev süreleri, görev açan aşı türleri, uyarı günü, belge zorunluluğu, TARBİL adresi
 import { useEffect, useState } from 'react'
 import { useCan } from '../../session'
 import { PETVET_KIND_LABEL, PETVET_TASK_KINDS } from '@shared/petvet'
@@ -33,7 +33,7 @@ export function PetvetSettingsPage() {
   useCtrlS(submit, !!p)
 
   if (!can('settings.manage')) return <NoAccess />
-  if (!p) return <div className="mut">Yükleniyor…</div>
+  if (!p) return <div className="mut">Yükleniyor...</div>
 
   return (
     <>
@@ -45,7 +45,7 @@ export function PetvetSettingsPage() {
           submit()
         }}
       >
-        <div className="ph"><h2>Görev süreleri (gün)</h2><span className="mut" style={{ fontSize: 12 }}>Yeni çip için 15 gün; diğerleri ⚠️ mevzuattan doğrulanmalı</span></div>
+        <div className="ph"><h2>Gorev sureleri (gun)</h2><span className="mut" style={{ fontSize: 12 }}>Yeni cip icin 15 gun; digerleri mevzuata gore ayarlanmali</span></div>
         {PETVET_TASK_KINDS.map((k) => (
           <Row key={k} label={PETVET_KIND_LABEL[k]} htmlFor={`pd-${k}`}>
             <input

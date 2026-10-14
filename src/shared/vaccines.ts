@@ -1,4 +1,4 @@
-// Aşı modülü (D) ortak tipleri ve saf hesaplamalar (sunucu + arayüz)
+// Aşı modülü ortak tipleri ve saf hesaplamalar (sunucu + arayüz)
 import { addDaysIso, diffDaysIso } from './petvet'
 import type { Species } from './api-types'
 
@@ -28,7 +28,7 @@ export const PLAN_STATUS_LABEL: Record<PlanStatus, string> = {
 
 export interface ProtocolStep {
   label: string
-  /** İlk doz için en küçük yaş (hafta) — vade doğum tarihinden hesaplanır, altındaysa uyarı */
+  /** İlk doz için en küçük yaş (hafta) - vade doğum tarihinden hesaplanır, altındaysa uyarı */
   minAgeWeeks?: number
   /** Bir önceki dozdan sonra kaç hafta */
   afterPrevWeeks?: number
@@ -107,7 +107,7 @@ export interface AnimalVaccinesDto {
   animalStatus: string
   vaccinations: VaccinationDto[]
   plans: VaccinationPlanDto[]
-  /** kind → seçili protokol id (özel seçim ya da varsayılan) */
+  /** kind -> seçili protokol id (özel seçim ya da varsayılan) */
   protocols: Partial<Record<VaccineKind, { protocolId: string; name: string; custom: boolean }>>
 }
 
@@ -116,7 +116,7 @@ export type CalendarFilter = (typeof CALENDAR_FILTERS)[number]
 export const CALENDAR_FILTER_LABEL: Record<CalendarFilter, string> = {
   week: 'Bu hafta',
   month: 'Bu ay',
-  overdue: 'Gecikmiş 0–30 g',
+  overdue: 'Gecikmiş 0-30 g',
   overdue30: '30+ g',
   failed: 'Hatırlatma başarısız',
   all: 'Tüm açık',
@@ -146,7 +146,7 @@ export interface CalendarDto {
   page: number
   pageSize: number
   counts: Record<CalendarFilter, number>
-  /** reminders tablosu henüz yoksa false — hatırlatma sütunu boş gösterilir */
+  /** reminders tablosu henüz yoksa false - hatırlatma sütunu boş gösterilir */
   remindersAvailable: boolean
 }
 

@@ -1,4 +1,4 @@
-// Modül F testleri: kullanıcılar, PIN/kilit, zorunlu parola, sözlükler, ayar izinleri, KVKK, denetim zinciri
+//  testleri: kullanıcılar, PIN/kilit, zorunlu parola, sözlükler, ayar izinleri, KVKK, denetim zinciri
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { startTestBackend, type TestBackend } from './test-helpers'
 import type { AdminUserDto, AnonymizePreview, AuditVerifyDto, DictItem, KvkkRequestDto, LoginResult } from '../shared/admin'
@@ -25,7 +25,7 @@ async function createUser(username: string, role: string, extra: Record<string, 
   return r.data
 }
 
-/** Geçici parolayla giriş + zorunlu değişiklik → oturum */
+/** Geçici parolayla giriş + zorunlu değişiklik -> oturum */
 async function activate(username: string, temp: string, newPassword = 'yeni-parola-123') {
   const l = await t.api<LoginResult>('POST', '/api/auth/login', { username, password: temp }, null)
   expect(l.status).toBe(200)
@@ -36,7 +36,7 @@ async function activate(username: string, temp: string, newPassword = 'yeni-paro
   return r.data
 }
 
-describe('kullanıcılar (S-101)', () => {
+describe('kullanıcılar', () => {
   it('kullanıcı oluşturur; geçici parola ile tam oturum verilmez, parola değiştirince açılır', async () => {
     const { user, tempPassword } = await createUser('zehra', 'secretary')
     expect(user.mustChangePassword).toBe(true)
@@ -105,7 +105,7 @@ describe('kullanıcılar (S-101)', () => {
   })
 })
 
-describe('PIN girişi ve kilit (S-04)', () => {
+describe('PIN girişi ve kilit', () => {
   it('PIN izni yoksa PIN belirlenemez ve PIN ile girilemez', async () => {
     const { tempPassword } = await createUser('pinyok', 'secretary')
     const s = await activate('pinyok', tempPassword)
@@ -134,7 +134,7 @@ describe('PIN girişi ve kilit (S-04)', () => {
     expect((await t.api('POST', '/api/auth/unlock', {}, null)).status).toBe(401)
 
     for (let i = 0; i < 4; i++) expect((await t.api('POST', '/api/auth/pin-login', { username: 'ayse', pin: '9999' }, null)).status).toBe(401)
-    // 5. hatalı deneme (önceki unlock hatası da sayıldı) → kilit
+    // 5. hatalı deneme (önceki unlock hatası da sayıldı) -> kilit
     const fifth = await t.api('POST', '/api/auth/pin-login', { username: 'ayse', pin: '9999' }, null)
     expect([401, 429]).toContain(fifth.status)
     const locked = await t.api<{ code: string }>('POST', '/api/auth/pin-login', { username: 'ayse', pin: '4826' }, null)
@@ -203,7 +203,7 @@ describe('sözlükler ve ayarlar', () => {
     })
     expect(r.status).toBe(200)
     expect(r.data.reader.maxGapMs).toBe(50)
-    // kartlar gizli → giriş ekranı listesi boş
+    // kartlar gizli -> giriş ekranı listesi boş
     expect((await t.api<unknown[]>('GET', '/api/login-users', undefined, null)).data).toEqual([])
     await t.api('PATCH', '/api/admin/settings', { security: { lockMinutes: 15, showUserCards: true } })
     const s = await t.api<{ reader: { maxGapMs: number } }>('GET', '/api/admin/settings', undefined, sec.token)
@@ -216,14 +216,14 @@ describe('sözlükler ve ayarlar', () => {
     const before = await t.api<{ kind: string; version: number; body: string }[]>('GET', '/api/kvkk/texts')
     const notice = before.data.find((x) => x.kind === 'notice')!
     expect(notice.version).toBe(1)
-    expect(notice.body).toContain('HUKUKÇU ONAYI')
+    expect(notice.body).toContain('ORNEK SABLON')
     const r = await t.api<{ version: number }>('POST', '/api/kvkk/texts', { kind: 'notice', body: notice.body + '\nEk paragraf.' })
     expect(r.data.version).toBe(2)
     expect((await t.api('POST', '/api/kvkk/texts', { kind: 'notice', body: notice.body + '\nEk paragraf.' })).status).toBe(400)
   })
 })
 
-describe('KVKK talepleri (S-95)', () => {
+describe('KVKK talepleri', () => {
   it('talep, veri kopyası ve anonimleştirme', async () => {
     const reg = await t.registerAnimal({ ownerTckn: '10000000146', phone: '05321234567', name: 'Boncuk' })
     const ownerId = reg.ownerId
@@ -300,7 +300,7 @@ describe('KVKK talepleri (S-95)', () => {
   })
 })
 
-describe('denetim kaydı (S-96)', () => {
+describe('denetim kaydı', () => {
   it('liste, filtre, maskeli ayrıntı ve izin', async () => {
     const sec = await t.loginAs('secretary')
     expect((await t.api('GET', '/api/audit', undefined, sec.token)).status).toBe(403)

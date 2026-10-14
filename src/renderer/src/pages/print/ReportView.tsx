@@ -1,10 +1,10 @@
-// Rapor gösterimi: özet, sade çubuk grafik (inline SVG) ve tablolar — Raporlar sayfası ve yazdırma çıktısı ortak kullanır.
+// Rapor gösterimi: özet, sade çubuk grafik (inline SVG) ve tablolar - Raporlar sayfası ve yazdırma çıktısı ortak kullanır.
 import { fmtNum, type CellValue, type ReportChart, type ReportColumn, type ReportResult, type ReportTable } from '@shared/reports'
 
 const ACCENT = '#1E4E9C'
 
 export function cellText(v: CellValue, col: ReportColumn): string {
-  if (v === null || v === undefined || v === '') return col.num ? '—' : ''
+  if (v === null || v === undefined || v === '') return col.num ? '-' : ''
   if (typeof v === 'number') return Number.isInteger(v) ? fmtNum(v) : fmtNum(v, 1)
   return v
 }
@@ -31,7 +31,7 @@ export function BarChart({ chart }: { chart: ReportChart }) {
             return (
               <g key={i}>
                 <text x={labelW - 8} y={y + 14} textAnchor="end" fontSize="11" fill="#2E2C29">
-                  {b.label.length > 24 ? b.label.slice(0, 23) + '…' : b.label}
+                  {b.label.length > 24 ? b.label.slice(0, 23) + '...' : b.label}
                 </text>
                 <rect x={labelW} y={y + 3} width={barW} height={row - 8} fill="#F2F0EB" />
                 <rect x={labelW} y={y + 3} width={w} height={row - 8} fill={ACCENT} />

@@ -72,7 +72,7 @@ try {
 
   if (rename) {
     const r = await call('PATCH', `/api/admin/users/${admin.id}`, { fullName: rename })
-    console.log(r.status === 200 ? `Ad değişti: ${admin.full_name} → ${r.data.fullName}` : `Ad değişmedi: ${r.status} ${JSON.stringify(r.data)}`)
+    console.log(r.status === 200 ? `Ad değişti: ${admin.full_name} -> ${r.data.fullName}` : `Ad değişmedi: ${r.status} ${JSON.stringify(r.data)}`)
     // Ad değişince oturumlar kapanır; yeni oturum aç
     token = backend.sessions.create({ id: admin.id, role: 'admin', fullName: r.data.fullName ?? admin.full_name })
   }

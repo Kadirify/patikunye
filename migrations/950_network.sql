@@ -1,4 +1,4 @@
--- Yerel ağ: ana bilgisayara bağlanan istemci cihazlar (S-03, S-109)
+-- Yerel ağ: ana bilgisayara bağlanan istemci cihazlar
 CREATE TABLE IF NOT EXISTS devices (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   name text NOT NULL,

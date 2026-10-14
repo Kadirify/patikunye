@@ -2,18 +2,16 @@
 //
 // Kaynaklar:
 //  - Resmî doküman: https://www.netgsm.com.tr/dokuman/ (sayfa JS ile yükleniyor; içeriği otomatik okunamadı)
-//  - Netgsm'in kendi paketi: https://github.com/netgsm1/sms  → `encoding: 'tr'` Türkçe karakter desteği,
+//  - Netgsm'in kendi paketi: https://github.com/netgsm1/sms  -> `encoding: 'tr'` Türkçe karakter desteği
 //    yanıt alanları `code`, `bulkid`/`jobid`, `durum`/`aciklama`
 //  - Topluluk istemcisi (REST v2): https://pkg.go.dev/github.com/YusufDrymz/go-netgsm
-//    → taban `https://api.netgsm.com.tr/sms/rest/v2`, uç `/send`, HTTP Basic (kullanıcı kodu + parola),
-//      gövde { msgheader, encoding, messages: [{ msg, no }] }, başarı kodu "00",
-//      hata kodları 20 (metin hatalı/uzun), 30 (kimlik/API yetkisi), 40/41 (başlık tanımsız),
+//    -> taban `https://api.netgsm.com.tr/sms/rest/v2`, uç `/send`, HTTP Basic (kullanıcı kodu + parola)
+//      gövde { msgheader, encoding, messages: [{ msg, no }] }, başarı kodu "00"
+//      hata kodları 20 (metin hatalı/uzun), 30 (kimlik/API yetkisi), 40/41 (başlık tanımsız)
 //      50/51 (İYS filtresi), 70 (parametre hatalı), 85 (mükerrer gönderim sınırı), 100 (sistem hatası)
 //
-// ⚠️ doğrulanacak: uç nokta, alan adları ve yanıt biçimi resmî dokümandan değil üçüncü taraf istemcilerden
-//    derlendi. Gerçek hesapla denenmedi (anahtar yok).
-// ⚠️ doğrulanacak: bakiye ucu. Eski XML/HTTP API'de `https://api.netgsm.com.tr/balance` (usercode, password, stip)
-//    olduğu biliniyor; REST v2 karşılığı doğrulanamadı.
+// Not: uc nokta ve yanit bicimi ucuncu taraf istemcilerden derlendi. Gercek hesapla denenmedi.
+// Bakiye ucu eski XML/HTTP API'den aktarildi; REST v2 karsiligi dogrulanamadi.
 import { HTTP_TIMEOUT_MS, toLocalGsm, type FetchLike, type MessageProvider, type SendResult } from './types'
 
 const BASE = 'https://api.netgsm.com.tr'
@@ -52,7 +50,7 @@ export function netgsmProvider(cfg: NetgsmConfig): MessageProvider {
           headers: { 'Content-Type': 'application/json', Authorization: auth },
           body: JSON.stringify({
             msgheader: cfg.header,
-            // Türkçe karakterli mesaj Türkçe kodlamayla gider (⚠️ değer 'TR' / 'tr' — doğrulanacak)
+            // Turkce karakterli mesaj Turkce kodlamayla gider
             encoding: 'TR',
             messages: [{ msg: body, no: toLocalGsm(to) }],
           }),
@@ -80,7 +78,7 @@ export function netgsmProvider(cfg: NetgsmConfig): MessageProvider {
       }
     },
     async balance() {
-      // ⚠️ doğrulanacak: uç ve gövde (eski API: stip=2 → TL bakiye)
+      // eski API: stip=2 -> TL bakiye
       const res = await doFetch(`${BASE}/balance`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

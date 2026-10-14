@@ -1,4 +1,4 @@
-// Modül B — Hayvanlar: S-30 liste, S-32 form, S-33 detay, S-34 durum değişiklikleri, S-35 çip uygula, S-36 çip düzelt
+// Hayvanlar: liste, form, detay, durum değişiklikleri, çip uygula, çip düzelt
 import type { FastifyInstance } from 'fastify'
 import { and, eq, inArray, ne, sql } from 'drizzle-orm'
 import { z } from 'zod'
@@ -85,7 +85,7 @@ const animalCreateSchema = z.intersection(
   animalFormSchema,
   z.object({
     ownerId: z.string().uuid('Sahip seçin.'),
-    weightKg: z.number().min(0.01, 'Kilo 0,01–150 kg arasında olmalı.').max(150, 'Kilo 0,01–150 kg arasında olmalı.').optional(),
+    weightKg: z.number().min(0.01, 'Kilo 0,01-150 kg arasında olmalı.').max(150, 'Kilo 0,01-150 kg arasında olmalı.').optional(),
   }),
 )
 const animalUpdateSchema = z.intersection(animalFormSchema, z.object({ version: z.number().int().positive() }))
@@ -203,7 +203,7 @@ export function animalRoutes(app: FastifyInstance, deps: AppDeps) {
     if (birthDate && date < birthDate) throw new AppError(400, `${label} doğum tarihinden önce olamaz.`, 'VALIDATION')
   }
 
-  /* ---------- S-30 liste ---------- */
+  /* ---------- liste ---------- */
   app.get('/api/animals', async (req) => {
     requirePerm(req, 'animals.read')
     const f = parse(
@@ -289,7 +289,7 @@ export function animalRoutes(app: FastifyInstance, deps: AppDeps) {
     )
   })
 
-  /* ---------- S-32 yeni hayvan (çipsiz de olabilir) ---------- */
+  /* ---------- yeni hayvan (çipsiz de olabilir) ---------- */
   app.post('/api/animals', async (req) => {
     const u = requirePerm(req, 'animals.write')
     const b = parse(animalCreateSchema, req.body)
@@ -334,7 +334,7 @@ export function animalRoutes(app: FastifyInstance, deps: AppDeps) {
     }
   })
 
-  /* ---------- S-33 detay ---------- */
+  /* ---------- detay ---------- */
   app.get('/api/animals/:id', async (req) => {
     requirePerm(req, 'animals.read')
     const { id } = parse(idParam, req.params)
@@ -416,7 +416,7 @@ export function animalRoutes(app: FastifyInstance, deps: AppDeps) {
     return detail
   })
 
-  /* ---------- S-32 düzenle (iyimser kilit) ---------- */
+  /* ---------- düzenle (iyimser kilit) ---------- */
   app.put('/api/animals/:id', async (req) => {
     const u = requirePerm(req, 'animals.write')
     const { id } = parse(idParam, req.params)
@@ -507,18 +507,18 @@ export function animalRoutes(app: FastifyInstance, deps: AppDeps) {
       switch (x.kind) {
         case 'chip':
           title = CHIP_TITLE[x.sub] ?? x.sub
-          detail = x.sub === 'CORRECTION' ? `${d.oldChipNo ?? ''} → ${x.detail}${d.reason ? ' · ' + d.reason : ''}` : `${x.detail}${d.bodySite ? ' · ' + d.bodySite : ''}`
+          detail = x.sub === 'CORRECTION' ? `${d.oldChipNo ?? ''} -> ${x.detail}${d.reason ? ' - ' + d.reason : ''}` : `${x.detail}${d.bodySite ? ' - ' + d.bodySite : ''}`
           break
         case 'status':
           title = STATUS_TITLE[x.sub] ?? x.sub
           detail = [
             x.sub === 'death' && d.cause ? DEATH_CAUSE_LABEL[d.cause as keyof typeof DEATH_CAUSE_LABEL] : null,
-            x.sub === 'transfer' ? `${d.fromOwnerName ?? ''} → ${d.toOwnerName ?? ''}` : null,
+            x.sub === 'transfer' ? `${d.fromOwnerName ?? ''} -> ${d.toOwnerName ?? ''}` : null,
             x.sub === 'lost' ? [d.city, d.district, d.place].filter(Boolean).join(' / ') : null,
             d.note || d.reason || null,
           ]
             .filter(Boolean)
-            .join(' · ')
+            .join(' - ')
           break
         case 'petvet':
           if (x.pstatus === 'opened') {
@@ -559,7 +559,7 @@ export function animalRoutes(app: FastifyInstance, deps: AppDeps) {
     const { id } = parse(idParam, req.params)
     const b = parse(
       z.object({
-        kg: z.number({ message: 'Kilo girin.' }).min(0.01, 'Kilo 0,01–150 kg arasında olmalı.').max(150, 'Kilo 0,01–150 kg arasında olmalı.'),
+        kg: z.number({ message: 'Kilo girin.' }).min(0.01, 'Kilo 0,01-150 kg arasında olmalı.').max(150, 'Kilo 0,01-150 kg arasında olmalı.'),
         date: isoDate().optional(),
         confirm: z.boolean().optional(),
       }),
@@ -571,7 +571,7 @@ export function animalRoutes(app: FastifyInstance, deps: AppDeps) {
       const prev = await tx.execute<{ kg: string }>(sql`select kg from animal_weights where animal_id = ${id} order by measured_at desc limit 1`)
       const last = prev.rows[0] ? Number(prev.rows[0].kg) : null
       if (last && !b.confirm && Math.abs(b.kg - last) / last > 0.3) {
-        throw new AppError(409, `Önceki ölçüm ${String(last).replace('.', ',')} kg. Fark %30'dan fazla — emin misiniz?`, 'CONFIRM_REQUIRED', { previousKg: last })
+        throw new AppError(409, `Önceki ölçüm ${String(last).replace('.', ',')} kg. Fark %30'dan fazla - emin misiniz?`, 'CONFIRM_REQUIRED', { previousKg: last })
       }
       const at = b.date && b.date !== today() ? new Date(b.date + 'T12:00:00+03:00') : now()
       const r = await tx.execute<{ id: string }>(
@@ -620,7 +620,7 @@ export function animalRoutes(app: FastifyInstance, deps: AppDeps) {
     )
   })
 
-  /* ---------- S-34 Ölüm ---------- */
+  /* ---------- Ölüm ---------- */
   app.post('/api/animals/:id/death', async (req) => {
     const u = requirePerm(req, 'animals.status', 'animals.death')
     const { id } = parse(idParam, req.params)
@@ -640,7 +640,7 @@ export function animalRoutes(app: FastifyInstance, deps: AppDeps) {
       await setStatus(tx, a, 'dead', b.date, u.id)
       await statusEvent(tx, id, 'death', b.date, a.status, 'dead', { cause: b.cause, note: b.note }, u.id)
       await cancelAnimalReminders(tx, id, 'Hayvan öldü')
-      // ⚠️ Gelecek randevuların iptali randevu modülüne (E) bağlı; burada yapılmıyor.
+      // Gelecek randevularin iptali randevu tarafinda yapilir.
       const chip = await petvetChip(tx, id, a.species)
       const task = chip
         ? await openTask(tx, { kind: 'DEATH', animalId: id, ownerId: await primaryOwnerId(tx, id), sourceType: 'animal_status', eventDate: b.date })
@@ -650,7 +650,7 @@ export function animalRoutes(app: FastifyInstance, deps: AppDeps) {
     })
   })
 
-  /* ---------- S-34 Kayıp ---------- */
+  /* ---------- Kayıp ---------- */
   app.post('/api/animals/:id/lost', async (req) => {
     const u = requirePerm(req, 'animals.status')
     const { id } = parse(idParam, req.params)
@@ -678,7 +678,7 @@ export function animalRoutes(app: FastifyInstance, deps: AppDeps) {
     })
   })
 
-  /* ---------- S-34 Bulundu ---------- */
+  /* ---------- Bulundu ---------- */
   app.post('/api/animals/:id/found', async (req) => {
     const u = requirePerm(req, 'animals.status')
     const { id } = parse(idParam, req.params)
@@ -709,13 +709,13 @@ export function animalRoutes(app: FastifyInstance, deps: AppDeps) {
         action: 'update',
         entity: 'animal',
         entityId: id,
-        summary: `${a.name}: bulundu${cancelled.length ? ' · açık kayıp görevi iptal edildi' : ''}`,
+        summary: `${a.name}: bulundu${cancelled.length ? ' - açık kayıp görevi iptal edildi' : ''}`,
       })
       return { ...result(task), cancelledTasks: cancelled.length }
     })
   })
 
-  /* ---------- S-34 Devir ---------- */
+  /* ---------- Devir ---------- */
   app.post('/api/animals/:id/transfer', async (req) => {
     const u = requirePerm(req, 'animals.status')
     const { id } = parse(idParam, req.params)
@@ -758,12 +758,12 @@ export function animalRoutes(app: FastifyInstance, deps: AppDeps) {
       await cancelAnimalReminders(tx, id, 'Sahip devri')
       const chip = await petvetChip(tx, id, a.species)
       const task = chip ? await openTask(tx, { kind: 'TRANSFER', animalId: id, ownerId: no.id, sourceType: 'animal_status', eventDate: b.date }) : null
-      await writeAudit(tx, { userId: u.id, action: 'update', entity: 'animal', entityId: id, summary: `${a.name}: devir ${fromName} → ${toName}` })
+      await writeAudit(tx, { userId: u.id, action: 'update', entity: 'animal', entityId: id, summary: `${a.name}: devir ${fromName} -> ${toName}` })
       return result(task)
     })
   })
 
-  /* ---------- S-35 Çip uygula / ikinci çip ---------- */
+  /* ---------- Çip uygula / ikinci çip ---------- */
   app.post('/api/animals/:id/chips', async (req) => {
     const u = requirePerm(req, 'chips.implant')
     const { id } = parse(idParam, req.params)
@@ -862,7 +862,7 @@ export function animalRoutes(app: FastifyInstance, deps: AppDeps) {
     }
   })
 
-  /* ---------- S-36 Çip düzelt (yanlış girilmiş numara) ---------- */
+  /* ---------- Çip düzelt (yanlış girilmiş numara) ---------- */
   app.post('/api/chips/:id/correct', async (req) => {
     const u = requirePerm(req, 'chips.correct')
     const { id } = parse(idParam, req.params)
@@ -928,7 +928,7 @@ export function animalRoutes(app: FastifyInstance, deps: AppDeps) {
             sourceType: 'microchip',
             sourceId: mc.id,
             eventDate: today(),
-            note: `Çip no düzeltildi: ${old.chipNo} → ${chip.value}`,
+            note: `Çip no düzeltildi: ${old.chipNo} -> ${chip.value}`,
           })
         }
         await tx.update(animals).set({ updatedAt: now(), version: sql`${animals.version} + 1` }).where(eq(animals.id, a.id))
@@ -937,7 +937,7 @@ export function animalRoutes(app: FastifyInstance, deps: AppDeps) {
           action: 'update',
           entity: 'animal',
           entityId: a.id,
-          summary: `${a.name}: çip düzeltildi ${old.chipNo} → ${chip.value} (${b.reason})`,
+          summary: `${a.name}: çip düzeltildi ${old.chipNo} -> ${chip.value} (${b.reason})`,
         })
         return { ...result(task, chip.warnings), chipId: mc.id } satisfies ChipActionResult
       })

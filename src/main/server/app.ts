@@ -16,7 +16,7 @@ import { fileRoutes } from './files'
 import { systemRoutes } from './routes/system'
 
 export interface ServerOptions extends AppDeps {
-  /** İzin verilen arayüz kökenleri (Electron: 'null' / file://, geliştirme: http://localhost:5173) */
+  /** İzin verilen arayüz kökenleri (Electron: 'null' / file://geliştirme: http://localhost:5173) */
   allowedOrigins: string[]
   /** Oturum deposu (yerel ağ dinleyicisiyle paylaşılır) */
   sessions?: SessionStore

@@ -1,4 +1,4 @@
-// Modül F: ayarlar (S-100…S-115), kullanıcılar, sözlükler, KVKK talepleri (S-95) ve denetim kaydı (S-96)
+// ayarlar, kullanıcılar, sözlükler, KVKK talepleri ve denetim kaydı
 import type { FastifyInstance } from 'fastify'
 import { hash, verify } from '@node-rs/argon2'
 import { randomInt } from 'node:crypto'
@@ -145,7 +145,7 @@ const settingsPatchSchema = z
         vaccineKinds: z.array(z.string().trim().min(1).max(40)).max(30),
         warnDaysBefore: z.number().int().min(0).max(60),
         requireEvidence: z.boolean(),
-        tarbilUrl: z.string().trim().url('Geçerli bir adres girin (https://…).').refine((u) => u.startsWith('https://'), 'Adres https:// ile başlamalı.').optional(),
+        tarbilUrl: z.string().trim().url('Geçerli bir adres girin (https://...).').refine((u) => u.startsWith('https://'), 'Adres https:// ile başlamalı.').optional(),
       })
       .optional(),
   })
@@ -341,7 +341,7 @@ export function adminRoutes(app: FastifyInstance, deps: AppDeps) {
   const { db } = deps
   const today = () => deps.today?.() ?? todayIstanbul()
 
-  // ===== Klinik ve genel ayarlar (S-100, S-107, S-110) =====
+  // ===== Klinik ve genel ayarlar =====
 
   app.get('/api/admin/settings', async (req) => {
     requireUser(req)
@@ -396,7 +396,7 @@ export function adminRoutes(app: FastifyInstance, deps: AppDeps) {
     })
   })
 
-  // ===== Kullanıcılar (S-101) =====
+  // ===== Kullanıcılar =====
 
   app.get('/api/admin/users', async (req) => {
     requirePerm(req, 'users.manage')
@@ -500,7 +500,7 @@ export function adminRoutes(app: FastifyInstance, deps: AppDeps) {
     return { closed: n }
   })
 
-  // ===== Sözlükler (S-104) =====
+  // ===== Sözlükler =====
 
   app.get('/api/dictionaries/:kind', async (req) => {
     requireUser(req)
@@ -590,12 +590,12 @@ export function adminRoutes(app: FastifyInstance, deps: AppDeps) {
       const value = (b ?? '').trim()
       if (!value) return errors.push({ line, message: 'Değer boş.' })
       if (value.length > 80) return errors.push({ line, message: 'Değer 80 karakterden uzun.' })
-      if (kind === 'breed' && !species) return errors.push({ line, message: 'Irk için tür (cat, dog…) gerekli.' })
+      if (kind === 'breed' && !species) return errors.push({ line, message: 'Irk için tür (cat, dog...) gerekli.' })
       const sort = c?.trim() ? Number(c) : null
       if (sort !== null && !Number.isInteger(sort)) return errors.push({ line, message: 'Sıra sayı olmalı.' })
       items.push({ species, value, sort, active: !/^(0|hayır|hayir|false|pasif)$/i.test((d ?? '').trim()) })
     })
-    if (errors.length) throw new AppError(400, `CSV'de ${errors.length} hatalı satır var. İlk hata: satır ${errors[0].line} — ${errors[0].message}`, 'CSV_INVALID', errors)
+    if (errors.length) throw new AppError(400, `CSV'de ${errors.length} hatalı satır var. İlk hata: satır ${errors[0].line} - ${errors[0].message}`, 'CSV_INVALID', errors)
     return db.transaction(async (tx) => {
       let added = 0
       let updated = 0
@@ -615,7 +615,7 @@ export function adminRoutes(app: FastifyInstance, deps: AppDeps) {
     })
   })
 
-  // ===== KVKK metinleri (S-114) =====
+  // ===== KVKK metinleri =====
 
   app.get('/api/kvkk/texts', async (req) => {
     requireUser(req)
@@ -653,7 +653,7 @@ export function adminRoutes(app: FastifyInstance, deps: AppDeps) {
     })
   })
 
-  // ===== KVKK talepleri (S-95) =====
+  // ===== KVKK talepleri =====
 
   const REQ_SELECT = sql`select r.*, o.first_name || ' ' || o.last_name as owner_name, (o.anonymized_at is not null) as owner_anonymized
                          from kvkk_requests r join owners o on o.id = r.owner_id`
@@ -816,7 +816,7 @@ export function adminRoutes(app: FastifyInstance, deps: AppDeps) {
     return {
       generatedAt: (deps.now?.() ?? new Date()).toISOString(),
       dataController: c?.name ?? '',
-      note: 'KVKK m.11 kapsamında veri kopyası. ⚠️ Yanıt yazısı ile birlikte ilgili kişiye verilmelidir.',
+      note: 'KVKK m.11 kapsaminda veri kopyasi. Yanit yazisi ile birlikte ilgili kisiye verilmelidir.',
       owner,
       animals,
       related,
@@ -834,7 +834,7 @@ export function adminRoutes(app: FastifyInstance, deps: AppDeps) {
     }))
     const count = async (q: SQL) => (await rows<{ n: number }>(tx, q))[0]?.n ?? 0
     const kept: AnonymizePreview['kept'] = []
-    const legal = 'Yasal yükümlülük (evcil hayvan kayıt ve aşı mevzuatı) ⚠️ hukukçuyla netleşmeli'
+    const legal = 'Yasal yukumluluk (evcil hayvan kayit ve asi mevzuati)'
     kept.push({ label: 'Hayvan kayıtları', count: await count(sql`select count(distinct animal_id)::int as n from animal_owners where owner_id = ${id}`), reason: legal })
     kept.push({
       label: 'Mikroçip kayıtları',
@@ -923,14 +923,14 @@ export function adminRoutes(app: FastifyInstance, deps: AppDeps) {
         action: 'update',
         entity: 'owner',
         entityId: id,
-        summary: `KVKK anonimleştirme (geri alınamaz) → ${an.first} ${an.last}`,
+        summary: `KVKK anonimleştirme (geri alınamaz) -> ${an.first} ${an.last}`,
         diff: jsonbOrder({ anonymized: true, clearedFields: preview.clearedFields.filter((f) => f.hasValue).map((f) => f.field), requestId: body.requestId ?? null }),
       })
       return { ok: true, anonymName: `${an.first} ${an.last}` }
     })
   })
 
-  // ===== Denetim kaydı (S-96) =====
+  // ===== Denetim kaydı =====
 
   app.get('/api/audit', async (req) => {
     requirePerm(req, 'audit.view')

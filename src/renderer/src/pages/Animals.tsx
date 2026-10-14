@@ -1,4 +1,4 @@
-// Modül B — S-30 Hayvan listesi, S-32 Hayvan formu, S-33 Hayvan detayı, S-34 durum diyalogları, S-35/S-36 çip işlemleri
+// Hayvan listesi, Hayvan formu, Hayvan detayı, durum diyalogları,  çip işlemleri
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
@@ -57,7 +57,7 @@ function WarnTags({ allergies, behavior, chronic }: { allergies: string[]; behav
   )
 }
 
-/* ================= S-30 Hayvan listesi ================= */
+/* ================= Hayvan listesi ================= */
 
 const PAGE = 50
 
@@ -126,7 +126,7 @@ export function AnimalsPage() {
         <label className="ck"><input type="checkbox" checked={risk6m} onChange={(e) => setParam('risk', e.target.checked ? '1' : null)} />6 aydan büyük ve çipsiz</label>
         <label className="ck"><input type="checkbox" checked={petvet === 'open'} onChange={(e) => setParam('petvet', e.target.checked ? 'open' : null)} />PETVET bekleyen</label>
       </form>
-      {risk6m && <div className="alert amb">Yasal risk listesi: 6 aylıktan büyük olup çipi kayıtlı olmayan hayvanlar. ⚠️ Yaş sınırı pilot hekimle doğrulanacak.</div>}
+      {risk6m && <div className="alert amb">Yasal risk listesi: 6 ayliktan buyuk olup cipi kayitli olmayan hayvanlar.</div>}
       <section className="pnl">
         <div className="tbl-wrap">
           <table>
@@ -141,20 +141,20 @@ export function AnimalsPage() {
                     {a.allergies.length > 0 && <span className="tag s-red">Alerji</span>}{' '}
                     {(a.behavior === 'aggressive' || a.behavior === 'bites') && <span className="tag s-amb">{BEHAVIOR_LABEL[a.behavior as Behavior]}</span>}
                   </td>
-                  <td>{[SPECIES_LABEL[a.species], a.breed].filter(Boolean).join(' · ')}</td>
+                  <td>{[SPECIES_LABEL[a.species], a.breed].filter(Boolean).join(' - ')}</td>
                   <td>{a.ownerName}<div className="mono mut" style={{ fontSize: 12 }}>{formatTrPhone(a.ownerPhone)}</div></td>
                   <td>{age(a.birthDate)}</td>
                   <td>{SEX_LABEL[a.sex]}{a.neutered ? ', kısır' : ''}</td>
                   <td><ChipNo value={a.chipNo} /></td>
                   <td className="mono">{a.passportNo ?? ''}</td>
                   <td><span className={`st ${statusClass(a.status)}`}>{ANIMAL_STATUS_LABEL[a.status] ?? a.status}</span></td>
-                  <td className="mono">{formatDateTr(a.lastVisit) || <span className="mut">—</span>}</td>
-                  <td>{a.petvet ? <PetvetState {...a.petvet} /> : <span className="mut">—</span>}</td>
+                  <td className="mono">{formatDateTr(a.lastVisit) || <span className="mut">-</span>}</td>
+                  <td>{a.petvet ? <PetvetState {...a.petvet} /> : <span className="mut">-</span>}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-          {list.isLoading && <div className="empty">Yükleniyor…</div>}
+          {list.isLoading && <div className="empty">Yükleniyor...</div>}
           {list.data?.length === 0 && (
             <div className="empty">
               {q ? `"${q}" için kayıt bulunamadı.` : 'Bu filtrelerle kayıt yok.'} {can('animals.write') && <Link to="/hayvanlar/yeni">Yeni hayvan ekle</Link>}
@@ -173,7 +173,7 @@ export function AnimalsPage() {
   )
 }
 
-/* ================= S-32 Hayvan formu ================= */
+/* ================= Hayvan formu ================= */
 
 interface AnimalFormState {
   name: string
@@ -263,7 +263,7 @@ function AnimalForm({ existing }: { existing?: AnimalDetailFull }) {
   })
   const [owner, setOwner] = useState<{ id: string; label: string } | null>(null)
   useEffect(() => {
-    if (ownerQ.data && !owner) setOwner({ id: ownerQ.data.id, label: `${ownerQ.data.fullName} · ${formatTrPhone(ownerQ.data.phone)}` })
+    if (ownerQ.data && !owner) setOwner({ id: ownerQ.data.id, label: `${ownerQ.data.fullName} - ${formatTrPhone(ownerQ.data.phone)}` })
   }, [ownerQ.data, owner])
   const [errs, setErrs] = useState<Record<string, string>>({})
   const [err, setErr] = useState('')
@@ -291,7 +291,7 @@ function AnimalForm({ existing }: { existing?: AnimalDetailFull }) {
     if (s.source === 'adoption' && !s.sourceDetail.trim()) e.sourceDetail = 'Barınak / belediye adını yazın.'
     if (s.weightKg) {
       const w = Number(s.weightKg.replace(',', '.'))
-      if (!(w >= 0.01 && w <= 150)) e.weightKg = 'Kilo 0,01–150 kg arasında olmalı.'
+      if (!(w >= 0.01 && w <= 150)) e.weightKg = 'Kilo 0,01-150 kg arasında olmalı.'
     }
     if (!existing && !owner) e.owner = 'Sahip seçin.'
     return e
@@ -333,7 +333,7 @@ function AnimalForm({ existing }: { existing?: AnimalDetailFull }) {
         nav(`/hayvanlar/${existing.id}`, { replace: true })
       } else {
         const r = await api.post<{ id: string }>('/api/animals', { ...body, ownerId: owner!.id, weightKg: s.weightKg ? Number(s.weightKg.replace(',', '.')) : undefined })
-        toast(`${s.name} kaydedildi.${petvetSpecies ? ' Çip uygulamak için "İşlemler → Çip uygula"yı kullanın.' : ''}`)
+        toast(`${s.name} kaydedildi.${petvetSpecies ? ' Çip uygulamak için "İşlemler -> Çip uygula"yı kullanın.' : ''}`)
         qc.invalidateQueries()
         nav(`/hayvanlar/${r.id}`, { replace: true })
       }
@@ -409,7 +409,7 @@ function AnimalForm({ existing }: { existing?: AnimalDetailFull }) {
         <fieldset className="sec">
           <legend>Sağlık ve davranış</legend>
           <div className="g4">
-            <Field label="Alerjiler (virgülle)" htmlFor="al" style={{ gridColumn: 'span 2' }}><input id="al" className="inp" value={s.allergies} onChange={(e) => set('allergies', e.target.value)} placeholder="Penisilin, …" /></Field>
+            <Field label="Alerjiler (virgülle)" htmlFor="al" style={{ gridColumn: 'span 2' }}><input id="al" className="inp" value={s.allergies} onChange={(e) => set('allergies', e.target.value)} placeholder="Penisilin, ..." /></Field>
             <Field label="Kronik hastalıklar (virgülle)" htmlFor="kr" style={{ gridColumn: 'span 2' }}><input id="kr" className="inp" value={s.chronicDiseases} onChange={(e) => set('chronicDiseases', e.target.value)} /></Field>
             <Field label="Davranış uyarısı" htmlFor="bh">
               <select id="bh" className="inp" value={s.behavior} onChange={(e) => set('behavior', e.target.value as Behavior | '')}>
@@ -430,7 +430,7 @@ function AnimalForm({ existing }: { existing?: AnimalDetailFull }) {
           <div className="g4">
             <Field label="Kaynak" htmlFor="sr">
               <select id="sr" className="inp" value={s.source} onChange={(e) => set('source', e.target.value as AnimalSource | '')}>
-                <option value="">—</option>
+                <option value="">-</option>
                 {ANIMAL_SOURCES.map((x) => <option key={x} value={x}>{SOURCE_LABEL[x]}</option>)}
               </select>
             </Field>
@@ -440,12 +440,12 @@ function AnimalForm({ existing }: { existing?: AnimalDetailFull }) {
         </fieldset>
         <div className="form-foot">
           <span className="mut" style={{ fontSize: 12 }}>
-            {existing ? <>Oluşturan: {existing.createdByName ?? '—'} · {fmtDT(existing.createdAt)} · Son değiştiren: {existing.updatedByName ?? '—'} · {fmtDT(existing.updatedAt)}</> : 'Fotoğraf ekleme sonraki sürümde.'}
+            {existing && <>Olusturan: {existing.createdByName ?? '-'} - {fmtDT(existing.createdAt)} - Son degistiren: {existing.updatedByName ?? '-'} - {fmtDT(existing.updatedAt)}</>}
           </span>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             {err && <span className="err" role="alert">{err}</span>}
             <button type="button" className="btn" onClick={cancel}>Vazgeç</button>
-            <button className="btn p" disabled={busy}>{busy ? 'Kaydediliyor…' : 'Kaydet'} <span className="k">Ctrl+S</span></button>
+            <button className="btn p" disabled={busy}>{busy ? 'Kaydediliyor...' : 'Kaydet'} <span className="k">Ctrl+S</span></button>
           </div>
         </div>
       </form>
@@ -453,7 +453,7 @@ function AnimalForm({ existing }: { existing?: AnimalDetailFull }) {
   )
 }
 
-/* ================= S-33 Hayvan detayı ================= */
+/* ================= Hayvan detayı ================= */
 
 type Dialog = null | 'death' | 'lost' | 'found' | 'transfer' | 'implant' | 'second' | 'correct'
 
@@ -464,7 +464,7 @@ export function AnimalDetailPage() {
   const q = useQuery({ queryKey: ['animal', id], queryFn: () => api.get<AnimalDetailFull>(`/api/animals/${id}`), enabled: !isNew })
   if (isNew) return <AnimalForm key="new" />
   if (q.isError) return <div className="alert">{(q.error as Error).message}</div>
-  if (!q.data) return <div className="mut">Yükleniyor…</div>
+  if (!q.data) return <div className="mut">Yükleniyor...</div>
   if (params.get('duzenle') === '1') return <AnimalForm key={`${id}-${q.data.version}`} existing={q.data} />
   return <AnimalView a={q.data} tab={params.get('sekme') ?? 'ozet'} setTab={(t) => setParams({ sekme: t }, { replace: true })} />
 }
@@ -524,15 +524,15 @@ function AnimalView({ a, tab, setTab }: { a: AnimalDetailFull; tab: string; setT
               a.color,
             ]
               .filter(Boolean)
-              .join(' · ')}
+              .join(' - ')}
           </div>
           <dl className="kv" style={{ marginTop: 4 }}>
             <dt>Çip</dt>
-            <dd>{chip ? <><ChipNo value={chip.chipNo} /> <span className="mut">· {formatDateTr(chip.implantedAt)} · {chip.bodySite}</span></> : <span className="s-red">çipsiz</span>}</dd>
+            <dd>{chip ? <><ChipNo value={chip.chipNo} /> <span className="mut">- {formatDateTr(chip.implantedAt)} - {chip.bodySite}</span></> : <span className="s-red">çipsiz</span>}</dd>
             <dt>Pasaport</dt>
-            <dd className="mono">{a.passportNo ?? '—'}</dd>
+            <dd className="mono">{a.passportNo ?? '-'}</dd>
             <dt>Sahip</dt>
-            <dd>{owner ? <><Link to={`/sahipler/${owner.id}`}>{owner.fullName}</Link> · <span className="mono">{formatTrPhone(owner.phone)}</span>{a.owners.length > 1 && <span className="mut"> +{a.owners.length - 1}</span>}</> : '—'}</dd>
+            <dd>{owner ? <><Link to={`/sahipler/${owner.id}`}>{owner.fullName}</Link> - <span className="mono">{formatTrPhone(owner.phone)}</span>{a.owners.length > 1 && <span className="mut"> +{a.owners.length - 1}</span>}</> : '-'}</dd>
           </dl>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-end' }}>
@@ -563,7 +563,7 @@ function AnimalView({ a, tab, setTab }: { a: AnimalDetailFull; tab: string; setT
           </div>
           {openTask && (
             <Link to={`/petvet/${openTask.id}`} className="alert amb" style={{ textDecoration: 'none', color: 'var(--ink)', padding: '6px 10px' }}>
-              <strong className="st s-amb">PETVET</strong> {kindLabel(openTask.kind)} · {openTask.status === 'missing_info' ? 'eksik bilgi' : urgencyText(openTask.urgency, openTask.daysLeft)} ›
+              <strong className="st s-amb">PETVET</strong> {kindLabel(openTask.kind)} - {openTask.status === 'missing_info' ? 'eksik bilgi' : urgencyText(openTask.urgency, openTask.daysLeft)} ›
             </Link>
           )}
         </div>
@@ -583,7 +583,7 @@ function AnimalView({ a, tab, setTab }: { a: AnimalDetailFull; tab: string; setT
       {tab === 'gecmis' && <AnimalHistoryTab animalId={a.id} />}
 
       <p className="mut" style={{ margin: 0, fontSize: 12 }}>
-        Oluşturan: {a.createdByName ?? '—'} · {fmtDT(a.createdAt)} · Son değiştiren: {a.updatedByName ?? '—'} · {fmtDT(a.updatedAt)}
+        Oluşturan: {a.createdByName ?? '-'} - {fmtDT(a.createdAt)} - Son değiştiren: {a.updatedByName ?? '-'} - {fmtDT(a.updatedAt)}
       </p>
 
       {dialog === 'death' && <DeathDialog a={a} onClose={() => setDialog(null)} />}
@@ -684,13 +684,13 @@ function ChipTab({ a, onAction }: { a: AnimalDetailFull; onAction(d: Dialog): vo
                 return (
                   <tr key={c.id}>
                     <td><ChipNo value={c.chipNo} /> <button type="button" className="btn sm" aria-label="Çip numarasını kopyala" onClick={() => navigator.clipboard.writeText(c.chipNo)}>Kopyala</button></td>
-                    <td>{c.format === 'iso' ? `ISO${v.ok && v.code ? ` · ${v.code === 792 ? 'Türkiye' : v.codeKind === 'manufacturer' ? 'üretici' : v.codeKind === 'test' ? 'test' : 'yurt dışı'}` : ''}` : 'Eski biçim'}</td>
+                    <td>{c.format === 'iso' ? `ISO${v.ok && v.code ? ` - ${v.code === 792 ? 'Türkiye' : v.codeKind === 'manufacturer' ? 'üretici' : v.codeKind === 'test' ? 'test' : 'yurt dışı'}` : ''}` : 'Eski biçim'}</td>
                     <td className="mono">{formatDateTr(c.implantedAt)}</td>
                     <td>{c.implantedByName}</td>
                     <td>{c.bodySite}</td>
                     <td className="mono">{c.lotNo}</td>
                     <td><span className={`st ${cls}`}>{label}</span></td>
-                    <td>{t ? <PetvetState status={t.status} urgency={t.urgency} daysLeft={t.daysLeft} /> : <span className="mut">—</span>}{t?.petvetRef ? <span className="mono mut"> {t.petvetRef}</span> : null}</td>
+                    <td>{t ? <PetvetState status={t.status} urgency={t.urgency} daysLeft={t.daysLeft} /> : <span className="mut">-</span>}{t?.petvetRef ? <span className="mono mut"> {t.petvetRef}</span> : null}</td>
                   </tr>
                 )
               })}
@@ -707,8 +707,8 @@ function ChipTab({ a, onAction }: { a: AnimalDetailFull; onAction(d: Dialog): vo
               <tr key={e.id}>
                 <td className="mono" style={{ whiteSpace: 'nowrap' }}>{fmtDT(e.at)}</td>
                 <td>
-                  {CHIP_EVENT[e.kind] ?? e.kind} · <span className="mono">{formatChip(e.chipNo)}</span>
-                  {e.kind === 'CORRECTION' && <div className="mut">eski: <span className="mono">{String(e.data.oldChipNo ?? '')}</span> · {String(e.data.reason ?? '')}</div>}
+                  {CHIP_EVENT[e.kind] ?? e.kind} - <span className="mono">{formatChip(e.chipNo)}</span>
+                  {e.kind === 'CORRECTION' && <div className="mut">eski: <span className="mono">{String(e.data.oldChipNo ?? '')}</span> - {String(e.data.reason ?? '')}</div>}
                   {typeof e.data.bodySiteReason === 'string' && <div className="mut">Bölge nedeni: {e.data.bodySiteReason}</div>}
                 </td>
                 <td>{e.userName}</td>
@@ -761,7 +761,7 @@ function WeightTab({ animalId }: { animalId: string }) {
     e.preventDefault?.()
     setErr('')
     const n = Number(val.replace(',', '.'))
-    if (!(n >= 0.01 && n <= 150)) return setErr('Kilo 0,01–150 kg arasında olmalı.')
+    if (!(n >= 0.01 && n <= 150)) return setErr('Kilo 0,01-150 kg arasında olmalı.')
     try {
       await api.post(`/api/animals/${animalId}/weights`, { kg: n, date, confirm })
       setVal('')
@@ -847,7 +847,7 @@ function OwnershipTab({ animalId }: { animalId: string }) {
           <tbody>
             {q.data?.map((o, i) => (
               <tr key={i} className="click" onClick={() => nav(`/sahipler/${o.ownerId}`)}>
-                <td><strong>{o.ownerName}</strong>{o.isPrimary && !o.toDate && <span className="mut"> · birincil</span>}</td>
+                <td><strong>{o.ownerName}</strong>{o.isPrimary && !o.toDate && <span className="mut"> - birincil</span>}</td>
                 <td className="mono">{formatTrPhone(o.phone)}</td>
                 <td className="mono">{formatDateTr(o.fromDate)}</td>
                 <td className="mono">{o.toDate ? formatDateTr(o.toDate) : <span className="st s-ok">devam ediyor</span>}</td>
@@ -866,7 +866,7 @@ function AnimalHistoryTab({ animalId }: { animalId: string }) {
   return <HistoryTable rows={q.data} />
 }
 
-/* ---------- S-34 Durum diyalogları ---------- */
+/* ---------- Durum diyalogları ---------- */
 
 function useAction(onClose: () => void) {
   const qc = useQueryClient()
@@ -896,7 +896,7 @@ function Foot({ err, busy, onClose, label, disabled, danger }: { err: string; bu
       <span className="err" role="alert">{err}</span>
       <div style={{ display: 'flex', gap: 8 }}>
         <button type="button" className="btn" onClick={onClose}>Vazgeç</button>
-        <button type="submit" form="dlg" className="btn p" disabled={busy || disabled} style={danger ? { background: 'var(--red)', borderColor: 'var(--red)' } : undefined}>{busy ? 'Kaydediliyor…' : label}</button>
+        <button type="submit" form="dlg" className="btn p" disabled={busy || disabled} style={danger ? { background: 'var(--red)', borderColor: 'var(--red)' } : undefined}>{busy ? 'Kaydediliyor...' : label}</button>
       </div>
     </>
   )
@@ -908,7 +908,7 @@ function DeathDialog({ a, onClose }: { a: AnimalDetailFull; onClose(): void }) {
   const { err, setErr, busy, run } = useAction(onClose)
   const ok = d.typed.trim().toLocaleUpperCase('tr-TR') === 'ÖLÜM'
   return (
-    <Modal title={`Ölüm kaydı — ${a.name}`} onClose={onClose} footer={<Foot err={err} busy={busy} onClose={onClose} label="Ölüm kaydını onayla" disabled={!ok || !d.noMsg} danger />}>
+    <Modal title={`Ölüm kaydı - ${a.name}`} onClose={onClose} footer={<Foot err={err} busy={busy} onClose={onClose} label="Ölüm kaydını onayla" disabled={!ok || !d.noMsg} danger />}>
       <form
         id="dlg"
         style={{ display: 'flex', flexDirection: 'column', gap: 10 }}
@@ -930,7 +930,7 @@ function DeathDialog({ a, onClose }: { a: AnimalDetailFull; onClose(): void }) {
         </div>
         <Field label="Açıklama" htmlFor="dn"><textarea id="dn" className="inp" style={{ height: 52, paddingTop: 4 }} value={d.note} onChange={(e) => setD({ ...d, note: e.target.value })} /></Field>
         {d.cause === 'euthanasia' && <span className="mut" style={{ fontSize: 12 }}>Ötanazi onam belgesini kayıttan sonra "Belgeler" sekmesine ekleyin.</span>}
-        {PETVET_SPECIES.includes(a.species) && a.chips.some((c) => c.status === 'active') && <span className="mut">PETVET'te ölüm bildirimi görevi açılacak (sahip bildirimi 30 gün ⚠️ doğrulanacak).</span>}
+        {PETVET_SPECIES.includes(a.species) && a.chips.some((c) => c.status === 'active') && <span className="mut">PETVET'te olum bildirimi gorevi acilacak (sahip bildirimi 30 gun).</span>}
         <label className="ck"><input type="checkbox" checked={d.noMsg} onChange={(e) => setD({ ...d, noMsg: e.target.checked })} />Bundan sonra bu hayvan için hiçbir mesaj gönderilmeyecek.</label>
         <Field label='Onay için "ÖLÜM" yazın' htmlFor="dt"><input id="dt" className="inp" value={d.typed} onChange={(e) => setD({ ...d, typed: e.target.value })} autoComplete="off" /></Field>
       </form>
@@ -944,7 +944,7 @@ function LostDialog({ a, onClose }: { a: AnimalDetailFull; onClose(): void }) {
   const { err, busy, run } = useAction(onClose)
   const petvet = PETVET_SPECIES.includes(a.species) && a.chips.some((c) => c.status === 'active')
   return (
-    <Modal title={`Kayıp bildirimi — ${a.name}`} onClose={onClose} footer={<Foot err={err} busy={busy} onClose={onClose} label="Kayıp olarak işaretle" />}>
+    <Modal title={`Kayıp bildirimi - ${a.name}`} onClose={onClose} footer={<Foot err={err} busy={busy} onClose={onClose} label="Kayıp olarak işaretle" />}>
       <form
         id="dlg"
         style={{ display: 'flex', flexDirection: 'column', gap: 10 }}
@@ -956,12 +956,12 @@ function LostDialog({ a, onClose }: { a: AnimalDetailFull; onClose(): void }) {
           )
         }}
       >
-        <div className="alert amb">Sahibin 7 gün içinde il/ilçe müdürlüğüne bildirmesi gerekir. ⚠️ doğrulanacak. Çip okunduğunda kırmızı uyarı gösterilir.</div>
+        <div className="alert amb">Sahibin 7 gun icinde il/ilce mudurlugune bildirmesi gerekir. Cip okundugunda kirmizi uyari gosterilir.</div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
           <Field label="Kayıp tarihi *" htmlFor="ld"><input id="ld" type="date" className="inp" max={today} value={d.date} onChange={(e) => setD({ ...d, date: e.target.value })} /></Field>
           <Field label="İl" htmlFor="lc">
             <select id="lc" className="inp" value={d.city} onChange={(e) => setD({ ...d, city: e.target.value })}>
-              <option value="">—</option>
+              <option value="">-</option>
               {CITIES.map((c) => <option key={c}>{c}</option>)}
             </select>
           </Field>
@@ -980,7 +980,7 @@ function FoundDialog({ a, onClose }: { a: AnimalDetailFull; onClose(): void }) {
   const [d, setD] = useState({ date: today, note: '' })
   const { err, busy, run } = useAction(onClose)
   return (
-    <Modal title={`Bulundu — ${a.name}`} onClose={onClose} footer={<Foot err={err} busy={busy} onClose={onClose} label="Bulundu olarak işaretle" />}>
+    <Modal title={`Bulundu - ${a.name}`} onClose={onClose} footer={<Foot err={err} busy={busy} onClose={onClose} label="Bulundu olarak işaretle" />}>
       <form
         id="dlg"
         style={{ display: 'flex', flexDirection: 'column', gap: 10 }}
@@ -1025,9 +1025,9 @@ function TransferDialog({ a, onClose }: { a: AnimalDetailFull; onClose(): void }
   }
 
   return (
-    <Modal title={`Sahip değişikliği — ${a.name}`} width={640} onClose={onClose} footer={<Foot err={err} busy={busy} onClose={onClose} label="Devri kaydet" />}>
+    <Modal title={`Sahip değişikliği - ${a.name}`} width={640} onClose={onClose} footer={<Foot err={err} busy={busy} onClose={onClose} label="Devri kaydet" />}>
       <form id="dlg" style={{ display: 'flex', flexDirection: 'column', gap: 10 }} onSubmit={submit}>
-        <span className="mut">Mevcut sahip: {a.owners.map((o) => o.fullName).join(', ') || '—'}</span>
+        <span className="mut">Mevcut sahip: {a.owners.map((o) => o.fullName).join(', ') || '-'}</span>
         <div className="rad" role="radiogroup" aria-label="Yeni sahip">
           <label><input type="radio" checked={mode === 'pick'} onChange={() => setMode('pick')} />Kayıtlı sahip seç</label>
           <label><input type="radio" checked={mode === 'new'} onChange={() => setMode('new')} />Yeni sahip oluştur</label>
@@ -1045,7 +1045,7 @@ function TransferDialog({ a, onClose }: { a: AnimalDetailFull; onClose(): void }
             <Field label="Cep telefonu *" htmlFor="np"><input id="np" className="inp mono" value={no.phone} onChange={(e) => setNo({ ...no, phone: e.target.value })} /></Field>
             <Field label="İl" htmlFor="nc">
               <select id="nc" className="inp" value={no.city} onChange={(e) => setNo({ ...no, city: e.target.value })}>
-                <option value="">—</option>
+                <option value="">-</option>
                 {CITIES.map((c) => <option key={c}>{c}</option>)}
               </select>
             </Field>
@@ -1065,7 +1065,7 @@ function TransferDialog({ a, onClose }: { a: AnimalDetailFull; onClose(): void }
   )
 }
 
-/* ---------- S-35 Çip uygula / ikinci çip ---------- */
+/* ---------- Çip uygula / ikinci çip ---------- */
 
 function ImplantDialog({ a, second, onClose }: { a: AnimalDetailFull; second: boolean; onClose(): void }) {
   const { user } = useSession()
@@ -1083,7 +1083,7 @@ function ImplantDialog({ a, second, onClose }: { a: AnimalDetailFull; second: bo
 
   return (
     <Modal
-      title={`${second ? 'İkinci çip ekle' : 'Çip uygula'} — ${a.name}`}
+      title={`${second ? 'İkinci çip ekle' : 'Çip uygula'} - ${a.name}`}
       width={640}
       onClose={onClose}
       footer={<Foot err={err} busy={busy} onClose={onClose} label="Kaydet" />}
@@ -1122,7 +1122,7 @@ function ImplantDialog({ a, second, onClose }: { a: AnimalDetailFull; second: bo
           <Field label="Çip no (tekrar) *" htmlFor="cn2"><input id="cn2" className="inp mono" autoComplete="off" value={d.chipNo2} onChange={(e) => setD({ ...d, chipNo2: e.target.value })} /></Field>
         </div>
         {v && !v.ok && <span className="st s-red">{v.error}</span>}
-        {v?.ok && <span className="st s-ok">Geçerli · {v.code === 792 ? '792 Türkiye' : v.codeKind === 'manufacturer' ? 'üretici kodu' : v.codeKind === 'test' ? 'test çipi' : 'yurt dışı çipi'}</span>}
+        {v?.ok && <span className="st s-ok">Geçerli - {v.code === 792 ? '792 Türkiye' : v.codeKind === 'manufacturer' ? 'üretici kodu' : v.codeKind === 'test' ? 'test çipi' : 'yurt dışı çipi'}</span>}
         {v?.ok && v.warnings.map((w) => <span key={w} className="st s-amb">{w}</span>)}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
           <Field label="Uygulama tarihi *" htmlFor="cd"><input id="cd" type="date" className="inp" max={today} value={d.date} onChange={(e) => setD({ ...d, date: e.target.value })} /></Field>
@@ -1148,7 +1148,7 @@ function ImplantDialog({ a, second, onClose }: { a: AnimalDetailFull; second: bo
   )
 }
 
-/* ---------- S-36 Çip düzelt ---------- */
+/* ---------- Çip düzelt ---------- */
 
 function CorrectDialog({ a, onClose }: { a: AnimalDetailFull; onClose(): void }) {
   const chips = a.chipsFull.filter((c) => c.status !== 'corrected')
@@ -1159,7 +1159,7 @@ function CorrectDialog({ a, onClose }: { a: AnimalDetailFull; onClose(): void })
   const entered = a.petvetTasks.some((t) => t.kind === 'CHIP_NEW' && t.status === 'done')
 
   return (
-    <Modal title={`Çip numarası düzelt — ${a.name}`} width={600} onClose={onClose} footer={<Foot err={err} busy={busy} onClose={onClose} label="Düzeltmeyi kaydet" />}>
+    <Modal title={`Çip numarası düzelt - ${a.name}`} width={600} onClose={onClose} footer={<Foot err={err} busy={busy} onClose={onClose} label="Düzeltmeyi kaydet" />}>
       <form
         id="dlg"
         style={{ display: 'flex', flexDirection: 'column', gap: 10 }}

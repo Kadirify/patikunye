@@ -1,9 +1,9 @@
-// Modül B (sahipler + hayvan işlemleri): API girdi/çıktı tipleri ve sabitler
+//  (sahipler + hayvan işlemleri): API girdi/çıktı tipleri ve sabitler
 import type { AnimalDetail, AnimalListItem, OwnerInput, OwnerListItem, Sex, Species } from './api-types'
 import type { PetvetStatus, PetvetTaskKind } from './petvet'
 
-/** Aydınlatma metni sürümü. ⚠️ doğrulanacak: metin değişince Ayarlar'dan yönetilmeli. */
-export const KVKK_TEXT_VERSION = '2026-1'
+/** Aydinlatma metni surumu. Metin degisince Ayarlar'dan yonetilmeli. */
+export const KVKK_TEXT_VERSION = '2022-1'
 
 export const CONSENT_TYPES = ['kvkk_notice', 'reminder', 'marketing'] as const
 export type ConsentType = (typeof CONSENT_TYPES)[number]

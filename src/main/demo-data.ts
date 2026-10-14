@@ -1,4 +1,4 @@
-// Örnek (test) verisi: uygulamanın kendi API'si üzerinden üretilir, böylece PETVET görevleri, aşı planları,
+// Örnek (test) verisi: uygulamanın kendi API'si üzerinden üretilir, böylece PETVET görevleri, aşı planları
 // hatırlatmalar ve denetim kaydı gerçek kullanımdaki gibi oluşur. Tüm kişiler ve numaralar uydurmadır.
 import { addDaysIso } from '../shared/petvet'
 
@@ -57,7 +57,7 @@ export const COMPLAINTS = [
   'Tüy dökülmesi ve kaşıntı.',
   'Kısırlaştırma sonrası kontrol.',
   'Aşı öncesi genel muayene.',
-  'İshal, son 24 saatte 4–5 kez.',
+  'İshal, son 24 saatte 4-5 kez.',
   'Diş taşı ve ağız kokusu.',
 ]
 export const DIAGNOSES = ['Otitis externa', 'Akut gastroenterit', 'Dermatit', 'Üst solunum yolu enfeksiyonu', 'Diş taşı', 'Yumuşak doku travması', 'Sağlıklı', 'Kulak akarı', 'Gıda intoleransı']
@@ -121,7 +121,7 @@ export async function seedDemoData(call: Call, opts: { today: string; log?: (m: 
   const users = (await call<{ id: string; role: string; fullName: string }[]>('GET', '/api/users')).data
   const vets = users.filter((u) => u.role === 'vet' || u.role === 'admin')
 
-  /* 2) Sahip + hayvan + çip (hızlı kayıt) — çip tarihleri son 75 güne yayılır */
+  /* 2) Sahip + hayvan + çip (hızlı kayıt) - çip tarihleri son 75 güne yayılır */
   type A = { id: string; ownerId: string; species: string; name: string; birthDate: string; chip: boolean }
   const animals: A[] = []
   for (let i = 0; i < size; i++) {

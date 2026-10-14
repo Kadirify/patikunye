@@ -1,5 +1,5 @@
-// Randevu modülü (E) API'si: takvim, randevu formu, durum geçişleri, bekleme salonu, randevu türleri, tatiller.
-// Kurallar SAYFALAR.md S-70/S-71/S-72 ve §15.2. Saat dilimi Europe/Istanbul.
+// Randevu modülü API'si: takvim, randevu formu, durum geçişleri, bekleme salonu, randevu türleri, tatiller.
+// Kurallar ve  Saat dilimi Europe/Istanbul.
 import type { FastifyInstance } from 'fastify'
 import { sql, type SQL } from 'drizzle-orm'
 import { z } from 'zod'
@@ -571,14 +571,14 @@ export function appointmentsRoutes(app: FastifyInstance, deps: AppDeps) {
         action: 'update',
         entity: 'appointment',
         entityId: id,
-        summary: `Randevu taşındı: ${full.x_animal_name}, ${formatDateTr(old.l_date)} ${old.l_time} → ${formatDateTr(full.l_date)} ${full.l_time}`,
+        summary: `Randevu taşındı: ${full.x_animal_name}, ${formatDateTr(old.l_date)} ${old.l_time} -> ${formatDateTr(full.l_date)} ${full.l_time}`,
         diff: { from: { startsAt: iso(old.starts_at), endsAt: iso(old.ends_at), vetId: old.vet_id }, to: { startsAt: b.startsAt, endsAt: b.endsAt, vetId: b.vetId } },
       })
       return { id, version: upd[0].version, overlap, warnings } satisfies AppointmentSaveResult
     })
   })
 
-  /* Durum değiştir: geldi, muayenede, tamamlandı, gelmedi, iptal… */
+  /* Durum değiştir: geldi, muayenede, tamamlandı, gelmedi, iptal... */
   app.post('/api/appointments/:id/status', async (req) => {
     const u = requirePerm(req, 'appointments.write')
     const { id } = parse(idParam, req.params)
@@ -643,7 +643,7 @@ export function appointmentsRoutes(app: FastifyInstance, deps: AppDeps) {
         action: 'update',
         entity: 'appointment',
         entityId: id,
-        summary: `Randevu durumu: ${full.x_animal_name}, ${APPOINTMENT_STATUS_LABEL[old.status]} → ${APPOINTMENT_STATUS_LABEL[b.status]}${
+        summary: `Randevu durumu: ${full.x_animal_name}, ${APPOINTMENT_STATUS_LABEL[old.status]} -> ${APPOINTMENT_STATUS_LABEL[b.status]}${
           b.status === 'cancelled' ? ` (${b.cancelledBySide === 'owner' ? 'sahip' : 'klinik'}: ${b.cancelReason})` : ''
         }`,
       })

@@ -1,4 +1,4 @@
-// S-31 Hızlı kayıt: çip → sahip → hayvan → uygulama
+// Hızlı kayıt: çip -> sahip -> hayvan -> uygulama
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
@@ -141,10 +141,10 @@ export function QuickRegisterPage() {
     <>
       <div className="page-head">
         <h1>Hızlı kayıt</h1>
-        <span className="mut">çip → sahip → hayvan → uygulama</span>
+        <span className="mut">çip -> sahip -> hayvan -> uygulama</span>
         <label className="ck right">
           <input type="checkbox" checked={campaign} onChange={(e) => setCampaign(e.target.checked)} />
-          Kampanya modu (kaydettikten sonra formu temizle){campaign && <> · bu oturumda <strong className="mono">{count}</strong></>}
+          Kampanya modu (kaydettikten sonra formu temizle){campaign && <> - bu oturumda <strong className="mono">{count}</strong></>}
         </label>
       </div>
 
@@ -169,7 +169,7 @@ export function QuickRegisterPage() {
             </Field>
             <div style={{ minHeight: 36, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               {v && !v.ok && <span className="st s-red">{v.error}</span>}
-              {v?.ok && lookup.isLoading && <span className="mut">Kontrol ediliyor…</span>}
+              {v?.ok && lookup.isLoading && <span className="mut">Kontrol ediliyor...</span>}
               {v?.ok && registered && (
                 <span className="st s-red">
                   Bu çip {registered.animal.name} adına kayıtlı. <Link to={`/hayvanlar/${registered.animal.id}`}>Kaydı aç</Link>
@@ -177,7 +177,7 @@ export function QuickRegisterPage() {
               )}
               {v?.ok && lookup.data && !registered && (
                 <span className="st s-ok">
-                  Geçerli · {v.code === 792 ? '792 Türkiye' : v.codeKind === 'manufacturer' ? 'üretici kodu' : v.codeKind === 'test' ? 'test çipi' : 'yurt dışı'} · klinikte kayıtlı değil
+                  Geçerli - {v.code === 792 ? '792 Türkiye' : v.codeKind === 'manufacturer' ? 'üretici kodu' : v.codeKind === 'test' ? 'test çipi' : 'yurt dışı'} - klinikte kayıtlı değil
                 </span>
               )}
               {v?.ok && v.warnings.map((w) => <span key={w} className="st s-amb">{w}</span>)}
@@ -191,7 +191,7 @@ export function QuickRegisterPage() {
             {owner ? (
               <div style={{ border: '1px solid var(--accent)', background: '#eef3fa', borderRadius: 2, padding: '8px 10px', display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
                 <strong>{owner.label}</strong>
-                {owner.tcknLast4 ? <span className="st s-ok">TCKN ****{owner.tcknLast4}</span> : <span className="st s-amb">TCKN yok — PETVET için gerekli</span>}
+                {owner.tcknLast4 ? <span className="st s-ok">TCKN ****{owner.tcknLast4}</span> : <span className="st s-amb">TCKN yok - PETVET için gerekli</span>}
                 <button type="button" className="btn sm" style={{ marginLeft: 'auto' }} onClick={() => setOwner(null)}>Değiştir</button>
               </div>
             ) : newOwner ? (
@@ -220,7 +220,7 @@ export function QuickRegisterPage() {
                   <Field label="Ara: ad, telefon, TCKN" htmlFor="oq" style={{ flex: '1 1 320px' }}>
                     <input id="oq" className="inp" value={ownerQ} onChange={(e) => setOwnerQ(e.target.value)} autoComplete="off" />
                   </Field>
-                  <button type="button" className="btn" onClick={() => setNewOwner(true)}>Yeni sahip…</button>
+                  <button type="button" className="btn" onClick={() => setNewOwner(true)}>Yeni sahip...</button>
                 </div>
                 {ownerSearch.data && ownerSearch.data.length > 0 && (
                   <div style={{ border: '1px solid var(--line)', borderRadius: 2 }}>
@@ -230,9 +230,9 @@ export function QuickRegisterPage() {
                         type="button"
                         className="list-row"
                         style={{ width: '100%', border: 0, borderBottom: '1px solid var(--line-3)', background: '#fff', textAlign: 'left', cursor: 'pointer' }}
-                        onClick={() => setOwner({ id: x.id, label: `${x.fullName} · ${formatTrPhone(x.phone)}`, tcknLast4: x.tcknLast4 })}
+                        onClick={() => setOwner({ id: x.id, label: `${x.fullName} - ${formatTrPhone(x.phone)}`, tcknLast4: x.tcknLast4 })}
                       >
-                        <span><strong>{x.fullName}</strong> <span className="mut">· {formatTrPhone(x.phone)} · {[x.city, x.district].filter(Boolean).join(' / ')}</span></span>
+                        <span><strong>{x.fullName}</strong> <span className="mut">- {formatTrPhone(x.phone)} - {[x.city, x.district].filter(Boolean).join(' / ')}</span></span>
                         <span className="mut">{x.animalCount} hayvan</span>
                       </button>
                     ))}
@@ -300,8 +300,8 @@ export function QuickRegisterPage() {
           <span className="mut">
             {petvetApplies ? (
               <>
-                Açılacak PETVET görevi: yeni çip kaydı · son gün <strong className="mono" style={{ color: 'var(--ink)' }}>{formatDateTr(petvetDueDate('CHIP_NEW', imp.date || today))}</strong>
-                {!ownerHasTckn && (owner || newOwner) && <span className="s-amb"> · sahip TCKN'si eksik, görev "eksik bilgi" açılır</span>}
+                Açılacak PETVET görevi: yeni çip kaydı - son gün <strong className="mono" style={{ color: 'var(--ink)' }}>{formatDateTr(petvetDueDate('CHIP_NEW', imp.date || today))}</strong>
+                {!ownerHasTckn && (owner || newOwner) && <span className="s-amb"> - sahip TCKN'si eksik, görev "eksik bilgi" açılır</span>}
               </>
             ) : (
               'Bu kayıt için PETVET görevi açılmayacak.'
@@ -310,7 +310,7 @@ export function QuickRegisterPage() {
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             {err && <span className="err" role="alert">{err}</span>}
             <button type="button" className="btn" onClick={reset}>Temizle</button>
-            <button className="btn p" disabled={busy || !!registered}>{busy ? 'Kaydediliyor…' : 'Kaydet'} <span className="k">Ctrl+S</span></button>
+            <button className="btn p" disabled={busy || !!registered}>{busy ? 'Kaydediliyor...' : 'Kaydet'} <span className="k">Ctrl+S</span></button>
           </div>
         </div>
       </form>

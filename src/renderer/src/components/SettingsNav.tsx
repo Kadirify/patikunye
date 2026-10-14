@@ -1,4 +1,4 @@
-// Ayarlar alt menüsü (S-100…S-116). Ayarlar modülü (F) ve Yedekleme modülü (G) birlikte kullanır.
+// Ayarlar alt menüsü. Ayarlar modülü ve Yedekleme modülü birlikte kullanır.
 import { NavLink } from 'react-router-dom'
 
 export const SETTINGS_LINKS: { to: string; label: string }[] = [

@@ -11,7 +11,7 @@ export interface ClinicSettings {
     tarbilUrl: string
   }
   visits: {
-    /** Sekreter muayene içeriğini görebilsin mi (varsayılan kapalı, SAYFALAR S-40) */
+    /** Sekreter muayene içeriğini görebilsin mi (varsayılan kapalı, ) */
     secretaryCanRead: boolean
   }
   messaging: {
@@ -42,7 +42,7 @@ export const DEFAULT_SETTINGS: ClinicSettings = {
   },
   reader: { mode: 'keyboard', maxGapMs: 35, sound: true },
   security: { lockMinutes: 10, showUserCards: true },
-  // day: 0 = pazar … 6 = cumartesi
+  // day: 0 = pazar ... 6 = cumartesi
   workHours: [
     { day: 0, open: '09:00', close: '14:00', closed: true },
     ...[1, 2, 3, 4, 5].map((day) => ({ day, open: '09:00', close: '18:00', breakStart: '12:30', breakEnd: '13:30' })),

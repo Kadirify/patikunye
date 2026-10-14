@@ -1,4 +1,4 @@
-// S-96 Denetim kaydı: filtreli liste, ayrıntı (maskeli fark), hash zinciri doğrulama
+// Denetim kaydı: filtreli liste, ayrıntı (maskeli fark), hash zinciri doğrulama
 import { useState } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { api, qs } from '../../api'
@@ -39,8 +39,8 @@ export function AuditPage() {
     <>
       <div className="page-head">
         <h1>Denetim kaydı</h1>
-        <span className="mut">Değiştirilemez kayıt · her satır öncekinin özetini içerir</span>
-        <div className="right"><button className="btn" onClick={() => verify.mutate()} disabled={verify.isPending}>{verify.isPending ? 'Doğrulanıyor…' : 'Zinciri doğrula'}</button></div>
+        <span className="mut">Değiştirilemez kayıt - her satır öncekinin özetini içerir</span>
+        <div className="right"><button className="btn" onClick={() => verify.mutate()} disabled={verify.isPending}>{verify.isPending ? 'Doğrulanıyor...' : 'Zinciri doğrula'}</button></div>
       </div>
       {verify.data &&
         (verify.data.ok ? (
@@ -86,9 +86,9 @@ export function AuditPage() {
                 <tr key={r.id} className={`click${r.action === 'login_failed' ? ' hot' : ''}`} onClick={() => setDetail(r.id)}>
                   <td className="mono mut">{r.id}</td>
                   <td className="mono">{fmtDateTime(r.at)}</td>
-                  <td>{r.userName ?? <span className="mut">—</span>}</td>
+                  <td>{r.userName ?? <span className="mut">-</span>}</td>
                   <td>{AUDIT_ACTION_LABEL[r.action] ?? r.action}</td>
-                  <td className="mono" style={{ fontSize: 12 }}>{r.entity}{r.entityId ? ` · ${r.entityId.slice(0, 8)}` : ''}</td>
+                  <td className="mono" style={{ fontSize: 12 }}>{r.entity}{r.entityId ? ` - ${r.entityId.slice(0, 8)}` : ''}</td>
                   <td style={{ maxWidth: 360, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.summary}</td>
                 </tr>
               ))}
@@ -116,19 +116,19 @@ function AuditDetail({ id, onClose }: { id: number; onClose: () => void }) {
   return (
     <Modal title={`Denetim kaydı #${id}`} onClose={onClose} width={680}>
       {!d ? (
-        <div className="empty">{q.isError ? errText(q.error) : 'Yükleniyor…'}</div>
+        <div className="empty">{q.isError ? errText(q.error) : 'Yükleniyor...'}</div>
       ) : (
         <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
           <dl className="kv" style={{ margin: 0 }}>
             <dt>Zaman</dt><dd className="mono">{fmtDateTime(d.at)}</dd>
-            <dt>Kullanıcı</dt><dd>{d.userName ?? '—'}</dd>
+            <dt>Kullanıcı</dt><dd>{d.userName ?? '-'}</dd>
             <dt>İşlem</dt><dd>{AUDIT_ACTION_LABEL[d.action] ?? d.action}</dd>
-            <dt>Kayıt</dt><dd className="mono">{d.entity}{d.entityId ? ` · ${d.entityId}` : ''}</dd>
-            <dt>Özet</dt><dd>{d.summary ?? '—'}</dd>
+            <dt>Kayıt</dt><dd className="mono">{d.entity}{d.entityId ? ` - ${d.entityId}` : ''}</dd>
+            <dt>Özet</dt><dd>{d.summary ?? '-'}</dd>
           </dl>
           {d.diff !== null && d.diff !== undefined && <DiffView diff={d.diff} />}
           <div className="mono mut" style={{ fontSize: 11, wordBreak: 'break-all' }}>
-            önceki özet: {d.prevHash ?? '—'}<br />özet: {d.hash}
+            önceki özet: {d.prevHash ?? '-'}<br />özet: {d.hash}
           </div>
           <div className="mut" style={{ fontSize: 12 }}>Hassas alanlar (TCKN, telefon, e-posta, parola) maskeli gösterilir.</div>
         </div>
@@ -141,7 +141,7 @@ function AuditDetail({ id, onClose }: { id: number; onClose: () => void }) {
 function DiffView({ diff }: { diff: unknown }) {
   const entries = diff && typeof diff === 'object' && !Array.isArray(diff) ? Object.entries(diff as Record<string, unknown>) : []
   const isFromTo = entries.length > 0 && entries.every(([, v]) => v && typeof v === 'object' && ('from' in (v as object) || 'to' in (v as object)))
-  const show = (v: unknown) => (v === null || v === undefined || v === '' ? <span className="mut">—</span> : typeof v === 'object' ? <pre style={{ margin: 0, fontSize: 11, whiteSpace: 'pre-wrap' }}>{JSON.stringify(v, null, 1)}</pre> : String(v))
+  const show = (v: unknown) => (v === null || v === undefined || v === '' ? <span className="mut">-</span> : typeof v === 'object' ? <pre style={{ margin: 0, fontSize: 11, whiteSpace: 'pre-wrap' }}>{JSON.stringify(v, null, 1)}</pre> : String(v))
   if (!isFromTo) return <pre className="mono" style={{ margin: 0, padding: 8, background: 'var(--head)', border: '1px solid var(--line-2)', fontSize: 12, whiteSpace: 'pre-wrap' }}>{JSON.stringify(diff, null, 2)}</pre>
   return (
     <table>

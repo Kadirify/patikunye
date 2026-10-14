@@ -1,4 +1,4 @@
-// Yedekleme modülü (G) API tipleri — sunucu ve arayüz ortak kullanır.
+// Yedekleme modülü API tipleri - sunucu ve arayüz ortak kullanır.
 
 export type BackupReason = 'daily' | 'manual' | 'pre_update' | 'pre_restore'
 
@@ -17,12 +17,12 @@ export const BACKUP_PASSWORD_MIN = 8
 
 export type BackupState = 'ok' | 'warn' | 'err'
 
-/** GET /api/backup/status — kenar çubuğu, durum çubuğu ve Bugün ekranı */
+/** GET /api/backup/status - kenar çubuğu, durum çubuğu ve Bugün ekranı */
 export interface BackupStatusDto {
   lastSuccessAt: string | null
   /** Son başarılı yedekten bu yana geçen saat (yoksa null) */
   hoursAgo: number | null
-  /** ok < 24 saat, warn < 72 saat, err ≥ 72 saat ya da hiç yedek yok / parola yok */
+  /** ok < 24 saat, warn < 72 saat, err >= 72 saat ya da hiç yedek yok / parola yok */
   state: BackupState
   passwordSet: boolean
   lastError: string | null
@@ -118,7 +118,7 @@ export interface TargetTestDto {
   kind: string
 }
 
-// ---- Veritabanı (S-111) ----
+// ---- Veritabanı ----
 
 export interface DbTableInfo {
   name: string

@@ -1,4 +1,4 @@
-// Modül B — S-20 Sahip listesi, S-21 Sahip formu, S-22 Sahip detayı (+ birleştirme)
+// Sahip listesi, Sahip formu, Sahip detayı (+ birleştirme)
 // Bu dosya Animals.tsx'in de kullandığı küçük yardımcıları (Modal, Tabs, DropMenu, OwnerPicker) dışa aktarır.
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
@@ -230,12 +230,12 @@ export function OwnerPicker({
               type="button"
               className="list-row"
               style={{ width: '100%', border: 0, borderBottom: '1px solid var(--line-3)', background: '#fff', textAlign: 'left', cursor: 'pointer' }}
-              onClick={() => onChange({ id: x.id, label: `${x.fullName} · ${formatTrPhone(x.phone)}`, tcknLast4: x.tcknLast4, kvkk: !!x.kvkkNoticeAt })}
+              onClick={() => onChange({ id: x.id, label: `${x.fullName} - ${formatTrPhone(x.phone)}`, tcknLast4: x.tcknLast4, kvkk: !!x.kvkkNoticeAt })}
             >
               <span>
-                <strong>{x.fullName}</strong> <span className="mut">· {formatTrPhone(x.phone)} · {[x.city, x.district].filter(Boolean).join(' / ')}</span>
+                <strong>{x.fullName}</strong> <span className="mut">- {formatTrPhone(x.phone)} - {[x.city, x.district].filter(Boolean).join(' / ')}</span>
               </span>
-              <span className="mut">{x.tcknLast4 ? `TCKN ****${x.tcknLast4} · ` : ''}{x.animalCount} hayvan</span>
+              <span className="mut">{x.tcknLast4 ? `TCKN ****${x.tcknLast4} - ` : ''}{x.animalCount} hayvan</span>
             </button>
           ))}
         </div>
@@ -286,7 +286,7 @@ function useOwnerTags() {
   return q.data ?? DEFAULT_OWNER_TAGS
 }
 
-/* ================= S-20 Sahip listesi ================= */
+/* ================= Sahip listesi ================= */
 
 const PAGE = 50
 
@@ -390,7 +390,7 @@ export function OwnersPage() {
                   <td className="mono">{formatTrPhone(o.phone)}</td>
                   <td>{[o.city, o.district].filter(Boolean).join(' / ')}</td>
                   <td className="mono">{o.animalCount}</td>
-                  <td className="mono">{formatDateTr(o.lastVisit) || <span className="mut">—</span>}</td>
+                  <td className="mono">{formatDateTr(o.lastVisit) || <span className="mut">-</span>}</td>
                   <td style={{ whiteSpace: 'nowrap' }}>
                     {o.kvkkNoticeAt ? <span className="st s-ok">Aydınlatma</span> : <span className="st s-red">Aydınlatma yok</span>}{' '}
                     <span className={`st ${o.marketingConsent ? 's-ok' : 's-gry'}`}>{o.marketingConsent ? 'Ticari ✓' : 'Ticari ✗'}</span>
@@ -400,7 +400,7 @@ export function OwnersPage() {
               ))}
             </tbody>
           </table>
-          {list.isLoading && <div className="empty">Yükleniyor…</div>}
+          {list.isLoading && <div className="empty">Yükleniyor...</div>}
           {list.data?.items.length === 0 && (
             <div className="empty">
               {filtered ? 'Bu filtrelerle kayıt bulunamadı.' : <>Henüz sahip kaydı yok. Çip okutarak ya da "Yeni sahip" ile başlayın.{' '}{can('owners.write') && <Link to="/sahipler/yeni">Yeni sahip</Link>}</>}
@@ -410,7 +410,7 @@ export function OwnersPage() {
         </div>
         {total > PAGE && (
           <div className="tfoot">
-            <span>{offset + 1}–{Math.min(offset + PAGE, total)} / {total}</span>
+            <span>{offset + 1}-{Math.min(offset + PAGE, total)} / {total}</span>
             <button className="btn sm" disabled={offset === 0} onClick={() => setParam('s', String(Math.max(0, offset - PAGE)) || null)}>Önceki</button>
             <button className="btn sm" disabled={offset + PAGE >= total} onClick={() => setParam('s', String(offset + PAGE))}>Sonraki</button>
           </div>
@@ -420,7 +420,7 @@ export function OwnersPage() {
   )
 }
 
-/* ================= S-21 Sahip formu ================= */
+/* ================= Sahip formu ================= */
 
 interface OwnerFormState {
   firstName: string
@@ -607,13 +607,13 @@ function OwnerForm({ existing }: { existing?: OwnerDetail }) {
           <div className="g4">
             <Field label="Ad *" htmlFor="fn" error={errs.firstName}><input id="fn" className={`inp${errs.firstName ? ' bad' : ''}`} maxLength={60} value={s.firstName} onChange={(e) => set('firstName', e.target.value)} autoFocus /></Field>
             <Field label="Soyad *" htmlFor="ln" error={errs.lastName}><input id="ln" className={`inp${errs.lastName ? ' bad' : ''}`} maxLength={60} value={s.lastName} onChange={(e) => set('lastName', e.target.value)} /></Field>
-            <Field label={s.isForeign ? 'Yabancı kimlik no (99…)' : 'TCKN (PETVET için)'} htmlFor="tc" error={errs.tckn}>
+            <Field label={s.isForeign ? 'Yabancı kimlik no (99...)' : 'TCKN (PETVET için)'} htmlFor="tc" error={errs.tckn}>
               <input
                 id="tc"
                 className={`inp mono${errs.tckn ? ' bad' : ''}`}
                 inputMode="numeric"
                 maxLength={11}
-                placeholder={existing?.hasTckn ? `kayıtlı: *******${existing.tcknLast4} — değiştirmek için yazın` : ''}
+                placeholder={existing?.hasTckn ? `kayıtlı: *******${existing.tcknLast4} - değiştirmek için yazın` : ''}
                 value={s.tckn}
                 disabled={s.clearTckn}
                 onChange={(e) => set('tckn', e.target.value.replace(/\D/g, ''))}
@@ -707,13 +707,13 @@ function OwnerForm({ existing }: { existing?: OwnerDetail }) {
 
         <div className="form-foot">
           <span className="mut" style={{ fontSize: 12 }}>
-            {existing && <>Oluşturan: {existing.createdByName ?? '—'} · {fmtDT(existing.createdAt)} · Son değiştiren: {existing.updatedByName ?? '—'} · {fmtDT(existing.updatedAt)}</>}
+            {existing && <>Oluşturan: {existing.createdByName ?? '-'} - {fmtDT(existing.createdAt)} - Son değiştiren: {existing.updatedByName ?? '-'} - {fmtDT(existing.updatedAt)}</>}
           </span>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
             {err && <span className="err" role="alert">{err}</span>}
             <button type="button" className="btn" onClick={cancel}>Vazgeç</button>
             <button type="submit" className="btn" disabled={busy} onClick={() => (afterRef.current = 'animal')}>Kaydet ve hayvan ekle</button>
-            <button type="submit" className="btn p" disabled={busy}>{busy ? 'Kaydediliyor…' : 'Kaydet'} <span className="k">Ctrl+S</span></button>
+            <button type="submit" className="btn p" disabled={busy}>{busy ? 'Kaydediliyor...' : 'Kaydet'} <span className="k">Ctrl+S</span></button>
           </div>
         </div>
       </form>
@@ -721,7 +721,7 @@ function OwnerForm({ existing }: { existing?: OwnerDetail }) {
   )
 }
 
-/* ================= S-22 Sahip detayı ================= */
+/* ================= Sahip detayı ================= */
 
 export function OwnerDetailPage() {
   const { id = '' } = useParams()
@@ -741,7 +741,7 @@ export function OwnerDetailPage() {
       </div>
     )
   }
-  if (!q.data) return <div className="mut">Yükleniyor…</div>
+  if (!q.data) return <div className="mut">Yükleniyor...</div>
   if (edit) return <OwnerForm key={`${id}-${q.data.version}`} existing={q.data} />
   return <OwnerView o={q.data} tab={params.get('sekme') ?? 'hayvanlar'} setTab={(t) => setParams({ sekme: t }, { replace: true, state: location.state })} />
 }
@@ -798,11 +798,11 @@ function OwnerView({ o, tab, setTab }: { o: OwnerDetail; tab: string; setTab(t: 
               <button type="button" className="mono" title="Kopyala" style={{ border: 0, background: 'none', padding: 0, cursor: 'pointer', font: 'inherit' }} onClick={() => navigator.clipboard.writeText(formatTrPhone(o.phone)).then(() => toast('Telefon kopyalandı.'))}>
                 {formatTrPhone(o.phone)}
               </button>
-              {o.phone2 && <span className="mono mut"> · {formatTrPhone(o.phone2)}</span>}
-              <span className="mut"> · tercih: {CHANNEL_LABEL[o.preferredChannel]}</span>
+              {o.phone2 && <span className="mono mut"> - {formatTrPhone(o.phone2)}</span>}
+              <span className="mut"> - tercih: {CHANNEL_LABEL[o.preferredChannel]}</span>
             </dd>
             <dt>İl / ilçe</dt>
-            <dd>{[o.city, o.district].filter(Boolean).join(' / ') || '—'}{o.address ? <span className="mut"> · {o.address}</span> : null}</dd>
+            <dd>{[o.city, o.district].filter(Boolean).join(' / ') || '-'}{o.address ? <span className="mut"> - {o.address}</span> : null}</dd>
             <dt>{o.isForeign ? 'Kimlik' : 'TCKN'}</dt>
             <dd>
               {o.hasTckn || o.foreignDocLast4 ? (
@@ -812,11 +812,11 @@ function OwnerView({ o, tab, setTab }: { o: OwnerDetail; tab: string; setTab(t: 
                   {tckn && <span className="mut" style={{ fontSize: 12 }}> görüntüleme kaydedildi</span>}
                 </>
               ) : (
-                <span className="st s-amb">Kayıtlı değil — PETVET için gerekli</span>
+                <span className="st s-amb">Kayıtlı değil - PETVET için gerekli</span>
               )}
             </dd>
             {o.email && <><dt>E-posta</dt><dd>{o.email}</dd></>}
-            {o.emergencyName && <><dt>Acil durum</dt><dd>{o.emergencyName} · <span className="mono">{formatTrPhone(o.emergencyPhone)}</span></dd></>}
+            {o.emergencyName && <><dt>Acil durum</dt><dd>{o.emergencyName} - <span className="mono">{formatTrPhone(o.emergencyPhone)}</span></dd></>}
             {o.notes && <><dt>Not</dt><dd>{o.notes}</dd></>}
           </dl>
         </div>
@@ -829,7 +829,7 @@ function OwnerView({ o, tab, setTab }: { o: OwnerDetail; tab: string; setTab(t: 
             label="⋯"
             items={[
               { label: 'KVKK talebi başlat', onClick: () => nav('/ayarlar/kvkk'), hidden: !can('kvkk.requests') },
-              { label: 'Birleştir…', onClick: () => setMerge(true), hidden: !can('owners.merge') },
+              { label: 'Birleştir...', onClick: () => setMerge(true), hidden: !can('owners.merge') },
               { label: 'Sil', onClick: remove, hidden: !can('owners.merge'), danger: true },
             ]}
           />
@@ -866,7 +866,7 @@ function OwnerView({ o, tab, setTab }: { o: OwnerDetail; tab: string; setTab(t: 
                       {a.allergies.length > 0 && <span className="tag s-red">Alerji</span>}{' '}
                       {(a.behavior === 'aggressive' || a.behavior === 'bites') && <span className="tag s-amb">{BEHAVIOR_LABEL[a.behavior as Behavior]}</span>}
                     </td>
-                    <td>{[SPECIES_LABEL[a.species], a.breed].filter(Boolean).join(' · ')}</td>
+                    <td>{[SPECIES_LABEL[a.species], a.breed].filter(Boolean).join(' - ')}</td>
                     <td>{age(a.birthDate)}</td>
                     <td>{SEX_LABEL[a.sex]}{a.neutered ? ', kısır' : ''}</td>
                     <td><ChipNo value={a.chipNo} short /></td>
@@ -884,10 +884,10 @@ function OwnerView({ o, tab, setTab }: { o: OwnerDetail; tab: string; setTab(t: 
         </section>
       )}
       {tab === 'randevular' && (
-        <section className="pnl"><div className="empty">Randevular randevu modülünde görüntülenir. <Link to="/randevular">Randevu takvimine git</Link></div></section>
+        <section className="pnl"><div className="empty">Randevulari goruntulemek icin <Link to="/randevular">randevu takvimine gidin</Link>.</div></section>
       )}
       {tab === 'mesajlar' && (
-        <section className="pnl"><div className="empty">Bu sahibe giden mesajlar mesaj modülünde görüntülenir. <Link to="/mesajlar">Mesajlara git</Link></div></section>
+        <section className="pnl"><div className="empty">Bu sahibe giden mesajlari goruntulemek icin <Link to="/mesajlar">mesajlara gidin</Link>.</div></section>
       )}
       {tab === 'belgeler' && <Attachments ownerType="owner" ownerId={o.id} canUpload={can('owners.write')} />}
       {tab === 'izinler' && (
@@ -915,7 +915,7 @@ function OwnerView({ o, tab, setTab }: { o: OwnerDetail; tab: string; setTab(t: 
       )}
       {tab === 'gecmis' && <HistoryTable rows={history.data} />}
       <p className="mut" style={{ margin: 0, fontSize: 12 }}>
-        Oluşturan: {o.createdByName ?? '—'} · {fmtDT(o.createdAt)} · Son değiştiren: {o.updatedByName ?? '—'} · {fmtDT(o.updatedAt)}
+        Oluşturan: {o.createdByName ?? '-'} - {fmtDT(o.createdAt)} - Son değiştiren: {o.updatedByName ?? '-'} - {fmtDT(o.updatedAt)}
       </p>
       {merge && <MergeDialog keep={o} onClose={() => setMerge(false)} />}
     </>
@@ -935,7 +935,7 @@ function mergeValue(o: OwnerDetail, f: MergeField): string {
     case 'birthDate':
       return formatDateTr(o.birthDate)
     case 'emergency':
-      return o.emergencyName ? `${o.emergencyName} · ${formatTrPhone(o.emergencyPhone)}` : ''
+      return o.emergencyName ? `${o.emergencyName} - ${formatTrPhone(o.emergencyPhone)}` : ''
     default:
       return (o[f] as string | null) ?? ''
   }
@@ -999,7 +999,7 @@ function MergeDialog({ keep, onClose }: { keep: OwnerDetail; onClose(): void }) 
                     <td key={side}>
                       <label className="ck" style={{ minHeight: 0 }}>
                         <input type="radio" name={`m-${f}`} checked={sel === side} disabled={a === b} onChange={() => setPick((p) => ({ ...p, [f]: side }))} />
-                        <span className={f === 'tckn' || f.startsWith('phone') ? 'mono' : undefined}>{(side === 'keep' ? a : b) || <span className="mut">—</span>}</span>
+                        <span className={f === 'tckn' || f.startsWith('phone') ? 'mono' : undefined}>{(side === 'keep' ? a : b) || <span className="mut">-</span>}</span>
                       </label>
                     </td>
                   ))}
@@ -1008,8 +1008,8 @@ function MergeDialog({ keep, onClose }: { keep: OwnerDetail; onClose(): void }) 
             })}
             <tr>
               <td className="mut">Hayvanlar</td>
-              <td>{keep.animals.map((x) => x.name).join(', ') || '—'}</td>
-              <td>{other.data.animals.map((x) => x.name).join(', ') || '—'} <span className="mut">(taşınır)</span></td>
+              <td>{keep.animals.map((x) => x.name).join(', ') || '-'}</td>
+              <td>{other.data.animals.map((x) => x.name).join(', ') || '-'} <span className="mut">(taşınır)</span></td>
             </tr>
           </tbody>
         </table>

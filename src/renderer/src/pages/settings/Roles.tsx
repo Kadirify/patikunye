@@ -1,4 +1,4 @@
-// S-102 Roller ve izinler: sabit roller, salt okunur izin matrisi
+// Roller ve izinler: sabit roller, salt okunur izin matrisi
 import { useCan } from '../../session'
 import { PERMISSIONS, ROLE_PERMISSIONS, type Permission } from '@shared/permissions'
 import { ROLE_LABEL, type Role } from '@shared/api-types'
@@ -45,7 +45,7 @@ export function RolesSettingsPage() {
     <>
       <div className="page-head">
         <h1>Roller ve izinler</h1>
-        <span className="mut">Hazır roller · özel roller sonraki sürümde</span>
+        <span className="mut">Hazir roller</span>
       </div>
       <section className="pnl">
         <div className="tbl-wrap">
@@ -62,7 +62,7 @@ export function RolesSettingsPage() {
                   <td>{PERM_LABEL[p]} <span className="mono mut" style={{ fontSize: 11 }}>{p}</span></td>
                   {ROLES.map((r) => (
                     <td key={r} style={{ textAlign: 'center' }}>
-                      {ROLE_PERMISSIONS[r].has(p) ? <span className="s-ok" aria-label="var">✓</span> : <span className="mut" aria-label="yok">–</span>}
+                      {ROLE_PERMISSIONS[r].has(p) ? <span className="s-ok" aria-label="var">✓</span> : <span className="mut" aria-label="yok">-</span>}
                     </td>
                   ))}
                 </tr>
@@ -70,7 +70,7 @@ export function RolesSettingsPage() {
             </tbody>
           </table>
         </div>
-        <div className="tfoot mut">Klinik Yöneticisi rolü tüm izinlere sahiptir ve değiştirilemez. Rolleri kopyalayıp özel rol oluşturma sonraki sürümde gelecek.</div>
+        <div className="tfoot mut">Klinik Yoneticisi rolu tum izinlere sahiptir ve degistirilemez.</div>
       </section>
     </>
   )

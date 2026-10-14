@@ -1,8 +1,8 @@
--- Modül C: muayene (SOAP) ve tedavi kayıtları (SAYFALAR S-40, S-41, S-42, §15.5)
+-- muayene (SOAP) ve tedavi kayıtları
 -- İmzalı muayene değiştirilemez; "Ek/düzeltme" aynı zincirde yeni versiyon (yeni satır) oluşturur.
 --   root_id       = zincirin ilk versiyonunun id'si (v1 için kendi id'si)
 --   supersedes_id = bir önceki versiyon
---   version       = 1, 2, 3 … (muayene versiyonu)
+--   version       = 1, 2, 3 ... (muayene versiyonu)
 --   rev           = iyimser kilit sayacı (taslak her kaydedildiğinde artar)
 CREATE TABLE IF NOT EXISTS visits (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -75,7 +75,7 @@ END $$ LANGUAGE plpgsql;
 DROP TRIGGER IF EXISTS visits_signed_guard_trg ON visits;
 CREATE TRIGGER visits_signed_guard_trg BEFORE UPDATE ON visits FOR EACH ROW EXECUTE FUNCTION visits_signed_guard();
 
--- Tedavi / ilaç satırları (S-42). Muayeneye bağlı; taslakta her kayıtta yeniden yazılır.
+-- Tedavi / ilaç satırları. Muayeneye bağlı; taslakta her kayıtta yeniden yazılır.
 CREATE TABLE IF NOT EXISTS treatments (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   visit_id uuid NOT NULL REFERENCES visits(id),
@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS treatments (
   duration text,
   duration_days integer,                            -- süren tedavi hesabı için
   kind varchar(12) NOT NULL DEFAULT 'administered' CHECK (kind IN ('administered', 'prescribed')),
-  e_recete_no varchar(40),                          -- ⚠️ e-reçete Bakanlık sisteminde yazılır; burada yalnızca numara
+  e_recete_no varchar(40),                          -- e-recete Bakanlik sisteminde yazilir; burada yalnizca numara
   note text,
   allergy_ack boolean NOT NULL DEFAULT false,       -- alerji uyarısına rağmen hekim onayladı
   created_at timestamptz NOT NULL DEFAULT now()
@@ -122,7 +122,7 @@ CREATE TABLE IF NOT EXISTS visit_phrases (
 );
 CREATE UNIQUE INDEX IF NOT EXISTS visit_phrases_shortcut_uq ON visit_phrases (lower(shortcut));
 
--- ⚠️ Başlangıç tanı listesi örnek amaçlıdır; pilot hekim onayıyla düzenlenecek (Ayarlar'dan yönetim ileride).
+-- Baslangic tani listesi ornek amaclidir; Ayarlar'dan duzenlenebilir.
 INSERT INTO diagnosis_terms (name, category, sort) VALUES
   ('Akut gastroenterit', 'Sindirim', 10),
   ('Gastrit', 'Sindirim', 20),
@@ -166,10 +166,10 @@ INSERT INTO diagnosis_terms (name, category, sort) VALUES
   ('Panleukopeni', 'Enfeksiyon', 20),
   ('Kedi gribi (FHV/FCV)', 'Enfeksiyon', 30),
   ('Gıda alerjisi', 'Alerji', 10),
-  ('Sağlıklı — rutin kontrol', 'Genel', 1)
+  ('Sağlıklı - rutin kontrol', 'Genel', 1)
 ON CONFLICT DO NOTHING;
 
--- ⚠️ Örnek hazır cümleler; klinik kendi cümlelerini ekleyecek.
+-- Ornek hazir cumleler; klinik kendi cumlelerini ekleyecek.
 INSERT INTO visit_phrases (shortcut, text, field) VALUES
   ('kusma', 'Son 2 gündür kusma, iştahsızlık. Su içiyor. İshal yok.', 'subjective'),
   ('ishal', 'Son 2 gündür ishal; dışkı sulu, kan yok. İştah azalmış.', 'subjective'),

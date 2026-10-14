@@ -1,5 +1,5 @@
 // Yazdırma önizlemesi (/yazdir/:kind/:id?): menüsüz, ayrı pencere. Üstte ekranda görünen ama baskıda gizli araç çubuğu.
-// Sayfa boyutu ?size=a4|a5|card; sayfa altı "PatiKünye · tarih · sayfa" @page kenar kutularıyla basılır (Chromium 131+).
+// Sayfa boyutu ?size=a4|a5|card; sayfa altı "PatiKünye - tarih - sayfa" @page kenar kutularıyla basılır (Chromium 131+).
 import { useEffect, useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
@@ -86,7 +86,7 @@ function printCss(size: Size, footer: string, landscape: boolean) {
   .photo-box { width: 17mm; height: 21mm; border: 1px solid #CFCAC0; flex: none; display: flex; align-items: center; justify-content: center; font-size: 6pt; color: #5E5A53; }
   .rp-print .rp-table h3 { font-size: 9pt; }
   @page { size: ${PAGE_SIZE[size]}${landscape ? ' landscape' : ''}; margin: ${card ? '0' : size === 'a5' ? '10mm 10mm 14mm' : '14mm 14mm 16mm'};
-    ${card ? '' : `@bottom-center { content: "${esc} · Sayfa " counter(page) " / " counter(pages); font-family: 'IBM Plex Sans', sans-serif; font-size: 7.5pt; color: #5E5A53; }`}
+    ${card ? '' : `@bottom-center { content: "${esc} - Sayfa " counter(page) " / " counter(pages); font-family: 'IBM Plex Sans', sans-serif; font-size: 7.5pt; color: #5E5A53; }`}
   }
   @media print {
     html, body, #root { background: #fff !important; }
@@ -136,7 +136,7 @@ export function PrintPage() {
     setSp(p, { replace: true })
   }
 
-  const footer = `PatiKünye ile oluşturuldu · ${env ? formatDateTr(env.today) : ''}`
+  const footer = `PatiKünye ile oluşturuldu - ${env ? formatDateTr(env.today) : ''}`
   let body: React.ReactNode = null
   if (env) {
     const c = env.clinic
@@ -184,21 +184,21 @@ export function PrintPage() {
             <input type="checkbox" checked={sp.get('owner') === '1'} onChange={(e) => setParam('owner', e.target.checked ? '1' : null)} /> Sahip adı ve telefonu (sahip onayıyla)
           </label>
         )}
-        {kind === 'kvkk-response' && <span className="mut" style={{ marginLeft: 12 }}>Şablon metin; gönderilmeden önce hukukçu tarafından gözden geçirilmelidir.</span>}
+        {kind === 'kvkk-response' && <span className="mut" style={{ marginLeft: 12 }}>Sablon metin; gonderilmeden once hukuki danismanlik alin.</span>}
         <span style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
           <button className="btn p" onClick={() => window.print()} disabled={!env}>Yazdır</button>
           <button className="btn" onClick={() => window.close()}>Kapat</button>
         </span>
       </div>
       {!meta && <div className="alert" style={{ margin: 16 }}>Bilinmeyen çıktı türü: {kind}</div>}
-      {q.isLoading && <div className="mut" style={{ padding: 24 }}>Hazırlanıyor…</div>}
+      {q.isLoading && <div className="mut" style={{ padding: 24 }}>Hazırlanıyor...</div>}
       {q.isError && <div className="alert" style={{ margin: 16 }}>{(q.error as Error).message}</div>}
       {env && (
         <main className="prt-sheet">
           {body}
           {size !== 'card' && (
             <footer className="prt-foot">
-              <span>PatiKünye ile oluşturuldu · {formatDateTr(env.today)}</span>
+              <span>PatiKünye ile oluşturuldu - {formatDateTr(env.today)}</span>
               <span>Sayfa numaraları baskıda eklenir</span>
             </footer>
           )}

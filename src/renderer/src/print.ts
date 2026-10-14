@@ -1,16 +1,16 @@
-// Yazdırma çıktıları (Ç-01…Ç-09) — Raporlar/yazdırma modülü (H). Önizleme: pages/print/PrintPage.tsx, veri: GET /api/print/:kind/:id?
-// Diğer modüller yalnızca openPrint(...) çağırır.
+// Yazdırma ciktilari. Onizleme: pages/print/PrintPage.tsx, veri: GET /api/print/:kind/:id?
+// Diger moduller yalnizca openPrint(...) cagirir.
 export type PrintKind =
-  | 'vaccine-card' // Ç-01 aşı karnesi (id = animalId)
-  | 'chip-card' // Ç-02 kayıt/çip kartı (id = animalId)
-  | 'visit' // Ç-03 muayene özeti (id = visitId)
-  | 'prescription' // Ç-04 tedavi talimatı (id = visitId)
-  | 'kvkk-consent' // Ç-05 aydınlatma + onam formu (id = ownerId, params.animalId)
-  | 'audit-pack' // Ç-06 denetim paketi (params.from, params.to)
-  | 'kvkk-response' // Ç-07 KVKK talep yanıtı (id = requestId)
-  | 'appointment-card' // Ç-08 randevu kartı (id = appointmentId)
-  | 'worklist' // Ç-09 iş listeleri (params.list = 'petvet' | 'vaccine-calls'; vaccine-calls için params.days)
-  | 'report' // S-90 rapor çıktısı (id = rapor anahtarı, params.from/to/vetId/lot)
+  | 'vaccine-card' // asi karnesi (id = animalId)
+  | 'chip-card' // kayit/cip karti (id = animalId)
+  | 'visit' // muayene ozeti (id = visitId)
+  | 'prescription' // tedavi talimati (id = visitId)
+  | 'kvkk-consent' // aydinlatma + onam formu (id = ownerId, params.animalId)
+  | 'audit-pack' // denetim paketi (params.from, params.to)
+  | 'kvkk-response' // KVKK talep yaniti (id = requestId)
+  | 'appointment-card' // randevu karti (id = appointmentId)
+  | 'worklist' // is listeleri (params.list = 'petvet' | 'vaccine-calls'; vaccine-calls icin params.days)
+  | 'report' // rapor ciktisi (id = rapor anahtari, params.from/to/vetId/lot)
 
 /**
  * Yazdırma önizlemesini açar (#/yazdir/:kind/:id?params).

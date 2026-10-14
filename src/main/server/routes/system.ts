@@ -23,7 +23,7 @@ export function systemRoutes(app: FastifyInstance, deps: AppDeps & { network?: N
     return deps.network
   }
 
-  /* S-109 Ağ ve cihazlar */
+  /* Ağ ve cihazlar */
   app.get('/api/network/status', async (req) => {
     requirePerm(req, 'settings.manage')
     if (!deps.network) return { host: false }

@@ -1,4 +1,4 @@
-// Yedekleme (S-108) ve veritabanı (S-111) API'si — Modül G
+// Yedekleme ve veritabanı API'si
 import type { FastifyInstance } from 'fastify'
 import { z } from 'zod'
 import { verify as argonVerify } from '@node-rs/argon2'
@@ -243,7 +243,7 @@ export function backupRoutes(app: FastifyInstance, deps: AppDeps) {
     return { ok: true }
   })
 
-  // ---- veritabanı (S-111)
+  // ---- veritabanı
   app.get('/api/db/status', async (req) => {
     requirePerm(req, 'settings.manage')
     return dbStatus(deps)

@@ -4,7 +4,7 @@ export interface SendResult {
   ok: boolean
   providerMsgId: string | null
   error: string | null
-  /** true ise tekrar denemek anlamsız (kimlik bilgisi hatalı, başlık tanımsız, numara geçersiz…) */
+  /** true ise tekrar denemek anlamsız (kimlik bilgisi hatalı, başlık tanımsız, numara geçersiz...) */
   permanent?: boolean
 }
 
@@ -30,7 +30,7 @@ export type FetchLike = (url: string, init: { method: string; headers: Record<st
   text(): Promise<string>
 }>
 
-/** +905321234567 → 5321234567 (Türk sağlayıcılarının beklediği 10 hane) */
+/** +905321234567 -> 5321234567 (Türk sağlayıcılarının beklediği 10 hane) */
 export function toLocalGsm(e164: string): string {
   const d = e164.replace(/\D/g, '')
   if (d.startsWith('90') && d.length === 12) return d.slice(2)

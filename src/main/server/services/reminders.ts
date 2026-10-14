@@ -1,5 +1,5 @@
-// Hatırlatma servisi — diğer modüller (aşı, randevu, muayene kontrolü) bu fonksiyonları çağırır.
-// İmzalar sabittir (MODUL-REHBERI.md). Gövdeler Mesajlaşma modülüne (M) aittir.
+// Hatırlatma servisi - diğer modüller (aşı, randevu, muayene kontrolü) bu fonksiyonları çağırır.
+// İmzalar sabittir. Gövdeler Mesajlaşma modülüne aittir.
 import { sql } from 'drizzle-orm'
 import type { Db } from '../../db/client'
 import { getSettings } from '../settings'
@@ -39,7 +39,7 @@ export const DAY_REMINDER_HOUR = '10:00'
 const ALWAYS_IMMEDIATE: ReminderKind[] = ['appointment_confirm', 'appointment_cancel', 'custom']
 const APPOINTMENT_KINDS = ['appointment', 'appointment_confirm', 'appointment_cancel']
 
-/** Türkiye 2016'dan beri sabit UTC+3 (yaz saati yok). YYYY-MM-DD + SS:dd → Date */
+/** Türkiye 2016'dan beri sabit UTC+3 (yaz saati yok). YYYY-MM-DD + SS:dd -> Date */
 export function istanbulDateTime(dateIso: string, hhmm: string): Date {
   return new Date(`${dateIso}T${hhmm}:00+03:00`)
 }
@@ -85,7 +85,7 @@ export function computeSendTimes(
   if (kind === 'appointment') {
     out.push({ sendAt: new Date(eventAt.getTime() - cfg.appointmentOffsetHours * 3600_000), templateKey: templateFor(kind, false) })
   } else {
-    // Aşı: [7, 1, -3] → 7 gün önce, 1 gün önce, 3 gün sonra (gecikme). Kontrol: yalnızca önceki günler.
+    // Aşı: [7, 1, -3] -> 7 gün önce, 1 gün önce, 3 gün sonra (gecikme). Kontrol: yalnızca önceki günler.
     const eventDay = todayIstanbul(eventAt)
     const offsets = kind === 'vaccine' ? cfg.vaccineOffsetsDays : cfg.vaccineOffsetsDays.filter((d) => d >= 0)
     for (const d of [...new Set(offsets)].sort((a, b) => b - a)) {
@@ -125,7 +125,7 @@ export async function scheduleReminder(tx: Tx | Db, input: ScheduleReminderInput
           exists(select 1 from animal_owners ao where ao.animal_id = a.id and ao.owner_id = ${input.ownerId} and ao.to_date is null) as is_owner
         from animals a where a.id = ${input.animalId}`)
     ).rows[0]
-    // Hayvan yok/silinmiş, ölü ya da sahibi değişmiş: mesaj üretilmez (S-80 ⊘)
+    // Hayvan yok/silinmiş, ölü ya da sahibi değişmiş: mesaj üretilmez
     if (!a || a.deleted_at || a.status === 'dead' || !a.is_owner) return
     animalName = a.name
   }
@@ -204,7 +204,7 @@ export async function renderReminder(db: Tx | Db, r: ReminderForRender): Promise
   ).rows[0]
   // Özel (custom) hatırlatma: metin vars.metin içinde gelir
   const templateBody = tpl ? fillTemplate(tpl.body, vars) : fillTemplate(vars.metin ?? '', vars)
-  const subject = tpl?.subject ? fillTemplate(tpl.subject, vars) : r.channel === 'email' ? `${vars.klinik_ad} — bilgilendirme` : null
+  const subject = tpl?.subject ? fillTemplate(tpl.subject, vars) : r.channel === 'email' ? `${vars.klinik_ad} - bilgilendirme` : null
   const body = r.body_override ? fillTemplate(r.body_override, vars) : templateBody
   return { subject, body, templateBody }
 }

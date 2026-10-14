@@ -1,4 +1,4 @@
-// Modül F (ayarlar, kullanıcılar, KVKK, denetim) API tipleri
+//  (ayarlar, kullanıcılar, KVKK, denetim) API tipleri
 import type { Role, SessionDto } from './api-types'
 
 export const DICT_KINDS = ['breed', 'color', 'owner_tag', 'cancel_reason'] as const

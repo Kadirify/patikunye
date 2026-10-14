@@ -1,4 +1,4 @@
-// Aşı modülü (D): S-50 Aşı uygula, S-51 Aşı takvimi, hayvan detayı Aşılar sekmesi, Bugün paneli, S-103 Aşılar ve ürünler
+// Aşı modülü: Aşı uygula, Aşı takvimi, hayvan detayı Aşılar sekmesi, Bugün paneli, Aşılar ve ürünler
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -39,14 +39,14 @@ const dayTime = (iso: string) =>
   new Intl.DateTimeFormat('tr-TR', { timeZone: 'Europe/Istanbul', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(iso))
 
 function ReminderCell({ r }: { r: ReminderInfo | null }) {
-  if (!r) return <span className="mut" title="Mesajlaşma modülü hazır değil">—</span>
+  if (!r) return <span className="mut" title="Mesajlaşma modülü hazır değil">-</span>
   const ch = r.channel === 'email' ? 'E-posta' : r.channel ? 'SMS' : ''
   const at = r.at ? ' ' + dayTime(r.at).slice(0, 5) : ''
   switch (r.state) {
     case 'sent':
       return <span className="st s-ok">{ch || 'Gönderildi'}{at}</span>
     case 'failed':
-      return <span className="st s-red" title={r.error ?? undefined}>{ch} gitmedi{r.error ? ` · ${r.error}` : ''}</span>
+      return <span className="st s-red" title={r.error ?? undefined}>{ch} gitmedi{r.error ? ` - ${r.error}` : ''}</span>
     case 'no_consent':
       return <span className="st s-gry">İzin yok</span>
     case 'cancelled':
@@ -113,7 +113,7 @@ function PlanActionDialog({ action, onClose }: { action: PlanAction; onClose: ()
   })
   const heading = action.kind === 'postpone' ? 'Ertele' : action.kind === 'cancel' ? 'Planı iptal et' : 'Başka klinikte yaptırıldı'
   return (
-    <Dialog title={`${heading} — ${action.title}`} onClose={onClose}>
+    <Dialog title={`${heading} - ${action.title}`} onClose={onClose}>
       <form
         onSubmit={(e) => {
           e.preventDefault()
@@ -139,14 +139,14 @@ function PlanActionDialog({ action, onClose }: { action: PlanAction; onClose: ()
         <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', alignItems: 'center' }}>
           {err && <span className="err" role="alert">{err}</span>}
           <button type="button" className="btn" onClick={onClose}>Vazgeç</button>
-          <button className="btn p" disabled={m.isPending}>{m.isPending ? 'Kaydediliyor…' : 'Kaydet'}</button>
+          <button className="btn p" disabled={m.isPending}>{m.isPending ? 'Kaydediliyor...' : 'Kaydet'}</button>
         </div>
       </form>
     </Dialog>
   )
 }
 
-// ---------------------------------------------------------------- S-51 Aşı takvimi
+// ---------------------------------------------------------------- Aşı takvimi
 
 export function VaccineCalendarPage() {
   const [params, setParams] = useSearchParams()
@@ -211,7 +211,7 @@ export function VaccineCalendarPage() {
           <nav aria-label="Hazır filtre" className="pnl fstrip" style={{ flex: '1 1 auto' }}>
             {CALENDAR_FILTERS.filter((f) => f !== 'all').map((f) => (
               <button key={f} className={`fl${filter === f ? ' on' : ''}`} onClick={() => set('f', f)} style={(f === 'overdue' || f === 'failed') && filter !== f && d?.counts[f] ? { color: 'var(--red)' } : undefined}>
-                <span className="v">{d ? d.counts[f] : '–'}</span>
+                <span className="v">{d ? d.counts[f] : '-'}</span>
                 <span className="kx">{CALENDAR_FILTER_LABEL[f]}</span>
               </button>
             ))}
@@ -277,7 +277,7 @@ export function VaccineCalendarPage() {
           </div>
           {d && d.total > 0 && (
             <div className="tfoot">
-              <span>{d.total} kayıttan {items.length} gösteriliyor · satır sonundaki ⋯ : ertele, başka klinikte yapıldı, iptal</span>
+              <span>{d.total} kayıttan {items.length} gösteriliyor - satır sonundaki ⋯ : ertele, başka klinikte yapıldı, iptal</span>
               <span style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                 <button className="btn sm" disabled={page <= 1} onClick={() => set('p', String(page - 1))}>Önceki</button>
                 Sayfa {page} / {pages}
@@ -296,7 +296,7 @@ function CalendarRow({ i, checked, onCheck, onAction }: { i: CalendarItem; check
   const can = useCan()
   const [menu, setMenu] = useState(false)
   const delay = delayText(i.daysLeft)
-  const title = `${i.animalName} · ${VACCINE_KIND_LABEL[i.kind]}${i.doseLabel ? ' ' + i.doseLabel : ''}`
+  const title = `${i.animalName} - ${VACCINE_KIND_LABEL[i.kind]}${i.doseLabel ? ' ' + i.doseLabel : ''}`
   const canWrite = can('vaccinations.write')
   const canPlan = canWrite || can('messages.send')
   const act = (kind: PlanAction['kind']) => {
@@ -309,8 +309,8 @@ function CalendarRow({ i, checked, onCheck, onAction }: { i: CalendarItem; check
       <td className="mono">{shortDate(i.dueDate)}{i.status === 'postponed' && <span className="mut" title="Ertelendi"> ↻</span>}</td>
       <td className="mono" style={{ color: delay.color }}>{delay.text}</td>
       <td><Link to={`/hayvanlar/${i.animalId}`}><strong>{i.animalName}</strong></Link> <span className="mut">{SPECIES_LABEL[i.species]}</span></td>
-      <td>{VACCINE_KIND_LABEL[i.kind]}{i.doseLabel ? ` · ${i.doseLabel}` : ''}</td>
-      <td>{i.ownerName ?? '—'}</td>
+      <td>{VACCINE_KIND_LABEL[i.kind]}{i.doseLabel ? ` - ${i.doseLabel}` : ''}</td>
+      <td>{i.ownerName ?? '-'}</td>
       <td className="mono">{maskPhone(i.ownerPhone)} <CopyPhone phone={i.ownerPhone} /></td>
       <td><ReminderCell r={i.reminder} /></td>
       <td className={i.appointmentAt ? 'mono' : 'mut'}>{i.appointmentAt ? dayTime(i.appointmentAt) : 'yok'}</td>
@@ -321,9 +321,9 @@ function CalendarRow({ i, checked, onCheck, onAction }: { i: CalendarItem; check
         )}
         {menu && (
           <div role="menu" className="pnl" style={{ position: 'absolute', right: 8, top: '100%', zIndex: 20, display: 'flex', flexDirection: 'column', minWidth: 200, boxShadow: '0 4px 12px rgba(0,0,0,.12)' }} onMouseLeave={() => setMenu(false)}>
-            <button role="menuitem" className="list-row" style={menuItem} onClick={() => act('postpone')}>Ertele…</button>
-            {canWrite && <button role="menuitem" className="list-row" style={menuItem} onClick={() => act('external')}>Başka klinikte yaptırıldı…</button>}
-            <button role="menuitem" className="list-row" style={menuItem} onClick={() => act('cancel')}>İptal…</button>
+            <button role="menuitem" className="list-row" style={menuItem} onClick={() => act('postpone')}>Ertele...</button>
+            {canWrite && <button role="menuitem" className="list-row" style={menuItem} onClick={() => act('external')}>Başka klinikte yaptırıldı...</button>}
+            <button role="menuitem" className="list-row" style={menuItem} onClick={() => act('cancel')}>İptal...</button>
           </div>
         )}
       </td>
@@ -378,13 +378,13 @@ function MonthView({ items, onPick }: { items: CalendarItem[]; onPick: (animalId
                 <>
                   <div className="mono" style={{ color: c < today ? 'var(--muted)' : 'var(--ink)' }}>{Number(c.slice(8))}</div>
                   {list.length > 0 && (
-                    <div style={{ fontWeight: 600, color: c < today ? 'var(--red)' : 'var(--accent)' }} title={list.map((i) => `${i.animalName} · ${VACCINE_KIND_LABEL[i.kind]}`).join('\n')}>
+                    <div style={{ fontWeight: 600, color: c < today ? 'var(--red)' : 'var(--accent)' }} title={list.map((i) => `${i.animalName} - ${VACCINE_KIND_LABEL[i.kind]}`).join('\n')}>
                       {list.length} aşı
                     </div>
                   )}
                   {list.slice(0, 2).map((i) => (
                     <button key={i.planId} type="button" onClick={() => onPick(i.animalId)} style={{ display: 'block', border: 0, background: 'none', padding: 0, cursor: 'pointer', color: 'var(--ink-2)', fontSize: 11, textAlign: 'left', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>
-                      {i.animalName} · {VACCINE_KIND_LABEL[i.kind]}
+                      {i.animalName} - {VACCINE_KIND_LABEL[i.kind]}
                     </button>
                   ))}
                 </>
@@ -397,7 +397,7 @@ function MonthView({ items, onPick }: { items: CalendarItem[]; onPick: (animalId
   )
 }
 
-// ---------------------------------------------------------------- S-50 Aşı uygula
+// ---------------------------------------------------------------- Aşı uygula
 
 export function VaccinatePage() {
   const [params, setParams] = useSearchParams()
@@ -419,12 +419,12 @@ function AnimalPicker({ onPick }: { onPick: (id: string) => void }) {
       <section className="pnl" style={{ maxWidth: 760 }}>
         <div style={{ padding: 12 }}>
           <Field label="Hasta ara" htmlFor="va-q">
-            <input id="va-q" className="inp" data-chip-input value={q} onChange={(e) => setQ(e.target.value)} autoFocus autoComplete="off" placeholder="Pamuk, Yılmaz, 792…" />
+            <input id="va-q" className="inp" data-chip-input value={q} onChange={(e) => setQ(e.target.value)} autoFocus autoComplete="off" placeholder="Pamuk, Yılmaz, 792..." />
           </Field>
         </div>
         {r.data?.map((a) => (
           <button key={a.id} type="button" className="list-row" style={{ ...menuItem, borderBottom: '1px solid var(--line-3)' }} onClick={() => onPick(a.id)}>
-            <span><strong>{a.name}</strong> <span className="mut">· {SPECIES_LABEL[a.species]}{a.breed ? ` · ${a.breed}` : ''}{a.birthDate ? ` · ${age(a.birthDate)}` : ''}</span></span>
+            <span><strong>{a.name}</strong> <span className="mut">- {SPECIES_LABEL[a.species]}{a.breed ? ` - ${a.breed}` : ''}{a.birthDate ? ` - ${age(a.birthDate)}` : ''}</span></span>
             <span className="mut">{a.ownerName}</span>
           </button>
         ))}
@@ -500,7 +500,7 @@ function VaccinateForm({ animalId, visitId, planId }: { animalId: string; visitI
     if (!productId) e.product = 'Ürün seçin.'
     if (rabies && !lotNo.trim()) e.lot = 'Kuduz aşısında lot / seri no zorunlu.'
     if (rabies && !expiry) e.expiry = 'Kuduz aşısında son kullanma tarihi zorunlu.'
-    if (expiry && expiry < givenAt) e.expiry = 'SKT uygulama tarihinden önce — bu aşı kullanılamaz.'
+    if (expiry && expiry < givenAt) e.expiry = 'SKT uygulama tarihinden önce - bu aşı kullanılamaz.'
     if (!givenAt) e.givenAt = 'Uygulama tarihini girin.'
     else if (givenAt > today) e.givenAt = 'Uygulama tarihi ileri bir tarih olamaz.'
     if (!givenBy) e.givenBy = 'Uygulayan hekimi seçin.'
@@ -556,7 +556,7 @@ function VaccinateForm({ animalId, visitId, planId }: { animalId: string; visitI
   }, [])
 
   if (animal.isError) return <div className="alert">{(animal.error as Error).message}</div>
-  if (!a) return <div className="mut">Yükleniyor…</div>
+  if (!a) return <div className="mut">Yükleniyor...</div>
   const owner = a.owners.find((o) => o.isPrimary) ?? a.owners[0]
 
   return (
@@ -565,14 +565,14 @@ function VaccinateForm({ animalId, visitId, planId }: { animalId: string; visitI
         <Link to="/asilar">Aşı takvimi</Link> › <Link to={`/hayvanlar/${a.id}`}>{a.name}</Link> › Aşı uygula
       </nav>
       <div className="page-head">
-        <h1>Aşı uygula · {a.name}</h1>
+        <h1>Aşı uygula - {a.name}</h1>
         <span className="mut">
-          {[SPECIES_LABEL[a.species], a.breed, a.birthDate ? age(a.birthDate) : null].filter(Boolean).join(' · ')}
-          {owner ? ` · ${owner.fullName}` : ''}
+          {[SPECIES_LABEL[a.species], a.breed, a.birthDate ? age(a.birthDate) : null].filter(Boolean).join(' - ')}
+          {owner ? ` - ${owner.fullName}` : ''}
         </span>
       </div>
       {a.status !== 'active' && <div className="alert amb">Hayvan {a.status === 'dead' ? 'ölü' : 'kayıp'} olarak işaretli. Uygulama kaydedilir ama sonraki doz planı ve hatırlatma oluşturulmaz.</div>}
-      {plan && <div className="alert">Plan satırı: {VACCINE_KIND_LABEL[plan.kind]}{plan.doseLabel ? ` · ${plan.doseLabel}` : ''} · vade {formatDateTr(plan.dueDate)}</div>}
+      {plan && <div className="alert">Plan satırı: {VACCINE_KIND_LABEL[plan.kind]}{plan.doseLabel ? ` - ${plan.doseLabel}` : ''} - vade {formatDateTr(plan.dueDate)}</div>}
 
       <form ref={formRef} className="pnl" onSubmit={submit} style={{ maxWidth: 1080 }} onKeyDown={(e) => e.key === 'Escape' && back()}>
         <fieldset className="sec">
@@ -580,13 +580,13 @@ function VaccinateForm({ animalId, visitId, planId }: { animalId: string; visitI
           <div className="g4">
             <Field label="Aşı türü *" htmlFor="v-kind" error={errors.kind}>
               <select id="v-kind" className="inp" value={kind} onChange={(e) => { setKind(e.target.value as VaccineKind); setProductId(''); setNextDue(null); setDoseLabel('') }} autoFocus>
-                <option value="">Seçin…</option>
+                <option value="">Seçin...</option>
                 {availableKinds.map((k) => <option key={k} value={k}>{VACCINE_KIND_LABEL[k]}</option>)}
               </select>
             </Field>
             <Field label="Ürün *" htmlFor="v-prod" error={errors.product}>
               <select id="v-prod" className="inp" value={productId} onChange={(e) => setProductId(e.target.value)} disabled={!kind}>
-                <option value="">Seçin…</option>
+                <option value="">Seçin...</option>
                 {kindProducts.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
               </select>
             </Field>
@@ -600,7 +600,7 @@ function VaccinateForm({ animalId, visitId, planId }: { animalId: string; visitI
                 </button>
               )}
             </Field>
-            <Field label={`Son kullanma tarihi${rabies ? ' *' : ''}`} htmlFor="v-exp" error={errors.expiry ?? (expiry && expiry < givenAt ? 'SKT uygulama tarihinden önce — bu aşı kullanılamaz.' : undefined)}>
+            <Field label={`Son kullanma tarihi${rabies ? ' *' : ''}`} htmlFor="v-exp" error={errors.expiry ?? (expiry && expiry < givenAt ? 'SKT uygulama tarihinden önce - bu aşı kullanılamaz.' : undefined)}>
               <input id="v-exp" type="date" className={`inp${expiry && expiry < givenAt ? ' bad' : ''}`} value={expiry} onChange={(e) => setExpiry(e.target.value)} />
             </Field>
             <Field label="Uygulama tarihi *" htmlFor="v-date" error={errors.givenAt}>
@@ -624,7 +624,7 @@ function VaccinateForm({ animalId, visitId, planId }: { animalId: string; visitI
             <Field label="Sonraki doz tarihi" htmlFor="v-next" error={errors.next}>
               <input id="v-next" type="date" className="inp" value={effectiveNext ?? ''} min={addDaysIso(givenAt || today, 1)} disabled={noNext || a.status !== 'active'} onChange={(e) => setNextDue(e.target.value || null)} />
               <span className="mut" style={{ fontSize: 12 }}>
-                {pv?.nextDoseLabel && !noNext ? `${pv.nextDoseLabel} · ` : ''}
+                {pv?.nextDoseLabel && !noNext ? `${pv.nextDoseLabel} - ` : ''}
                 {nextDue ? 'elle değiştirildi' : pv?.protocolName ? `protokol: ${pv.protocolName}` : pv && !pv.nextDueDate ? 'protokol yok' : ''}
               </span>
             </Field>
@@ -636,7 +636,7 @@ function VaccinateForm({ animalId, visitId, planId }: { animalId: string; visitI
             <div className="f">
               <span className="l">Pasaport</span>
               <label className="ck"><input type="checkbox" checked={passport} onChange={(e) => setPassport(e.target.checked)} />Pasaporta işlendi</label>
-              {rabies && a.passportNo && !passport && <span className="s-amb" style={{ fontSize: 12 }}>Pasaportu var ({a.passportNo}) — kuduz aşısını pasaporta işleyin.</span>}
+              {rabies && a.passportNo && !passport && <span className="s-amb" style={{ fontSize: 12 }}>Pasaportu var ({a.passportNo}) - kuduz aşısını pasaporta işleyin.</span>}
             </div>
             <Field label="Yan etki gözlemi" htmlFor="v-se" style={{ gridColumn: 'span 4' }}>
               <input id="v-se" className="inp" value={sideEffects} onChange={(e) => setSideEffects(e.target.value)} />
@@ -649,8 +649,8 @@ function VaccinateForm({ animalId, visitId, planId }: { animalId: string; visitI
           <span className="mut">
             {pv ? (
               <>
-                {pv.doseNo}. uygulama · <strong style={{ color: 'var(--ink)' }}>{doseLabel || pv.doseLabel}</strong>
-                {pv.petvetTask && <> · PETVET aşı görevi açılacak{owner && !owner.tcknLast4 && <span className="s-amb"> (sahip TCKN'si eksik → "eksik bilgi")</span>}</>}
+                {pv.doseNo}. uygulama - <strong style={{ color: 'var(--ink)' }}>{doseLabel || pv.doseLabel}</strong>
+                {pv.petvetTask && <> - PETVET aşı görevi açılacak{owner && !owner.tcknLast4 && <span className="s-amb"> (sahip TCKN'si eksik -> "eksik bilgi")</span>}</>}
               </>
             ) : (
               'Aşı türünü seçin.'
@@ -659,7 +659,7 @@ function VaccinateForm({ animalId, visitId, planId }: { animalId: string; visitI
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             {err && <span className="err" role="alert">{err}</span>}
             <button type="button" className="btn" onClick={back}>Vazgeç</button>
-            <button className="btn p" disabled={save.isPending}>{save.isPending ? 'Kaydediliyor…' : 'Kaydet'} <span className="k">Ctrl+S</span></button>
+            <button className="btn p" disabled={save.isPending}>{save.isPending ? 'Kaydediliyor...' : 'Kaydet'} <span className="k">Ctrl+S</span></button>
           </div>
         </div>
       </form>
@@ -667,7 +667,7 @@ function VaccinateForm({ animalId, visitId, planId }: { animalId: string; visitI
   )
 }
 
-// ---------------------------------------------------------------- S-33 Aşılar sekmesi
+// ---------------------------------------------------------------- Aşılar sekmesi
 
 export function AnimalVaccinesTab({ animalId }: { animalId?: string }) {
   const can = useCan()
@@ -721,8 +721,8 @@ export function AnimalVaccinesTab({ animalId }: { animalId?: string }) {
                     <td className="mono">{formatDateTr(p.dueDate)}</td>
                     <td className="mono" style={{ color: dl.color }}>{p.daysLeft < 0 ? `${dl.text} gecikti` : dl.text}</td>
                     <td>{VACCINE_KIND_LABEL[p.kind]}</td>
-                    <td>{p.doseLabel ?? '—'}</td>
-                    <td><PlanStateCell s={p.status} />{p.reason && <span className="mut"> · {p.reason}</span>}</td>
+                    <td>{p.doseLabel ?? '-'}</td>
+                    <td><PlanStateCell s={p.status} />{p.reason && <span className="mut"> - {p.reason}</span>}</td>
                     <td><ReminderCell r={p.reminder} /></td>
                     <td style={{ whiteSpace: 'nowrap', textAlign: 'right' }}>
                       {canWrite && <Link className="btn sm" to={`/asilar/uygula${qs({ animal: animalId, plan: p.id })}`}>Uygula</Link>}{' '}
@@ -760,19 +760,19 @@ export function AnimalVaccinesTab({ animalId }: { animalId?: string }) {
               {d?.vaccinations.map((v) => (
                 <tr key={v.id}>
                   <td className="mono">{formatDateTr(v.givenAt)}</td>
-                  <td>{VACCINE_KIND_LABEL[v.kind]}{v.doseLabel ? ` · ${v.doseLabel}` : ''}{v.sideEffects && <div className="s-amb" style={{ fontSize: 12 }}>Yan etki: {v.sideEffects}</div>}</td>
-                  <td>{v.productName ?? '—'}{v.external && <div className="mut" style={{ fontSize: 12 }}>Dış kayıt{v.externalClinic ? ` · ${v.externalClinic}` : ''}</div>}</td>
-                  <td className="mono">{v.lotNo ?? '—'}</td>
-                  <td className="mono">{v.expiryDate ? formatDateTr(v.expiryDate) : '—'}</td>
-                  <td>{v.givenByName ?? '—'}</td>
-                  <td>{v.passportRecorded ? <span className="st s-ok">İşlendi</span> : <span className="mut">—</span>}</td>
+                  <td>{VACCINE_KIND_LABEL[v.kind]}{v.doseLabel ? ` - ${v.doseLabel}` : ''}{v.sideEffects && <div className="s-amb" style={{ fontSize: 12 }}>Yan etki: {v.sideEffects}</div>}</td>
+                  <td>{v.productName ?? '-'}{v.external && <div className="mut" style={{ fontSize: 12 }}>Dış kayıt{v.externalClinic ? ` - ${v.externalClinic}` : ''}</div>}</td>
+                  <td className="mono">{v.lotNo ?? '-'}</td>
+                  <td className="mono">{v.expiryDate ? formatDateTr(v.expiryDate) : '-'}</td>
+                  <td>{v.givenByName ?? '-'}</td>
+                  <td>{v.passportRecorded ? <span className="st s-ok">İşlendi</span> : <span className="mut">-</span>}</td>
                   <td>
                     {v.petvetTaskId ? (
                       <Link to={`/petvet/${v.petvetTaskId}`} className={`st ${v.petvetStatus === 'done' ? 's-ok' : v.petvetStatus === 'cancelled' ? 's-gry' : 's-amb'}`}>
                         {v.petvetStatus === 'done' ? 'Girildi' : v.petvetStatus === 'cancelled' ? 'İptal' : v.petvetStatus === 'missing_info' ? 'Eksik bilgi' : 'Bekliyor'}
                       </Link>
                     ) : (
-                      <span className="mut">—</span>
+                      <span className="mut">-</span>
                     )}
                   </td>
                   <td>{canWrite && <button className="btn sm" onClick={() => setDel({ id: v.id, title: `${formatDateTr(v.givenAt)} ${VACCINE_KIND_LABEL[v.kind]}` })}>Sil</button>}</td>
@@ -818,13 +818,13 @@ function ProtocolDialog({ animalId, data, onClose }: { animalId: string; data: A
       <form onSubmit={(e) => { e.preventDefault(); m.mutate() }} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         <Field label="Aşı türü *" htmlFor="pd-k">
           <select id="pd-k" className="inp" value={kind} onChange={(e) => { const k = e.target.value as VaccineKind; setKind(k); setPid(data.protocols[k]?.protocolId ?? '') }} required autoFocus>
-            <option value="">Seçin…</option>
-            {kinds.map((k) => <option key={k} value={k}>{VACCINE_KIND_LABEL[k]}{data.protocols[k] ? ` — şu an: ${data.protocols[k]!.name}` : ''}</option>)}
+            <option value="">Seçin...</option>
+            {kinds.map((k) => <option key={k} value={k}>{VACCINE_KIND_LABEL[k]}{data.protocols[k] ? ` - şu an: ${data.protocols[k]!.name}` : ''}</option>)}
           </select>
         </Field>
         <Field label="Protokol *" htmlFor="pd-p">
           <select id="pd-p" className="inp" value={pid} onChange={(e) => setPid(e.target.value)} required disabled={!kind}>
-            <option value="">Seçin…</option>
+            <option value="">Seçin...</option>
             {list.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
         </Field>
@@ -855,7 +855,7 @@ function DeleteVaccinationDialog({ id, title, onClose }: { id: string; title: st
     onError: (e) => setErr((e as Error).message),
   })
   return (
-    <Dialog title={`Hatalı kaydı sil — ${title}`} onClose={onClose}>
+    <Dialog title={`Hatalı kaydı sil - ${title}`} onClose={onClose}>
       <form onSubmit={(e) => { e.preventDefault(); m.mutate() }} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         <Field label="Neden *" htmlFor="dv-r"><input id="dv-r" className="inp" value={reason} onChange={(e) => setReason(e.target.value)} required minLength={3} autoFocus /></Field>
         <span className="mut">Kayıt yumuşak silinir (geri izlenebilir). Açık PETVET görevi iptal olur, plan yeniden hesaplanır.</span>
@@ -883,16 +883,16 @@ export function TodayVaccinesPanel() {
   const d = q.data
   return (
     <section className="pnl">
-      <div className="ph"><h2>Geciken aşılar — aranacak</h2><Link to="/asilar?f=overdue" style={{ fontSize: 12 }}>Tümü{d ? ` (${d.counts.overdue})` : ''}</Link></div>
+      <div className="ph"><h2>Geciken aşılar - aranacak</h2><Link to="/asilar?f=overdue" style={{ fontSize: 12 }}>Tümü{d ? ` (${d.counts.overdue})` : ''}</Link></div>
       {d?.items.length === 0 && <div className="empty">Son 30 günde geciken aşı yok.</div>}
       {q.isError && <div className="alert" style={{ margin: 8 }}>{(q.error as Error).message}</div>}
       {d?.items.map((i) => (
         <div key={i.planId} className="list-row">
           <span style={{ minWidth: 0 }}>
-            <Link to={`/hayvanlar/${i.animalId}`}><strong>{i.animalName}</strong></Link> · {VACCINE_KIND_LABEL[i.kind]}{i.doseLabel ? ` ${i.doseLabel}` : ''}
-            <span className="mut"> · {i.ownerName ?? 'sahip yok'}</span>
-            {i.ownerPhone && <span className="mono mut"> · {maskPhone(i.ownerPhone)}</span>} <CopyPhone phone={i.ownerPhone} />
-            {i.reminder?.state === 'failed' && <span className="s-red"> · mesaj gitmedi</span>}
+            <Link to={`/hayvanlar/${i.animalId}`}><strong>{i.animalName}</strong></Link> - {VACCINE_KIND_LABEL[i.kind]}{i.doseLabel ? ` ${i.doseLabel}` : ''}
+            <span className="mut"> - {i.ownerName ?? 'sahip yok'}</span>
+            {i.ownerPhone && <span className="mono mut"> - {maskPhone(i.ownerPhone)}</span>} <CopyPhone phone={i.ownerPhone} />
+            {i.reminder?.state === 'failed' && <span className="s-red"> - mesaj gitmedi</span>}
           </span>
           <span style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
             <span className="mono" style={{ color: delayText(i.daysLeft).color }}>{-i.daysLeft} gün</span>
@@ -904,17 +904,17 @@ export function TodayVaccinesPanel() {
   )
 }
 
-// ---------------------------------------------------------------- S-103 Ayarlar > Aşılar ve ürünler
+// ---------------------------------------------------------------- Ayarlar > Aşılar ve ürünler
 
 function StepsLine({ steps }: { steps: ProtocolStep[] }) {
   return (
     <span style={{ fontSize: 12 }}>
       {steps.map((s, k) => (
         <span key={k}>
-          {k > 0 && ' → '}
+          {k > 0 && ' -> '}
           <strong>{s.label}</strong>
           <span className="mut">
-            {s.minAgeWeeks != null ? ` (≥${s.minAgeWeeks} hf)` : ''}
+            {s.minAgeWeeks != null ? ` (>=${s.minAgeWeeks} hf)` : ''}
             {s.afterPrevWeeks != null ? ` (+${s.afterPrevWeeks} hf)` : ''}
             {s.thenEveryDays != null ? ` (her ${s.thenEveryDays} günde)` : ''}
           </span>
@@ -948,11 +948,11 @@ export function VaccineSettingsPage() {
             <tbody>
               {products.data?.map((p) => (
                 <tr key={p.id} className={edit ? 'click' : undefined} onDoubleClick={() => edit && setProd(p)}>
-                  <td><strong>{p.name}</strong>{p.notes && <span className="mut"> · {p.notes}</span>}</td>
-                  <td>{p.manufacturer ?? '—'}</td>
+                  <td><strong>{p.name}</strong>{p.notes && <span className="mut"> - {p.notes}</span>}</td>
+                  <td>{p.manufacturer ?? '-'}</td>
                   <td>{VACCINE_KIND_LABEL[p.kind]}</td>
                   <td>{p.species.length ? p.species.map((s) => SPECIES_LABEL[s]).join(', ') : 'Tümü'}</td>
-                  <td className="mono">{p.immunityDays ? `${p.immunityDays} gün` : '—'}</td>
+                  <td className="mono">{p.immunityDays ? `${p.immunityDays} gün` : '-'}</td>
                   <td>{p.active ? <span className="st s-ok">Etkin</span> : <span className="st s-gry">Kullanım dışı</span>}</td>
                   <td>{edit && <button className="btn sm" onClick={() => setProd(p)}>Düzenle</button>}</td>
                 </tr>
@@ -1013,7 +1013,7 @@ function ProductDialog({ product, onClose }: { product: VaccineProduct | null; o
     onError: (e) => setErr((e as Error).message),
   })
   return (
-    <Dialog title={product ? `Ürün — ${product.name}` : 'Yeni ürün'} onClose={onClose} width={560}>
+    <Dialog title={product ? `Ürün - ${product.name}` : 'Yeni ürün'} onClose={onClose} width={560}>
       <form onSubmit={(e) => { e.preventDefault(); m.mutate() }} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
           <Field label="Ürün adı *" htmlFor="pr-n"><input id="pr-n" className="inp" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} required autoFocus /></Field>
@@ -1084,7 +1084,7 @@ function ProtocolEditDialog({ protocol, onClose }: { protocol: VaccineProtocol |
   })
   const upd = (k: number, patch: Partial<StepDraft>) => setSteps((x) => x.map((s, i) => (i === k ? { ...s, ...patch } : s)))
   return (
-    <Dialog title={protocol ? `Protokol — ${protocol.name}` : 'Yeni protokol'} onClose={onClose} width={720}>
+    <Dialog title={protocol ? `Protokol - ${protocol.name}` : 'Yeni protokol'} onClose={onClose} width={720}>
       <form
         onSubmit={(e) => {
           e.preventDefault()
@@ -1126,7 +1126,7 @@ function ProtocolEditDialog({ protocol, onClose }: { protocol: VaccineProtocol |
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
           <button type="button" className="btn sm" onClick={() => setSteps((x) => [...x.map((s, i) => (i === x.length - 1 ? { ...s, thenEveryDays: '' } : s)), { label: `${x.length + 1}. doz`, minAgeWeeks: '', afterPrevWeeks: '3', thenEveryDays: '' }])}>Adım ekle</button>
           <label className="ck"><input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} />Etkin</label>
-          <span className="mut" style={{ fontSize: 12 }}>Ör. köpek karma: 1. doz ≥6 hf → +3 hf → +3 hf → yıllık rapel (+52 hf, her 365 günde).</span>
+          <span className="mut" style={{ fontSize: 12 }}>Ör. köpek karma: 1. doz >=6 hf -> +3 hf -> +3 hf -> yıllık rapel (+52 hf, her 365 günde).</span>
         </div>
         <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', alignItems: 'center' }}>
           {err && <span className="err" role="alert">{err}</span>}

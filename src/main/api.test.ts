@@ -199,7 +199,7 @@ describe('çip ve hızlı kayıt', () => {
       name: 'PAMUK',
       speciesBreed: 'KEDİ / TEKİR',
       sex: 'DİŞİ',
-      implant: '20.10.2026 · Boyun sol',
+      implant: '20.10.2026 - Boyun sol',
     })
     const log = await backend.db.$client.query(`select count(*)::int as n from audit_logs where action = 'view_sensitive'`)
     expect(log.rows[0].n).toBe(1)

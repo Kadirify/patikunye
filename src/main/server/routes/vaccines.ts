@@ -1,4 +1,4 @@
-// Aşılar modülü (D) API'si: ürünler, protokoller, aşı uygulama (S-50), aşı takvimi (S-51), hayvanın aşı planı
+// Aşılar modülü API'si: ürünler, protokoller, aşı uygulama, aşı takvimi, hayvanın aşı planı
 import type { FastifyInstance } from 'fastify'
 import { and, asc, desc, eq, inArray, isNull, sql } from 'drizzle-orm'
 import { boolean, date, integer, jsonb, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core'
@@ -570,7 +570,7 @@ async function applyVaccination(tx: Tx, u: SessionUser, b: VaccinateBody, today:
     action: 'create',
     entity: 'vaccination',
     entityId: v.id,
-    summary: `${b.external ? 'Dış kayıt: ' : ''}${animal.name} · ${vaccineTitle(b.kind, calc.doseLabel)}${v.productName ? ' · ' + v.productName : ''}${v.lotNo ? ' · lot ' + v.lotNo : ''}`,
+    summary: `${b.external ? 'Dış kayıt: ' : ''}${animal.name} - ${vaccineTitle(b.kind, calc.doseLabel)}${v.productName ? ' - ' + v.productName : ''}${v.lotNo ? ' - lot ' + v.lotNo : ''}`,
   })
   return {
     id: v.id,
@@ -618,7 +618,7 @@ export function vaccinesRoutes(app: FastifyInstance, deps: AppDeps) {
   const { db } = deps
   const today = () => deps.today?.() ?? todayIstanbul()
 
-  // ---- Ürünler (S-103)
+  // ---- Ürünler
   app.get('/api/vaccine-products', async (req) => {
     requireUser(req)
     const q = parse(z.object({ all: z.coerce.boolean().optional(), kind: kindSchema.optional(), species: z.string().optional() }), req.query)
@@ -661,7 +661,7 @@ export function vaccinesRoutes(app: FastifyInstance, deps: AppDeps) {
     })
   })
 
-  // ---- Protokoller (S-103)
+  // ---- Protokoller
   app.get('/api/vaccine-protocols', async (req) => {
     requireUser(req)
     const q = parse(z.object({ all: z.coerce.boolean().optional(), species: z.string().optional(), kind: kindSchema.optional() }), req.query)
@@ -742,14 +742,14 @@ export function vaccinesRoutes(app: FastifyInstance, deps: AppDeps) {
     } satisfies VaccinePreviewDto
   })
 
-  // ---- Aşı uygula (S-50)
+  // ---- Aşı uygula
   app.post('/api/vaccinations', async (req) => {
     const u = requirePerm(req, 'vaccinations.write')
     const b = parse(vaccinateSchema, req.body)
     return db.transaction((tx) => applyVaccination(tx, u, b, today()))
   })
 
-  // Hatalı kaydı sil (yumuşak) — PETVET görevi iptal olur, plan yeniden hesaplanır
+  // Hatalı kaydı sil (yumuşak) - PETVET görevi iptal olur, plan yeniden hesaplanır
   app.post('/api/vaccinations/:id/delete', async (req) => {
     const u = requirePerm(req, 'vaccinations.write')
     const { id } = parse(uuidParam, req.params)
@@ -769,7 +769,7 @@ export function vaccinesRoutes(app: FastifyInstance, deps: AppDeps) {
     })
   })
 
-  // ---- Hayvanın aşıları + planı (S-33 Aşılar sekmesi)
+  // ---- Hayvanın aşıları + planı (Aşılar sekmesi)
   app.get('/api/animals/:id/vaccines', async (req) => {
     requirePerm(req, 'animals.read')
     const { id } = parse(uuidParam, req.params)
@@ -841,7 +841,7 @@ export function vaccinesRoutes(app: FastifyInstance, deps: AppDeps) {
     } satisfies AnimalVaccinesDto
   })
 
-  // Protokol değiştir → planı yeniden kur
+  // Protokol değiştir -> planı yeniden kur
   app.post('/api/animals/:id/vaccine-protocol', async (req) => {
     const u = requirePerm(req, 'vaccinations.write')
     const { id } = parse(uuidParam, req.params)
@@ -887,7 +887,7 @@ export function vaccinesRoutes(app: FastifyInstance, deps: AppDeps) {
     })
   })
 
-  // ---- Takvim (S-51)
+  // ---- Takvim
   app.get('/api/vaccine-calendar', async (req) => {
     requirePerm(req, 'animals.read')
     const q = parse(
@@ -973,7 +973,7 @@ export function vaccinesRoutes(app: FastifyInstance, deps: AppDeps) {
       await cancelReminders(tx, 'vaccination_plan', id, 'postponed')
       const animal = await loadAnimal(tx, p.animalId)
       if (animal.status === 'active') await remind(tx, animal, np, false)
-      await writeAudit(tx, { userId: u.id, action: 'update', entity: 'vaccination_plan', entityId: id, summary: `Ertelendi: ${formatDateTr(p.dueDate)} → ${formatDateTr(b.dueDate)}${b.reason ? ' · ' + b.reason : ''}` })
+      await writeAudit(tx, { userId: u.id, action: 'update', entity: 'vaccination_plan', entityId: id, summary: `Ertelendi: ${formatDateTr(p.dueDate)} -> ${formatDateTr(b.dueDate)}${b.reason ? ' - ' + b.reason : ''}` })
       return { ok: true, dueDate: b.dueDate }
     })
   })
@@ -992,7 +992,7 @@ export function vaccinesRoutes(app: FastifyInstance, deps: AppDeps) {
     })
   })
 
-  // Başka klinikte yaptırıldı → dış kayıt + sonraki plan
+  // Başka klinikte yaptırıldı -> dış kayıt + sonraki plan
   app.post('/api/vaccination-plans/:id/external', async (req) => {
     const u = requirePerm(req, 'vaccinations.write')
     const { id } = parse(uuidParam, req.params)

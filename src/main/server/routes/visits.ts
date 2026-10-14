@@ -1,5 +1,5 @@
-// Muayene modülü (C) API'si: SOAP muayene, imza + ek/düzeltme versiyonları, tedavi satırları, öneriler.
-// SAYFALAR S-40, S-41, S-42, §15.5, §16.3, §17.
+// Muayene modülü API'si: SOAP muayene, imza + ek/düzeltme versiyonları, tedavi satırları, öneriler.
+// , 
 import type { FastifyInstance } from 'fastify'
 import { sql, type SQL } from 'drizzle-orm'
 import { z } from 'zod'
@@ -69,7 +69,7 @@ const CURRENT = `(v.status = 'signed' or v.supersedes_id is null)`
 
 const vital = (key: keyof typeof VITAL_LIMITS, unit = '') => {
   const l = VITAL_LIMITS[key]
-  const msg = `${l.label} ${String(l.hard[0]).replace('.', ',')}–${l.hard[1]}${unit} arasında olmalı.`
+  const msg = `${l.label} ${String(l.hard[0]).replace('.', ',')}-${l.hard[1]}${unit} arasında olmalı.`
   return z.number({ message: `${l.label} sayı olmalı.` }).min(l.hard[0], msg).max(l.hard[1], msg).nullable().optional()
 }
 
@@ -78,7 +78,7 @@ const vitalsSchema = z.object({
   pulse: vital('pulse', ' /dk'),
   resp: vital('resp', ' /dk'),
   weight: vital('weight', ' kg'),
-  bcs: vital('bcs').refine((v) => v == null || Number.isInteger(v), 'VKS tam sayı olmalı (1–9).'),
+  bcs: vital('bcs').refine((v) => v == null || Number.isInteger(v), 'VKS tam sayı olmalı (1-9).'),
   crt: vital('crt', ' sn'),
   dehydration: vital('dehydration', ' %'),
   mucosa: z.string().trim().max(60).nullable().optional(),
@@ -478,7 +478,7 @@ export function visitsRoutes(app: FastifyInstance, deps: AppDeps) {
 
   /* ───────────── Uçlar ───────────── */
 
-  // S-41 liste
+  // liste
   app.get('/api/visits', async (req) => {
     const u = requireUser(req)
     const full = await canReadContent(u)
@@ -703,8 +703,8 @@ export function visitsRoutes(app: FastifyInstance, deps: AppDeps) {
 
   function summarize(v: Pick<VisitRow, 'diagnoses' | 'subjective' | 'plan_text'>) {
     const parts = [v.diagnoses.join(', '), v.subjective, v.plan_text].filter(Boolean) as string[]
-    const s = parts.join(' · ')
-    return s.length > 160 ? s.slice(0, 157) + '…' : s
+    const s = parts.join(' - ')
+    return s.length > 160 ? s.slice(0, 157) + '...' : s
   }
 
   async function animalTreatments(animalId: string, activeOnly: boolean): Promise<AnimalTreatmentDto[]> {
@@ -728,7 +728,7 @@ export function visitsRoutes(app: FastifyInstance, deps: AppDeps) {
     }))
   }
 
-  // Hayvanın tedavileri (hayvan detayı → Tedaviler sekmesi)
+  // Hayvanın tedavileri (hayvan detayı -> Tedaviler sekmesi)
   app.get('/api/treatments', async (req) => {
     requirePerm(req, 'visits.read')
     const { animalId, active } = parse(z.object({ animalId: z.string().uuid('Hayvan seçin.'), active: z.enum(['1', '0']).optional() }), req.query)

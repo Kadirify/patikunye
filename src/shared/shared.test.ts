@@ -30,7 +30,7 @@ describe('çip doğrulama', () => {
     expect(r.ok).toBe(false)
   })
 
-  it('üretici kodunu (900–998) kabul eder', () => {
+  it('üretici kodunu (900-998) kabul eder', () => {
     expect(validateChip('900164001234567')).toMatchObject({ ok: true, codeKind: 'manufacturer' })
   })
 
@@ -61,7 +61,7 @@ describe('çip doğrulama', () => {
 
   it('gösterim biçimleri', () => {
     expect(formatChip('792091234567890')).toBe('792 091 234 567 890')
-    expect(shortChip('792091234567890')).toBe('792…567 890')
+    expect(shortChip('792091234567890')).toBe('792...567 890')
   })
 })
 

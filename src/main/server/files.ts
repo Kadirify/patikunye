@@ -77,7 +77,7 @@ export async function listAttachments(deps: AppDeps, ownerType: string, ownerId:
 /**
  * POST /api/files  { ownerType, ownerId, fileName, mime, dataBase64, note? }
  * GET  /api/files?ownerType=&ownerId=
- * GET  /api/files/:id  → dosyanın kendisi
+ * GET  /api/files/:id  -> dosyanın kendisi
  */
 export function fileRoutes(app: FastifyInstance, deps: AppDeps) {
   app.post('/api/files', { bodyLimit: Math.ceil(MAX_FILE_BYTES * 1.4) }, async (req) => {

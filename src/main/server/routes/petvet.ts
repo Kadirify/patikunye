@@ -64,7 +64,7 @@ export function petvetRoutes(app: FastifyInstance, deps: AppDeps) {
       f('owner', 'phone', 'Cep telefonu', phoneForPetvet(o?.phone)),
       f('owner', 'cityDistrict', 'İl / ilçe', o?.city ? trUpper(`${o.city} / ${o.district ?? ''}`) : ''),
       f('owner', 'address', 'Adres', o?.address),
-      f('owner', 'emergency', 'Acil durum', o?.emergencyName ? `${o.emergencyName} · ${phoneForPetvet(o.emergencyPhone)}` : ''),
+      f('owner', 'emergency', 'Acil durum', o?.emergencyName ? `${o.emergencyName} - ${phoneForPetvet(o.emergencyPhone)}` : ''),
       f('animal', 'chipNo', 'Çip no', mc?.chipNo),
       f('animal', 'name', 'Adı', trUpper(a.name)),
       f('animal', 'speciesBreed', 'Tür / ırk', trUpper(`${SPECIES_LABEL[a.species as Species]}${a.breed ? ' / ' + a.breed : ''}`)),
@@ -72,7 +72,7 @@ export function petvetRoutes(app: FastifyInstance, deps: AppDeps) {
       f('animal', 'color', 'Renk', a.color ? trUpper(a.color) : ''),
       f('animal', 'birthDate', 'Doğum tarihi', formatDateTr(a.birthDate)),
       f('animal', 'passportNo', 'Pasaport', a.passportNo),
-      f('animal', 'implant', 'Uygulama', mc ? `${formatDateTr(mc.implantedAt)} · ${mc.bodySite ?? ''}` : ''),
+      f('animal', 'implant', 'Uygulama', mc ? `${formatDateTr(mc.implantedAt)} - ${mc.bodySite ?? ''}` : ''),
     ]
     return { ...item, copyFields, note: t.note, vetId: t.vetId, ownerId: t.ownerId } satisfies PetvetTaskDetail
   })

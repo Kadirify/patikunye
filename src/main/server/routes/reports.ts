@@ -1,4 +1,4 @@
-// Raporlar (S-90) ve yazdırma verisi (Ç-01…Ç-09) — Modül H
+// Raporlar ve yazdirma verisi
 // Tüm raporlar diğer modüllerin tablolarını yalnızca OKUR. TCKN hiçbir yanıtta çözülmez: yalnızca son 4 hane (maskeli).
 import type { FastifyInstance, FastifyRequest } from 'fastify'
 import { z } from 'zod'
@@ -57,9 +57,9 @@ const pk = (k: string) => PETVET_KIND_LABEL[k as PetvetTaskKind] ?? k
 const maskLast4 = (last4: string | null | undefined) => (last4 ? '*******' + last4 : '')
 const d = (v: unknown): string | null => (v == null ? null : typeof v === 'string' ? v.slice(0, 10) : (v as Date).toISOString().slice(0, 10))
 const isoTs = (v: unknown): string | null => (v == null ? null : v instanceof Date ? v.toISOString() : new Date(String(v)).toISOString())
-const pctStr = (v: number | null) => (v == null ? '—' : `%${fmtNum(v, 1)}`)
+const pctStr = (v: number | null) => (v == null ? '-' : `%${fmtNum(v, 1)}`)
 
-/** Ana (güncel) sahip — lateral alt sorgu (a = animals takma adı) */
+/** Ana (güncel) sahip - lateral alt sorgu (a = animals takma adı) */
 const OWNER_LATERAL = `left join lateral (
     select o.id as owner_id, o.first_name || ' ' || o.last_name as owner_name, o.phone as owner_phone, o.tckn_last4 as owner_tckn_last4
     from animal_owners ao join owners o on o.id = ao.owner_id
@@ -68,7 +68,7 @@ const OWNER_LATERAL = `left join lateral (
 const CHIP_LATERAL = `left join lateral (
     select m.chip_no from microchips m where m.animal_id = a.id and m.status = 'active' order by m.created_at desc limit 1
   ) mc on true`
-/** Hekimin dokunduğu hayvan (muayene, aşı ya da çip uygulaması) — hekim boyutu olmayan raporlarda "kendi" kapsamı */
+/** Hekimin dokunduğu hayvan (muayene, aşı ya da çip uygulaması) - hekim boyutu olmayan raporlarda "kendi" kapsamı */
 const touchedBy = (p: string) => `(
     exists (select 1 from visits vv where vv.animal_id = a.id and vv.vet_id = ${p} and vv.deleted_at is null)
     or exists (select 1 from vaccinations vx where vx.animal_id = a.id and vx.given_by = ${p} and vx.deleted_at is null)
@@ -260,7 +260,7 @@ export function reportsRoutes(app: FastifyInstance, deps: AppDeps) {
           { label: 'Görev', value: fmtNum(all.total) },
           { label: 'Girildi', value: fmtNum(all.done) },
           { label: 'Zamanında', value: pctStr(allPct) },
-          { label: 'Ort. giriş süresi', value: all.done ? `${fmtNum(all.daysSum / all.done, 1)} gün` : '—' },
+          { label: 'Ort. giriş süresi', value: all.done ? `${fmtNum(all.daysSum / all.done, 1)} gün` : '-' },
           { label: 'Geciken (açık)', value: fmtNum(all.overdue) },
         ],
         chart: {
@@ -364,7 +364,7 @@ export function reportsRoutes(app: FastifyInstance, deps: AppDeps) {
         vet = `and v.given_by = $${p.length}`
       }
       const rows = await q(
-        `select v.kind, coalesce(pr.name, v.product_name, '—') as product, coalesce(v.lot_no, '') as lot_no, count(*)::int as n
+        `select v.kind, coalesce(pr.name, v.product_name, '-') as product, coalesce(v.lot_no, '') as lot_no, count(*)::int as n
            from vaccinations v left join vaccine_products pr on pr.id = v.product_id
           where v.deleted_at is null and not v.external and v.given_at between $1 and $2 ${vet}
           group by 1, 2, 3 order by 1, 2, 3`,
@@ -397,7 +397,7 @@ export function reportsRoutes(app: FastifyInstance, deps: AppDeps) {
         }
         const recall = await q(
           `select v.given_at, a.name as animal_name, a.species, mc.chip_no, o.owner_name, o.owner_phone,
-                  coalesce(pr.name, v.product_name, '—') as product, v.lot_no, u.full_name as vet_name
+                  coalesce(pr.name, v.product_name, '-') as product, v.lot_no, u.full_name as vet_name
              from vaccinations v
              join animals a on a.id = v.animal_id and a.deleted_at is null
              left join vaccine_products pr on pr.id = v.product_id
@@ -639,8 +639,8 @@ export function reportsRoutes(app: FastifyInstance, deps: AppDeps) {
       const newOnes = rows.filter((r) => d(r.created)! >= c.from && d(r.created)! <= c.to)
       const lost = rows.filter((r) => d(r.last_seen)! < limit12).sort((a, b) => d(a.last_seen)!.localeCompare(d(b.last_seen)!))
       const bySpecies = countBy(rows, (r) => sp(r.species))
-      const byBreed = countBy(rows, (r) => `${sp(r.species)} · ${r.breed?.trim() || 'Belirtilmemiş'}`)
-      const bands = ['0–1 yaş', '1–3 yaş', '3–7 yaş', '7–10 yaş', '10 yaş ve üstü', 'Bilinmiyor']
+      const byBreed = countBy(rows, (r) => `${sp(r.species)} - ${r.breed?.trim() || 'Belirtilmemiş'}`)
+      const bands = ['0-1 yaş', '1-3 yaş', '3-7 yaş', '7-10 yaş', '10 yaş ve üstü', 'Bilinmiyor']
       const byAge = new Map<string, number>(bands.map((b) => [b, 0]))
       for (const r of rows) {
         const b = d(r.birth_date)
@@ -660,7 +660,7 @@ export function reportsRoutes(app: FastifyInstance, deps: AppDeps) {
         chart: { title: 'Türe göre aktif hayvan', bars: sortedEntries(bySpecies).map(([label, value]) => ({ label, value })) },
         tables: [
           { title: 'Tür dağılımı', columns: [{ key: 'k', label: 'Tür' }, { key: 'n', label: 'Hayvan', num: true }], rows: sortedEntries(bySpecies).map(([k, n]) => ({ k, n })) },
-          { title: 'Irk dağılımı (ilk 25)', columns: [{ key: 'k', label: 'Tür · ırk' }, { key: 'n', label: 'Hayvan', num: true }], rows: sortedEntries(byBreed).slice(0, 25).map(([k, n]) => ({ k, n })) },
+          { title: 'Irk dağılımı (ilk 25)', columns: [{ key: 'k', label: 'Tür - ırk' }, { key: 'n', label: 'Hayvan', num: true }], rows: sortedEntries(byBreed).slice(0, 25).map(([k, n]) => ({ k, n })) },
           { title: 'Yaş dağılımı', columns: [{ key: 'k', label: 'Yaş' }, { key: 'n', label: 'Hayvan', num: true }], rows: [...byAge.entries()].map(([k, n]) => ({ k, n })) },
           {
             title: '12 aydır gelmeyen hastalar',
@@ -784,7 +784,7 @@ export function reportsRoutes(app: FastifyInstance, deps: AppDeps) {
           { label: 'Gelmedi', value: fmtNum(all.noShow) },
           { label: 'İptal', value: fmtNum(all.cancelOwner + all.cancelClinic) },
           { label: 'Gelme oranı', value: pctStr(pct(all.came, all.came + all.noShow)) },
-          { label: 'Ort. bekleme', value: all.waitN ? `${fmtNum(all.waitSum / all.waitN, 1)} dk` : '—' },
+          { label: 'Ort. bekleme', value: all.waitN ? `${fmtNum(all.waitSum / all.waitN, 1)} dk` : '-' },
         ],
         chart: { title: 'Duruma göre randevular', bars: sortedEntries(statusCount).map(([label, value]) => ({ label, value })) },
         tables: [
@@ -813,7 +813,7 @@ export function reportsRoutes(app: FastifyInstance, deps: AppDeps) {
             ],
           },
         ],
-        notes: ['Gelme oranı = geldi / (geldi + gelmedi). Bekleme = bekleme salonuna geliş → muayeneye alınma (S-72).'],
+        notes: ['Gelme orani = geldi / (geldi + gelmedi). Bekleme = bekleme salonuna gelis -> muayeneye alinma.'],
       }
     },
   }
@@ -847,7 +847,7 @@ export function reportsRoutes(app: FastifyInstance, deps: AppDeps) {
     const from = f.from ?? t.slice(0, 8) + '01'
     const to = f.to ?? t
     if (diffDaysIso(from, to) > 3700) throw new AppError(400, 'Tarih aralığı en fazla 10 yıl olabilir.', 'VALIDATION')
-    // Hekim rolü yalnızca kendi verisini görür (SAYFALAR §17: "H ✓ (kendi)")
+    // Hekim rolü yalnızca kendi verisini görür (: "H ✓ (kendi)")
     const vetId = def.usesVet ? (u.role === 'vet' ? u.id : (f.vetId ?? null)) : null
     const built = await builders[def.key]({ from, to, today: t, vetId, lot: f.lot || null })
     const vetName = vetId ? ((await q('select full_name from users where id = $1', [vetId]))[0]?.full_name ?? null) : null
@@ -899,7 +899,7 @@ export function reportsRoutes(app: FastifyInstance, deps: AppDeps) {
       action: 'export',
       entity: 'report',
       entityId: key,
-      summary: `${r.title} raporu CSV (${formatDateTr(r.from)}–${formatDateTr(r.to)}${r.vetName ? ', ' + r.vetName : ''})`,
+      summary: `${r.title} raporu CSV (${formatDateTr(r.from)}-${formatDateTr(r.to)}${r.vetName ? ', ' + r.vetName : ''})`,
     })
     const name = `PatiKunye_${key}_${r.from}_${r.to}.csv`
     reply
@@ -1162,9 +1162,9 @@ export function reportsRoutes(app: FastifyInstance, deps: AppDeps) {
       userId: u.id,
       action: 'export',
       entity: 'petvet_audit_pack',
-      summary: `PETVET denetim paketi ${formatDateTr(f.from)}–${formatDateTr(f.to)} (${out.length} görev)`,
+      summary: `PETVET denetim paketi ${formatDateTr(f.from)}-${formatDateTr(f.to)} (${out.length} görev)`,
     })
-    const taskLabel = new Map(out.map((r, i) => [ids[i], `${r.kindLabel} · ${r.animalName} · ${formatDateTr(r.eventDate)}`]))
+    const taskLabel = new Map(out.map((r, i) => [ids[i], `${r.kindLabel} - ${r.animalName} - ${formatDateTr(r.eventDate)}`]))
     return {
       from: f.from,
       to: f.to,
@@ -1407,11 +1407,11 @@ export function reportsRoutes(app: FastifyInstance, deps: AppDeps) {
         data = await printWorklist(req, query)
         break
       case 'report': {
-        // Rapor çıktısı (S-90 [Yazdır]) — dışa aktarma izni gerekir
+        // Rapor çıktısı ([Yazdır]) - dışa aktarma izni gerekir
         const u = requirePerm(req, 'reports.view', 'reports.export')
         if (!id) throw new AppError(400, 'Rapor belirtilmedi.', 'VALIDATION')
         const r = await runReport(u, id, query)
-        await writeAudit(db, { userId: u.id, action: 'export', entity: 'report', entityId: id, summary: `${r.title} raporu yazdırıldı (${formatDateTr(r.from)}–${formatDateTr(r.to)})` })
+        await writeAudit(db, { userId: u.id, action: 'export', entity: 'report', entityId: id, summary: `${r.title} raporu yazdırıldı (${formatDateTr(r.from)}-${formatDateTr(r.to)})` })
         data = r
         break
       }

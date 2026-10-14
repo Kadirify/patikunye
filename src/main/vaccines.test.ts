@@ -1,4 +1,4 @@
-// Aşı modülü (D) uçtan uca testleri
+// Aşı modülü uçtan uca testleri
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { startTestBackend, TEST_TODAY, type TestBackend } from './test-helpers'
 import { addDaysIso } from '../shared/petvet'
@@ -82,7 +82,7 @@ describe('ürün ve protokol tohumları', () => {
   })
 })
 
-describe('aşı uygula (S-50)', () => {
+describe('aşı uygula', () => {
   it('kuduz: kaydeder, sonraki planı ve PETVET VACCINE görevini açar', async () => {
     const a = await makeAnimal({ tckn: true })
     const pre = await t.api<VaccinePreviewDto>('GET', `/api/vaccines/preview?animalId=${a.animalId}&kind=rabies&productId=${prod('Rabisin').id}`)
@@ -204,12 +204,12 @@ describe('aşı uygula (S-50)', () => {
   })
 })
 
-describe('plan işlemleri ve takvim (S-51)', () => {
+describe('plan işlemleri ve takvim', () => {
   let overdueAnimal: string
   let overduePlan: string
 
   beforeAll(async () => {
-    // Doğumdan 8 hafta sonrası 6 gün önce → kedi karma 1. doz 6 gün gecikmiş
+    // Doğumdan 8 hafta sonrası 6 gün önce -> kedi karma 1. doz 6 gün gecikmiş
     const a = await makeAnimal({ name: 'Fıstık' })
     overdueAnimal = a.animalId
     await t.backend.db.$client.query(`update animals set birth_date = $2 where id = $1`, [a.animalId, addDaysIso(TEST_TODAY, -8 * 7 - 6)])
@@ -257,7 +257,7 @@ describe('plan işlemleri ve takvim (S-51)', () => {
     await t.backend.db.$client.query(`update animals set birth_date = $2 where id = $1`, [a.animalId, addDaysIso(TEST_TODAY, -12 * 7 + 2)])
     const r = await t.api<{ plans: { id: string; dueDate: string }[] }>('POST', `/api/animals/${a.animalId}/vaccine-plan/recalculate`, { kind: 'rabies' })
     const planId = r.data.plans[0].id
-    expect(r.data.plans[0].dueDate).toBe(addDaysIso(TEST_TODAY, 2)) // 29.10 → bu hafta (26.10–01.11)
+    expect(r.data.plans[0].dueDate).toBe(addDaysIso(TEST_TODAY, 2)) // 29.10 -> bu hafta (26.10-01.11)
     const week = await t.api<CalendarDto>('GET', '/api/vaccine-calendar?filter=week')
     expect(week.data.items.some((i) => i.planId === planId)).toBe(true)
     const month = await t.api<CalendarDto>('GET', '/api/vaccine-calendar?filter=month&kind=rabies&species=dog')

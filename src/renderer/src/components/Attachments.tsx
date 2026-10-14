@@ -65,7 +65,7 @@ export function Attachments({ ownerType, ownerId, title = 'Belgeler', canUpload 
         {canUpload && (
           <>
             <button className="btn sm" disabled={busy} onClick={() => input.current?.click()}>
-              {busy ? 'Yükleniyor…' : 'Dosya ekle'}
+              {busy ? 'Yükleniyor...' : 'Dosya ekle'}
             </button>
             <input ref={input} type="file" multiple hidden accept=".pdf,.jpg,.jpeg,.png,.webp,.heic" onChange={(e) => upload(e.target.files)} />
           </>

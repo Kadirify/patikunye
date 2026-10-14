@@ -1,4 +1,4 @@
-// Global çip yakalama (SAYFALAR.md §0.3).
+// Global çip yakalama.
 // USB okuyucular klavye gibi davranır: rakamları çok hızlı yazıp Enter basar.
 // İnsan bu hızda yazamaz; tuşlar arası süre eşiğin altındaysa giriş okuyucudan gelmiştir.
 import { useEffect, useRef } from 'react'

@@ -1,4 +1,4 @@
-// Modül G — yedekleme / geri yükleme / veritabanı uçtan uca testleri
+// yedekleme / geri yükleme / veritabanı uçtan uca testleri
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { copyFile, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
@@ -227,7 +227,7 @@ describe('Yedekleme', () => {
     const { mkdir } = await import('node:fs/promises')
     await mkdir(dir)
     const names: string[] = []
-    // Ağustos–Ekim arası her gün bir yedek
+    // Ağustos-Ekim arası her gün bir yedek
     for (let d = new Date('2026-08-01T00:00:00Z'); d <= new Date('2026-10-27T00:00:00Z'); d = new Date(d.getTime() + 86400_000)) {
       const ymd = d.toISOString().slice(0, 10).replace(/-/g, '')
       const n = `patikunye-${ymd}-030000-daily-abcd.pkb`
@@ -250,12 +250,12 @@ describe('Yedekleme', () => {
   })
 
   it('günlük iş zamanlaması', async () => {
-    // 04:00 TR → bugün 03:00; 02:00 TR → dün 03:00
+    // 04:00 TR -> bugün 03:00; 02:00 TR -> dün 03:00
     expect(lastScheduledAt(new Date('2026-10-27T01:00:00Z'), '03:00').toISOString()).toBe('2026-10-27T00:00:00.000Z')
     expect(lastScheduledAt(new Date('2026-10-26T23:00:00Z'), '03:00').toISOString()).toBe('2026-10-26T00:00:00.000Z')
-    // a'da az önce başarılı yedek var → çalışmamalı
+    // a'da az önce başarılı yedek var -> çalışmamalı
     expect(await shouldRunDaily(a.backend.deps)).toBe(false)
-    // Saat 2 gün sonrası → çalışmalı
+    // Saat 2 gün sonrası -> çalışmalı
     const later = { ...a.backend.deps, now: () => new Date(Date.now() + 2 * 86400_000) }
     expect(await shouldRunDaily(later)).toBe(true)
   })
@@ -267,7 +267,7 @@ describe('Yedekleme', () => {
   })
 })
 
-describe('Veritabanı (S-111)', () => {
+describe('Veritabanı', () => {
   it('durum, bakım, tanı paketi', async () => {
     const s = await a.api('GET', '/api/db/status')
     expect(s.status).toBe(200)

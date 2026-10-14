@@ -1,8 +1,8 @@
-// Raporlar ve yazdırma modülü (H) — sunucu ve arayüzün paylaştığı tipler + saf yardımcılar
+// Raporlar ve yazdırma modülü - sunucu ve arayüzün paylaştığı tipler + saf yardımcılar
 // (Code 128 B barkod kodlaması, CSV üretimi).
 import type { Role } from './api-types'
 
-// ---------------------------------------------------------------- raporlar (S-90)
+// ---------------------------------------------------------------- raporlar
 
 export const REPORT_KEYS = [
   'identification',
@@ -34,12 +34,12 @@ const ALL_REPORT_ROLES: Role[] = ['admin', 'vet', 'secretary']
 export const REPORTS: ReportDef[] = [
   { key: 'identification', title: 'Kimliklendirme', description: 'Dönemde uygulanan çipler, PETVET durumu ve gecikme.', usesRange: true, usesVet: true, roles: ['admin', 'vet'] },
   { key: 'petvet', title: 'PETVET uyum', description: 'Tür bazında görev sayısı, zamanında giriş oranı, ortalama giriş süresi, gecikenler.', usesRange: true, usesVet: true, roles: ['admin', 'vet'] },
-  { key: 'chipless', title: 'Çipsiz hayvanlar', description: '6 aydan büyük, aktif, çipsiz kedi/köpek/gelincik — arama listesi.', usesRange: false, usesVet: true, roles: ['admin', 'vet'] },
+  { key: 'chipless', title: 'Çipsiz hayvanlar', description: '6 aydan büyük, aktif, çipsiz kedi/köpek/gelincik - arama listesi.', usesRange: false, usesVet: true, roles: ['admin', 'vet'] },
   { key: 'vaccines', title: 'Aşı raporu', description: 'Uygulanan aşılar (tür, ürün, lot). Lot geri çağırma araması.', usesRange: true, usesVet: true, roles: ['admin', 'vet'] },
   { key: 'vaccine-compliance', title: 'Aşı uyum oranı', description: 'Vadesi gelen aşılardan zamanında yapılanların oranı ve gecikenler.', usesRange: true, usesVet: true, roles: ['admin', 'vet'] },
   { key: 'visits', title: 'Muayene istatistiği', description: 'Hekim, tür ve gün bazında muayene sayısı; en sık tanılar.', usesRange: true, usesVet: true, roles: ['admin', 'vet'] },
   { key: 'patients', title: 'Hasta tabanı', description: 'Aktif hayvanlar (tür, ırk, yaş), yeni hasta, 12 aydır gelmeyen.', usesRange: true, usesVet: true, roles: ['admin', 'vet'] },
-  // Mesajların hekim boyutu yok; hekim rolüne kapalı (SAYFALAR §17: S yalnızca randevu/mesaj)
+  // Mesajların hekim boyutu yok; hekim rolüne kapalı (: S yalnızca randevu/mesaj)
   { key: 'messages', title: 'Mesaj raporu', description: 'Gönderilen / başarısız mesajlar, kanal ve tür bazında, birim (maliyet tahmini).', usesRange: true, usesVet: false, roles: ['admin', 'secretary'] },
   { key: 'appointments', title: 'Randevu raporu', description: 'Gelme / gelmeme oranı, iptaller, ortalama bekleme süresi.', usesRange: true, usesVet: true, roles: ALL_REPORT_ROLES },
 ]
@@ -104,7 +104,7 @@ export function fmtNum(n: number, digits = 0): string {
   return n.toLocaleString('tr-TR', { minimumFractionDigits: digits, maximumFractionDigits: digits })
 }
 
-/** Yüzde: 0,833 → "83,3" (paydası 0 ise null) */
+/** Yüzde: 0,833 -> "83,3" (paydası 0 ise null) */
 export function pct(part: number, whole: number): number | null {
   if (!whole) return null
   return Math.round((part / whole) * 1000) / 10
@@ -149,8 +149,8 @@ export function reportToCsv(r: Pick<ReportResult, 'tables'>): string {
 // ---------------------------------------------------------------- Code 128 (B kod kümesi)
 
 /**
- * Code 128 desen tablosu: her değer için çubuk/boşluk genişlikleri (modül cinsinden),
- * çubukla başlar, dönüşümlü. 0–102 veri, 103/104/105 Start A/B/C, 106 Stop (7 eleman, 13 modül).
+ * Code 128 desen tablosu: her değer için çubuk/boşluk genişlikleri (modül cinsinden)
+ * çubukla başlar, dönüşümlü. 0-102 veri, 103/104/105 Start A/B/C, 106 Stop (7 eleman, 13 modül).
  */
 export const CODE128_PATTERNS: readonly string[] = [
   '212222', '222122', '222221', '121223', '121322', '131222', '122213', '122312', '132212', '221213',
@@ -172,13 +172,13 @@ export interface Code128Encoding {
   /** Start B, veri değerleri, kontrol değeri, Stop */
   codes: number[]
   checksum: number
-  /** Tüm desenlerin birleşimi (genişlik dizisi), ör. "211214…2331112" */
+  /** Tüm desenlerin birleşimi (genişlik dizisi), ör. "211214...2331112" */
   pattern: string
   /** Sessiz bölge hariç toplam modül sayısı */
   modules: number
 }
 
-/** Metni Code 128 B ile kodlar (ASCII 32–126). Geçersiz karakterde hata fırlatır. */
+/** Metni Code 128 B ile kodlar (ASCII 32-126). Geçersiz karakterde hata fırlatır. */
 export function encodeCode128B(text: string): Code128Encoding {
   if (!text) throw new Error('Barkod metni boş olamaz.')
   const data: number[] = []
@@ -196,7 +196,7 @@ export function encodeCode128B(text: string): Code128Encoding {
   return { codes, checksum, pattern, modules }
 }
 
-/** Çubukların (siyah) konum ve genişlikleri — modül cinsinden, sessiz bölge `quiet` modül */
+/** Çubukların (siyah) konum ve genişlikleri - modül cinsinden, sessiz bölge `quiet` modül */
 export function code128Bars(text: string, quiet = 10): { bars: { x: number; w: number }[]; width: number } {
   const enc = encodeCode128B(text)
   const bars: { x: number; w: number }[] = []
@@ -206,11 +206,11 @@ export function code128Bars(text: string, quiet = 10): { bars: { x: number; w: n
     if (i % 2 === 0) bars.push({ x, w })
     x += w
   })
-  // Her desen çift sayıda eleman içerir (stop hariç 6, stop 7) → çubuk/boşluk dönüşümü desenler arasında korunur
+  // Her desen çift sayıda eleman içerir (stop hariç 6, stop 7) -> çubuk/boşluk dönüşümü desenler arasında korunur
   return { bars, width: x + quiet }
 }
 
-// ---------------------------------------------------------------- yazdırma (Ç-01…Ç-09)
+// ---------------------------------------------------------------- yazdirma
 
 export interface PrintClinic {
   name: string

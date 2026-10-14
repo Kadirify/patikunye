@@ -1,4 +1,4 @@
-// Muayene modülü (C) uçtan uca testleri
+// Muayene modülü uçtan uca testleri
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { startTestBackend, type TestBackend } from './test-helpers'
 import type { VisitAnimalContext, VisitDetail, VisitListResult, AnimalTreatmentDto, DiagnosisSuggestion, VisitPhrase } from '../shared/visits'
@@ -37,7 +37,7 @@ async function newDraft(extra: Record<string, unknown> = {}, token?: string) {
   return r.data
 }
 
-describe('muayene: taslak → imza → ek/düzeltme', () => {
+describe('muayene: taslak -> imza -> ek/düzeltme', () => {
   let id = ''
   let rev = 0
 
@@ -177,7 +177,7 @@ describe('muayene: taslak → imza → ek/düzeltme', () => {
 })
 
 describe('doğrulama', () => {
-  it('ateş 30–45 dışında, VKS 1–9 dışında, kilo 150 üstünde reddedilir', async () => {
+  it('ateş 30-45 dışında, VKS 1-9 dışında, kilo 150 üstünde reddedilir', async () => {
     const bad = [
       { vitals: { temp: 46 } },
       { vitals: { temp: 29.5 } },
@@ -193,7 +193,7 @@ describe('doğrulama', () => {
     }
     const temp = await t.api<{ error: string }>('POST', '/api/visits', { animalId, findings: { vitals: { temp: 50 }, systems: {} } })
     expect(temp.data.error).toContain('Ateş')
-    // 35–43 dışı yalnızca uyarıdır (arayüzde); kayıt kabul edilir
+    // 35-43 dışı yalnızca uyarıdır (arayüzde); kayıt kabul edilir
     const ok = await t.api('POST', '/api/visits', { animalId, findings: { vitals: { temp: 34.2 }, systems: {} } })
     expect(ok.status).toBe(200)
   })

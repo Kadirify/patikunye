@@ -1,9 +1,9 @@
-// Raporlar ve yazdırma (Modül H) uçtan uca testleri + Code 128 birim testleri
+// Raporlar ve yazdırma  uçtan uca testleri + Code 128 birim testleri
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { startTestBackend, TEST_TODAY, type TestBackend } from './test-helpers'
 import { CODE128_PATTERNS, code128Bars, encodeCode128B, reportToCsv, type ReportResult, type ReportsMetaDto } from '../shared/reports'
 
-// Algoritmaya uyan örnek TCKN — hiçbir yanıtta tam hali görünmemeli
+// Algoritmaya uyan örnek TCKN - hiçbir yanıtta tam hali görünmemeli
 const TCKN = '10000000146'
 const RANGE = 'from=2026-10-01&to=2026-10-31'
 
@@ -237,7 +237,7 @@ describe('raporlar', () => {
     expect(chip.done).toBe(1)
     expect(chip.onTime).toBe(1)
     expect(chip.onTimePct).toBe(50) // 1 zamanında / (1 girildi + 1 süresi geçmiş)
-    expect(chip.avgDays).toBe(9) // 01.10 → 10.10
+    expect(chip.avgDays).toBe(9) // 01.10 -> 10.10
     expect(chip.overdue).toBe(1)
     const late = table(r.data, 'Geciken').rows
     expect(late).toHaveLength(1)

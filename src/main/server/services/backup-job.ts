@@ -1,4 +1,4 @@
-// Günlük otomatik yedek (Modül G): ayarlardaki saatte; bilgisayar kapalıydıysa ilk fırsatta.
+// Günlük otomatik yedek : ayarlardaki saatte; bilgisayar kapalıydıysa ilk fırsatta.
 // Kural: en son planlanan an (bugün SS:dd geçtiyse bugün, geçmediyse dün SS:dd) ile şimdi arasında
 // başarılı bir yedek yoksa yedek alınır. Son deneme hata verdiyse 1 saat beklenir.
 import type { Job } from './jobs'

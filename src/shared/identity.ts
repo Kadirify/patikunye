@@ -18,7 +18,7 @@ export function maskTckn(tckn: string | null | undefined): string {
   return '*******' + tckn.slice(-4)
 }
 
-/** TR cep telefonu → E.164 (+905XXXXXXXXX). Geçersizse null. */
+/** TR cep telefonu -> E.164 (+905XXXXXXXXX). Geçersizse null. */
 export function normalizeTrMobile(raw: string): string | null {
   let s = raw.replace(/[\s()\-.]/g, '')
   if (s.startsWith('+90')) s = s.slice(3)
@@ -28,24 +28,24 @@ export function normalizeTrMobile(raw: string): string | null {
   return /^5\d{9}$/.test(s) ? '+90' + s : null
 }
 
-/** +905321234567 → 0532 123 45 67 */
+/** +905321234567 -> 0532 123 45 67 */
 export function formatTrPhone(e164: string | null | undefined): string {
   if (!e164) return ''
   const m = /^\+90(\d{3})(\d{3})(\d{2})(\d{2})$/.exec(e164)
   return m ? `0${m[1]} ${m[2]} ${m[3]} ${m[4]}` : e164
 }
 
-/** PETVET'e kopyalanacak biçim: baştaki 0 olmadan 10 hane (pilot hekimle doğrulanacak) */
+/** PETVET'e kopyalanacak bicim: bastaki 0 olmadan 10 hane */
 export function phoneForPetvet(e164: string | null | undefined): string {
   return e164?.startsWith('+90') ? e164.slice(3) : (e164 ?? '')
 }
 
-/** Türkçe büyük harf (i → İ) */
+/** Türkçe büyük harf (i -> İ) */
 export function trUpper(s: string): string {
   return s.toLocaleUpperCase('tr-TR')
 }
 
-/** "ayşe nur" → "Ayşe Nur" */
+/** "ayşe nur" -> "Ayşe Nur" */
 export function trTitleCase(s: string): string {
   return s
     .trim()

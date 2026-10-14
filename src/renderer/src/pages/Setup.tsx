@@ -1,4 +1,4 @@
-// Açılış: S-01 Kurulum sihirbazı, başlatma ekranı ve S-02 sistem hatası ekranı.
+// Açılış: Kurulum sihirbazı, başlatma ekranı ve sistem hatası ekranı.
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { api, setApiBase, setToken } from '../api'
 import { TitleBar } from '../Layout'
@@ -40,7 +40,7 @@ export function BootGate({ children }: { children: ReactNode }) {
   }, [st?.state, st?.apiBase])
 
   if (!st) return <div className="app"><TitleBar /></div>
-  // İlk açılış ya da kurulum yapılmamış veritabanı → sihirbaz (veritabanı adımını kendisi yürütür)
+  // İlk açılış ya da kurulum yapılmamış veritabanı -> sihirbaz (veritabanı adımını kendisi yürütür)
   // Veritabanı hazır ve kurulum tamamsa "ilk açılış" bayrağına bakılmaz (yazdırma gibi ek pencereler)
   const wizardNeeded = needsSetup === true || (st.firstRun && st.state !== 'ready')
   // Sihirbaz bir kez açıldıysa tamamlanana kadar açık kalır (adım bilgisi kaybolmasın)
@@ -59,7 +59,7 @@ function Starting({ status }: { status: BackendStatus }) {
         <div className="pnl" style={{ padding: '24px 28px', width: 420, display: 'flex', flexDirection: 'column', gap: 10 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <Logo size={20} hole="#fff" />
-            <strong>PatiKünye başlatılıyor…</strong>
+            <strong>PatiKünye başlatılıyor...</strong>
           </div>
           <StepList status={status} compact />
         </div>
@@ -68,7 +68,7 @@ function Starting({ status }: { status: BackendStatus }) {
   )
 }
 
-/* S-02 Sistem hatası */
+/* Sistem hatası */
 function SystemError({ status }: { status: BackendStatus }) {
   const [busy, setBusy] = useState(false)
   const [saved, setSaved] = useState<string | null>(null)
@@ -97,7 +97,7 @@ function SystemError({ status }: { status: BackendStatus }) {
             {saved && <div className="alert ok">Tanı paketi kaydedildi: <span className="mono">{saved}</span></div>}
           </div>
           <div className="form-foot">
-            <span className="mut" style={{ fontSize: 12 }}>Sorun sürerse tanı paketini destek ekibine gönderin. Kişisel veri içermez.</span>
+            <span className="mut" style={{ fontSize: 12 }}>Sorun surerse tani paketini bize gonderin. Kisisel veri icermez.</span>
             <div style={{ display: 'flex', gap: 8 }}>
               {client && (
                 <button
@@ -120,7 +120,7 @@ function SystemError({ status }: { status: BackendStatus }) {
                   setBusy(false)
                 }}
               >
-                {busy ? 'Deneniyor…' : 'Tekrar dene'}
+                {busy ? 'Deneniyor...' : 'Tekrar dene'}
               </button>
             </div>
           </div>
@@ -131,17 +131,17 @@ function SystemError({ status }: { status: BackendStatus }) {
 }
 
 function StepList({ status, compact }: { status: BackendStatus; compact?: boolean }) {
-  if (!status.steps.length) return <div className="mut">Hazırlanıyor…</div>
+  if (!status.steps.length) return <div className="mut">Hazırlanıyor...</div>
   return (
     <div>
       {status.steps.map((s) => (
         <div key={s.key} style={{ display: 'grid', gridTemplateColumns: '22px minmax(0,1fr) auto', gap: 8, alignItems: 'center', padding: compact ? '4px 0' : '7px 0', borderBottom: '1px solid var(--line-3)' }}>
           <span style={{ color: s.state === 'done' ? 'var(--ok)' : s.state === 'error' ? 'var(--red)' : 'var(--accent)' }} aria-hidden="true">
-            {s.state === 'done' ? '✓' : s.state === 'error' ? '✗' : '…'}
+            {s.state === 'done' ? '✓' : s.state === 'error' ? '✗' : '...'}
           </span>
           <span>
             {s.state === 'start' ? <strong>{s.label}</strong> : s.label}
-            {s.detail && s.state !== 'error' && <span className="mono mut" style={{ fontSize: 12 }}> · {s.detail}</span>}
+            {s.detail && s.state !== 'error' && <span className="mono mut" style={{ fontSize: 12 }}> - {s.detail}</span>}
             {s.state === 'error' && <div className="err">{s.detail}</div>}
           </span>
           <span className="mono mut" style={{ fontSize: 12 }}>{s.ms !== undefined && s.state === 'done' ? `${(s.ms / 1000).toFixed(1).replace('.', ',')} sn` : ''}</span>
@@ -151,7 +151,7 @@ function StepList({ status, compact }: { status: BackendStatus; compact?: boolea
   )
 }
 
-/* ───────────── Kurulum sihirbazı (S-01) ───────────── */
+/* ───────────── Kurulum sihirbazı ───────────── */
 
 const STEPS = [
   'Hoş geldiniz',
@@ -166,7 +166,7 @@ const STEPS = [
   'Hazır',
 ] as const
 
-// Kurtarma kodu için Türkçe kelime listesi (256 kelime → 12 kelime ≈ 96 bit)
+// Kurtarma kodu için Türkçe kelime listesi (256 kelime -> 12 kelime ≈ 96 bit)
 const WORDS = (
   'ada akşam alan anahtar arı armut aslan ayva badem bahar balık bulut çamur çay çiçek deniz dere dut elma erik fener fidan fil fındık ' +
   'gemi gece göl güneş güz hamak hasır havuz hurma ırmak ışık incir inci kalem kale kapı kar kartal kavak kayık kedi kekik kestane kiraz ' +
@@ -371,7 +371,7 @@ export function SetupWizard({ status, onDone }: { status: BackendStatus; onDone(
                   Geri
                 </button>
                 {isLast ? (
-                  <button className="btn p" disabled={busy} onClick={finish}>{busy ? 'Kaydediliyor…' : 'Başla'}</button>
+                  <button className="btn p" disabled={busy} onClick={finish}>{busy ? 'Kaydediliyor...' : 'Başla'}</button>
                 ) : (
                   <button
                     className="btn p"
@@ -436,7 +436,7 @@ function InstallType({ d, up }: StepProps) {
         <strong>{title}</strong>
       </span>
       <span />
-      <span className="mut" style={{ fontSize: 12, gridColumn: 'span 2' }}>{desc}{disabled && ` · ${disabled}`}</span>
+      <span className="mut" style={{ fontSize: 12, gridColumn: 'span 2' }}>{desc}{disabled && ` - ${disabled}`}</span>
     </label>
   )
   return (
@@ -451,7 +451,7 @@ function InstallType({ d, up }: StepProps) {
   )
 }
 
-/* S-03 Bu bilgisayarı mevcut kliniğe bağla */
+/* Bu bilgisayarı mevcut kliniğe bağla */
 function JoinStep() {
   const [hosts, setHosts] = useState<DiscoveredHost[] | null>(null)
   const [address, setAddress] = useState('')
@@ -503,11 +503,11 @@ function JoinStep() {
             <h2>Yerel ağda bulunanlar</h2>
             <button className="btn sm" onClick={scan}>Yeniden ara</button>
           </div>
-          {hosts === null && <div className="empty">Aranıyor…</div>}
+          {hosts === null && <div className="empty">Aranıyor...</div>}
           {hosts?.length === 0 && <div className="empty">Bulunamadı. Windows güvenlik duvarı mDNS'i engelliyor olabilir; adresi elle girin.</div>}
           {hosts?.map((h) => (
             <button key={h.url} className="list-row" style={{ width: '100%', border: 0, borderBottom: '1px solid var(--line-3)', background: '#fff', textAlign: 'left', cursor: 'pointer' }} onClick={() => connect(h.url)} disabled={busy}>
-              <span><strong>{h.clinic || h.name}</strong> <span className="mut">· {h.name}</span></span>
+              <span><strong>{h.clinic || h.name}</strong> <span className="mut">- {h.name}</span></span>
               <span className="mono mut">{h.url.replace('https://', '')}</span>
             </button>
           ))}
@@ -522,7 +522,7 @@ function JoinStep() {
           <Field label="ya da adres (IP:port)" htmlFor="ha" style={{ flex: 1 }}>
             <input id="ha" className="inp mono" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="192.168.1.20:47900" />
           </Field>
-          <button className="btn" disabled={busy || !address.trim()}>{busy ? 'Bağlanılıyor…' : 'Bağlan'}</button>
+          <button className="btn" disabled={busy || !address.trim()}>{busy ? 'Bağlanılıyor...' : 'Bağlan'}</button>
         </form>
         {err && <div className="alert">{err}</div>}
       </>
@@ -531,7 +531,7 @@ function JoinStep() {
 
   return (
     <>
-      <H title={`${hi.clinicName} — eşleştirme`} sub={`Ana bilgisayar: ${hi.url.replace('https://', '')} · sürüm ${hi.version}`} />
+      <H title={`${hi.clinicName} - eşleştirme`} sub={`Ana bilgisayar: ${hi.url.replace('https://', '')} - sürüm ${hi.version}`} />
       <div>
         <div className="mut" style={{ fontSize: 12, marginBottom: 4 }}>Sertifika parmak izi</div>
         <div className="mono" style={{ padding: 10, border: '1px solid var(--line)', background: 'var(--head)', fontSize: 12, wordBreak: 'break-all' }}>{hi.fingerprint}</div>
@@ -552,7 +552,7 @@ function JoinStep() {
       <div style={{ display: 'flex', gap: 8 }}>
         <button className="btn" onClick={() => setHi(null)}>Başka ana bilgisayar</button>
         <button className="btn p" disabled={busy || !fpOk || code.length !== 6 || !name.trim()} onClick={doPair}>
-          {busy ? 'Eşleştiriliyor…' : 'Eşleştir ve bağlan'}
+          {busy ? 'Eşleştiriliyor...' : 'Eşleştir ve bağlan'}
         </button>
       </div>
     </>
@@ -659,7 +659,7 @@ function AdminStep({ d, up, onCreate, busy }: StepProps & { onCreate(): void; bu
         </Field>
       </div>
       <div>
-        <button className="btn p" disabled={busy || a.password.length < 10 || a.password !== a.password2}>{busy ? 'Kaydediliyor…' : 'Yöneticiyi oluştur'}</button>
+        <button className="btn p" disabled={busy || a.password.length < 10 || a.password !== a.password2}>{busy ? 'Kaydediliyor...' : 'Yöneticiyi oluştur'}</button>
       </div>
     </form>
   )
@@ -682,7 +682,7 @@ function BackupStep({ d, up }: StepProps) {
                 if (f) up('backupFolder', f)
               }}
             >
-              Seç…
+              Seç...
             </button>
           )}
         </div>
@@ -701,7 +701,7 @@ function BitlockerStep({ state }: { state: WizardData['bitlocker'] }) {
   return (
     <>
       <H title="Disk şifreleme" sub="Bilgisayar çalınırsa verilerin okunamaması için Windows BitLocker önerilir." />
-      {state === null && <div className="mut">Denetleniyor…</div>}
+      {state === null && <div className="mut">Denetleniyor...</div>}
       {state === 'on' && <div className="alert ok">BitLocker açık. Sistem diski şifreli.</div>}
       {state === 'off' && (
         <div className="alert amb">
@@ -753,9 +753,9 @@ function ReaderStep({ onMeasured }: { onMeasured(ms: number): void }) {
           <dt>Ham değer</dt>
           <dd className="mono">{result.raw}</dd>
           <dt>Sonuç</dt>
-          <dd>{v.ok ? <span className="st s-ok">Geçerli · <span className="mono">{formatChip(v.value)}</span></span> : <span className="st s-red">{v.error}</span>}</dd>
+          <dd>{v.ok ? <span className="st s-ok">Geçerli - <span className="mono">{formatChip(v.value)}</span></span> : <span className="st s-red">{v.error}</span>}</dd>
           <dt>Tuş arası</dt>
-          <dd className="mono">{result.gap} ms {result.gap > 60 ? <span className="s-amb">· elle yazılmış gibi</span> : <span className="s-ok">· okuyucu hızı</span>}</dd>
+          <dd className="mono">{result.gap} ms {result.gap > 60 ? <span className="s-amb">- elle yazılmış gibi</span> : <span className="s-ok">- okuyucu hızı</span>}</dd>
         </dl>
       )}
       <div className="mut" style={{ fontSize: 12 }}>Okuyucunuz yoksa bu adımı atlayabilirsiniz; ayar sonradan Ayarlar &gt; Çip okuyucu'dan yapılır.</div>
@@ -767,7 +767,7 @@ function MessagingStep() {
   return (
     <>
       <H title="Mesajlaşma" sub="Aşı ve randevu hatırlatmaları SMS ya da e-postayla gönderilir." />
-      <p style={{ margin: 0 }}>SMS sağlayıcısı (Netgsm, İletimerkezi…) ve e-posta ayarları kurulumdan sonra Ayarlar &gt; Mesajlaşma'dan yapılabilir. Ayar yapılana kadar hatırlatmalar listede görünür ama gönderilmez.</p>
+      <p style={{ margin: 0 }}>SMS sağlayıcısı (Netgsm, İletimerkezi...) ve e-posta ayarları kurulumdan sonra Ayarlar &gt; Mesajlaşma'dan yapılabilir. Ayar yapılana kadar hatırlatmalar listede görünür ama gönderilmez.</p>
     </>
   )
 }
@@ -778,15 +778,15 @@ function DoneStep({ d }: { d: WizardData }) {
       <H title="Kurulum tamamlandı" />
       <dl className="kv">
         <dt>Klinik</dt>
-        <dd>{d.clinic.clinicName} · {d.clinic.city} / {d.clinic.district}</dd>
+        <dd>{d.clinic.clinicName} - {d.clinic.city} / {d.clinic.district}</dd>
         <dt>Yönetici</dt>
         <dd>{d.session?.user.fullName} ({d.session?.user.username})</dd>
         <dt>Yedek</dt>
-        <dd>{d.backupFolder || 'uygulama klasörü'} · her gün {d.backupTime}</dd>
+        <dd>{d.backupFolder || 'uygulama klasörü'} - her gün {d.backupTime}</dd>
         <dt>Disk şifreleme</dt>
         <dd>{d.bitlocker === 'on' ? 'açık' : d.bitlocker === 'off' ? 'kapalı (önerilir)' : 'bilinmiyor'}</dd>
         <dt>Çip okuyucu</dt>
-        <dd>{d.readerGapMs ? `test edildi · eşik ${d.readerGapMs} ms` : 'test edilmedi'}</dd>
+        <dd>{d.readerGapMs ? `test edildi - eşik ${d.readerGapMs} ms` : 'test edilmedi'}</dd>
       </dl>
       <p style={{ margin: 0 }}>"Başla" ile uygulamaya geçin. İlk iş olarak Ayarlar &gt; Kullanıcılar'dan diğer hekim ve personeli ekleyebilirsiniz.</p>
     </>

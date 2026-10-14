@@ -1,4 +1,4 @@
--- Modül F: kullanıcı ek alanları, sözlükler, KVKK metinleri ve talepleri
+-- kullanıcı ek alanları, sözlükler, KVKK metinleri ve talepleri
 
 ALTER TABLE users ADD COLUMN IF NOT EXISTS pin_allowed boolean NOT NULL DEFAULT false;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS must_change_password boolean NOT NULL DEFAULT false;
@@ -8,11 +8,11 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS phone varchar(16);
 -- Kişisel tercihler (bildirimler vb.)
 ALTER TABLE users ADD COLUMN IF NOT EXISTS prefs jsonb NOT NULL DEFAULT '{}'::jsonb;
 
--- Sözlükler (S-104): ırk, renk, sahip etiketi, iptal nedeni
+-- Sözlükler: ırk, renk, sahip etiketi, iptal nedeni
 CREATE TABLE IF NOT EXISTS dictionaries (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   kind varchar(20) NOT NULL,             -- breed | color | owner_tag | cancel_reason
-  species varchar(20),                   -- yalnızca breed için (cat | dog | …), diğerlerinde null
+  species varchar(20),                   -- yalnızca breed için (cat | dog | ...), diğerlerinde null
   value text NOT NULL,
   sort integer NOT NULL DEFAULT 0,
   active boolean NOT NULL DEFAULT true,
@@ -55,7 +55,7 @@ SELECT 'cancel_reason', NULL, v, n FROM unnest(ARRAY['Sahip iptal etti', 'Gelmed
 WITH ORDINALITY AS t(v, n)
 ON CONFLICT DO NOTHING;
 
--- KVKK metinleri (S-114), sürümlü: her değişiklik yeni satır
+-- KVKK metinleri, sürümlü: her değişiklik yeni satır
 CREATE TABLE IF NOT EXISTS kvkk_texts (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   kind varchar(20) NOT NULL,             -- notice | consent | marketing
@@ -67,12 +67,12 @@ CREATE TABLE IF NOT EXISTS kvkk_texts (
 );
 
 INSERT INTO kvkk_texts (kind, version, body) VALUES
-('notice', 1, E'⚠️ HUKUKÇU ONAYI GEREKLİDİR — bu metin örnek şablondur, kullanmadan önce bir hukukçuya inceletin.\n\nKİŞİSEL VERİLERİN İŞLENMESİNE İLİŞKİN AYDINLATMA METNİ\n\n{klinik_ad} olarak, 6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında veri sorumlusu sıfatıyla; adınız, soyadınız, T.C. kimlik numaranız, iletişim bilgileriniz ve hayvanınıza ait kayıtlar; veteriner hekimlik hizmetinin sunulması, mikroçip ve evcil hayvan kayıt yükümlülüklerinin yerine getirilmesi, randevu ve aşı hatırlatmalarının yapılması amaçlarıyla işlenmektedir.\n\nVerileriniz, yasal yükümlülüklerin yerine getirilmesi amacıyla yetkili kamu kurumlarıyla (ör. evcil hayvan kayıt sistemi) paylaşılabilir. Kanun''un 11. maddesindeki haklarınız için kliniğimize yazılı olarak başvurabilirsiniz.'),
-('consent', 1, E'⚠️ HUKUKÇU ONAYI GEREKLİDİR — bu metin örnek şablondur.\n\nAÇIK RIZA METNİ\n\nAydınlatma metnini okudum. Kişisel verilerimin aydınlatma metninde belirtilen amaçlar dışında, açık rızamı gerektiren işlemler için işlenmesine onay veriyorum.'),
-('marketing', 1, E'⚠️ HUKUKÇU ONAYI GEREKLİDİR — bu metin örnek şablondur.\n\nTİCARİ ELEKTRONİK İLETİ İZNİ\n\n{klinik_ad} tarafından kampanya, duyuru ve bilgilendirme amaçlı SMS ve e-posta gönderilmesine izin veriyorum. Bu izni dilediğim zaman geri alabilirim.')
+('notice', 1, E'ORNEK SABLON - kullanmadan once hukuki danismanlik alin.\n\nKISISEL VERILERIN ISLENMESINE ILISKIN AYDINLATMA METNI\n\n{klinik_ad} olarak, 6698 sayili Kisisel Verilerin Korunmasi Kanunu kapsaminda veri sorumlusu sifatiyla; adiniz, soyadiniz, T.C. kimlik numaraniz, iletisim bilgileriniz ve hayvaniniza ait kayitlar; veteriner hekimlik hizmetinin sunulmasi, mikrocip ve evcil hayvan kayit yukumluluklerinin yerine getirilmesi, randevu ve asi hatirlatmalarinin yapilmasi amaclariyla islenmektedir.\n\nVerileriniz, yasal yukumluluklerin yerine getirilmesi amaciyla yetkili kamu kurumlariyla (or. evcil hayvan kayit sistemi) paylasilabilir. Kanun''un 11. maddesindeki haklariniz icin klinigimize yazili olarak basvurabilirsiniz.'),
+('consent', 1, E'ORNEK SABLON - kullanmadan once hukuki danismanlik alin.\n\nACIK RIZA METNI\n\nAydinlatma metnini okudum. Kisisel verilerimin aydinlatma metninde belirtilen amaclar disinda, acik rizami gerektiren islemler icin islenmesine onay veriyorum.'),
+('marketing', 1, E'ORNEK SABLON - kullanmadan once hukuki danismanlik alin.\n\nTICARi ELEKTRONIK ILETI IZNI\n\n{klinik_ad} tarafindan kampanya, duyuru ve bilgilendirme amacli SMS ve e-posta gonderilmesine izin veriyorum. Bu izni diledigim zaman geri alabilirim.')
 ON CONFLICT DO NOTHING;
 
--- KVKK talepleri (S-95)
+-- KVKK talepleri
 CREATE TABLE IF NOT EXISTS kvkk_requests (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   owner_id uuid NOT NULL REFERENCES owners(id),

@@ -1,4 +1,4 @@
-// Yerel ağ modu — ana bilgisayar tarafı (S-03, S-109).
+// Yerel ağ modu - ana bilgisayar tarafı.
 // Yerel arayüz 127.0.0.1'deki API'yi kullanır. Ağdaki diğer bilgisayarlar için ayrı bir HTTPS dinleyici açılır:
 // kendinden imzalı sertifika (istemci parmak izini sabitler) + eşleştirme kodu + cihaz anahtarı.
 import { createHash, randomBytes, randomInt } from 'node:crypto'
@@ -33,7 +33,7 @@ export interface PairingCode {
 
 export const sha256hex = (s: string) => createHash('sha256').update(s).digest('hex')
 
-/** Sertifika parmak izi: DER'in sha256'sı, "AB:CD:…" biçiminde (Electron certificate.fingerprint ile aynı biçim için ayrıca 'sha256/' base64 da üretilir) */
+/** Sertifika parmak izi: DER'in sha256'sı, "AB:CD:..." biçiminde (Electron certificate.fingerprint ile aynı biçim için ayrıca 'sha256/' base64 da üretilir) */
 export function certFingerprint(pem: string): string {
   const der = Buffer.from(pem.replace(/-----[^-]+-----/g, '').replace(/\s+/g, ''), 'base64')
   return createHash('sha256').update(der).digest('hex').toUpperCase().match(/.{2}/g)!.join(':')

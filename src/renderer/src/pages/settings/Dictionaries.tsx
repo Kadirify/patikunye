@@ -1,4 +1,4 @@
-// S-104 Sözlükler: ırklar (tür bazında), renkler, sahip etiketleri, iptal nedenleri; CSV içe/dışa aktarma
+// Sözlükler: ırklar (tür bazında), renkler, sahip etiketleri, iptal nedenleri; CSV içe/dışa aktarma
 import { useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api, qs } from '../../api'
@@ -72,7 +72,7 @@ export function DictionariesSettingsPage() {
         <h1>Sözlükler</h1>
         <div className="right">
           <button className="btn" onClick={exportCsv}>CSV dışa aktar</button>
-          <button className="btn" onClick={() => fileRef.current?.click()} disabled={imp.isPending}>CSV içe aktar…</button>
+          <button className="btn" onClick={() => fileRef.current?.click()} disabled={imp.isPending}>CSV içe aktar...</button>
           <input
             ref={fileRef}
             type="file"

@@ -1,4 +1,4 @@
-// Gönderim motoru (S-80): kuyruktaki hatırlatmaları sessiz saatlere uyarak gönderir.
+// Gönderim motoru: kuyruktaki hatırlatmaları sessiz saatlere uyarak gönderir.
 // Arka plan işi 5 dakikada bir çalışır; test ve "Şimdi gönder" için fonksiyonlar dışa aktarılır.
 import { sql } from 'drizzle-orm'
 import type { Job } from './jobs'
@@ -8,7 +8,7 @@ import { renderReminder } from './reminders'
 import { createProviders, type MessageProvider, type Providers } from './sms'
 import { isQuietTime, smsSegments, type MessageChannel, type ProcessResult } from '../../../shared/messaging'
 
-/** Hata sonrası tekrar deneme aralıkları: 5 dk, 30 dk, 2 sa (3 tekrar → sonra kalıcı başarısız) */
+/** Hata sonrası tekrar deneme aralıkları: 5 dk, 30 dk, 2 sa (3 tekrar -> sonra kalıcı başarısız) */
 export const RETRY_DELAYS_MS = [5 * 60_000, 30 * 60_000, 2 * 3600_000]
 /** Bu süreden eski kaçırılmış randevu hatırlatması gönderilmez */
 export const APPOINTMENT_EXPIRE_MS = 24 * 3600_000
@@ -144,7 +144,7 @@ export async function processDueReminders(deps: Deps, opts?: ProcessOptions): Pr
   return result
 }
 
-/** "Şimdi gönder" (S-80): sessiz saatleri yok sayar, kullanıcı açıkça istemiştir. */
+/** "Şimdi gönder": sessiz saatleri yok sayar, kullanıcı açıkça istemiştir. */
 export async function sendReminderNow(deps: Deps, id: string, userId: string, opts?: ProcessOptions): Promise<SendOutcome | null> {
   const r = (await deps.db.execute<ReminderRow>(sql`${SELECT_REMINDER} where r.id = ${id}`)).rows[0]
   if (!r) return null
